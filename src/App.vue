@@ -24,7 +24,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import { TestModel } from './models/TestModel';
-import { History } from '../external/EditingSystemTs/src/History';
+import { History } from '../externals/EditingSystemTs/src/History';
 
 import NumberEditor from './components/NumberEditor.vue';
 

@@ -1,6 +1,6 @@
-import { History } from '../../external/EditingSystemTs/src/History';
-import { TypedEvent } from '../../external/EditingSystemTs/src/TypedEvent';
-import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../external/EditingSystemTs/src/Event';
+import { History } from '../../externals/EditingSystemTs/src/History';
+import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../externals/EditingSystemTs/src/Event';
 
 export class TestModel implements NotifyPropertyChanged {
   readonly PropertyChanged = new TypedEvent<PropertyChangedEventArgs>();
