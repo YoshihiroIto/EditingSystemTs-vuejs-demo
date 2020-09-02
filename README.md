@@ -1,4 +1,4 @@
-# vuejs-demo
+# editing-system-ts-vuejs-demo
 
 ## Project setup
 ```
