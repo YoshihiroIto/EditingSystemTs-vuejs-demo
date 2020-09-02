@@ -20,6 +20,10 @@
       :value.sync="testModel.valueA"
     />
     {{ testModel.valueA }}
+
+    <br />
+    <br />
+    <Viewport :scene="scene" :camera="camera" :updated="updated" :width="800" :height="600" />
   </div>
 </template>
 
@@ -30,10 +34,14 @@ import { History } from '../externals/EditingSystemTs/src/History';
 
 import NumberEditor from './components/NumberEditor.vue';
 
+import { RootScene } from '@/se/components/RootScene';
+import Viewport from '@/se/components/Viewport.vue';
+
 export default defineComponent({
   name: 'App',
   components: {
     NumberEditor,
+    Viewport,
   },
   setup() {
     const _history = new History();
@@ -76,6 +84,15 @@ export default defineComponent({
       }
     };
 
+    const rootScene = new RootScene();
+    const scene = ref(rootScene.scene);
+    const camera = ref(rootScene.camera);
+    const updated = ref(rootScene.updated);
+
+    for (let i = 0; i != 30; ++i) {
+      rootScene.addCube();
+    }
+
     return {
       history,
       testModel,
@@ -88,6 +105,10 @@ export default defineComponent({
 
       onBeginContinuousEditing,
       onEndContinuousEditing,
+
+      scene,
+      camera,
+      updated,
     };
   },
 });

@@ -3,7 +3,7 @@ import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../externals/EditingSystemTs/src/Event';
 
 export class TestModel implements NotifyPropertyChanged {
-  readonly PropertyChanged = new TypedEvent<PropertyChangedEventArgs>();
+  readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
 
   valueA = 123;
   valueB = '';
