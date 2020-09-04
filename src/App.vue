@@ -30,12 +30,13 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import { TestModel } from './models/TestModel';
+
+import { RootScene } from './models/RootScene';
+import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
 
 import NumberEditor from './components/NumberEditor.vue';
-
-import { RootScene } from '@/se/components/RootScene';
-import Viewport from '@/se/components/Viewport.vue';
+import Viewport from './components/Viewport.vue';
 
 export default defineComponent({
   name: 'App',
@@ -44,9 +45,8 @@ export default defineComponent({
     Viewport,
   },
   setup() {
-    const _history = new History();
-
-    const _testModel = new TestModel(_history);
+    const _history = container.resolve(History);
+    const _testModel = container.resolve(TestModel);
 
     const history = ref(_history);
     const testModel = ref(_testModel);
@@ -62,6 +62,7 @@ export default defineComponent({
         _history.beginBatch();
       }
     };
+
     const onEndContinuousEditing = () => {
       if (_history.isInBatch) {
         _history.endBatch();
@@ -84,8 +85,9 @@ export default defineComponent({
       }
     };
 
-    const rootScene = new RootScene();
-    const scene = ref(rootScene.scene);
+    const rootScene = container.resolve(RootScene);
+
+    const scene = ref(rootScene);
     const camera = ref(rootScene.camera);
     const updated = ref(rootScene.updated);
 
