@@ -5,8 +5,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from '@vue/composition-api';
 import { Camera, Scene, WebGLRenderer } from 'three';
-import { TypedEvent } from '@/se/Foundations/TypedEvent';
-import { CameraHelper } from '@/se/libs/CameraHelper';
+import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { CameraHelper } from '../models/CameraHelper';
 
 type Props = {
   scene: Scene;

@@ -1,18 +1,20 @@
-﻿import { Scene, Camera, PerspectiveCamera, BoxGeometry, MeshNormalMaterial, Mesh, Object3D } from 'three';
-import { EventArgs, TypedEvent } from '@/se/Foundations/TypedEvent';
+﻿import { Camera, PerspectiveCamera, BoxGeometry, MeshNormalMaterial, Mesh } from 'three';
+import { EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { History } from '../../externals/EditingSystemTs/src/History';
+import { SeMesh } from './se/SeMesh';
+import { SeScene } from './se/SeScene';
+import { container, injectable } from 'tsyringe';
 
-export class RootScene {
-  public readonly scene = new Scene();
+@injectable()
+export class RootScene extends SeScene {
   public readonly camera: Camera;
   public readonly updated = new TypedEvent();
 
-  public get children(): Object3D[] {
-    return this.scene.children;
-  }
-
   private readonly cubes = new Array<Mesh>();
 
-  constructor() {
+  constructor(history: History) {
+    super(history);
+
     this.camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
     this.camera.position.set(0, 0, 3);
     this.camera.lookAt(0, 0, 0);
@@ -20,26 +22,28 @@ export class RootScene {
     this.animate();
   }
 
+  static geometry = new BoxGeometry(1, 1, 1);
+  static material = new MeshNormalMaterial();
+
   public addCube(): void {
-    const geometry = new BoxGeometry(1, 1, 1);
-    const material = new MeshNormalMaterial();
-    const cube = new Mesh(geometry, material);
+    const cube = container.resolve(SeMesh);
+
+    cube.geometry = RootScene.geometry;
+    cube.material = RootScene.material;
 
     cube.position.x = (Math.random() - 0.5) * 8;
     cube.position.y = (Math.random() - 0.5) * 8;
-    cube.position.z = Math.random() * -2;
+    cube.position.z = Math.random() * -10;
     cube.rotation.x = Math.random() * Math.PI * 2;
     cube.rotation.y = Math.random() * Math.PI * 2;
     cube.rotation.z = Math.random() * Math.PI * 2;
-    cube.position.z = Math.random() * -10;
 
-    this.scene.add(cube);
+    this.add(cube);
     this.cubes.push(cube);
   }
 
   public doUpdate(): void {
     const speed = 0.03;
-
     for (const cube of this.cubes) {
       cube.rotation.x += speed;
       cube.rotation.y += speed * 0.7;

@@ -23,6 +23,8 @@
 
     <br />
     <br />
+    <button @click="addCubes">Add cubes</button>
+    <br />
     <Viewport :scene="scene" :camera="camera" :updated="updated" :width="800" :height="600" />
   </div>
 </template>
@@ -30,12 +32,13 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import { TestModel } from './models/TestModel';
+
+import { RootScene } from './models/RootScene';
+import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
 
 import NumberEditor from './components/NumberEditor.vue';
-
-import { RootScene } from '@/se/components/RootScene';
-import Viewport from '@/se/components/Viewport.vue';
+import Viewport from './components/Viewport.vue';
 
 export default defineComponent({
   name: 'App',
@@ -44,9 +47,8 @@ export default defineComponent({
     Viewport,
   },
   setup() {
-    const _history = new History();
-
-    const _testModel = new TestModel(_history);
+    const _history = container.resolve(History);
+    const _testModel = container.resolve(TestModel);
 
     const history = ref(_history);
     const testModel = ref(_testModel);
@@ -62,6 +64,7 @@ export default defineComponent({
         _history.beginBatch();
       }
     };
+
     const onEndContinuousEditing = () => {
       if (_history.isInBatch) {
         _history.endBatch();
@@ -84,14 +87,17 @@ export default defineComponent({
       }
     };
 
-    const rootScene = new RootScene();
-    const scene = ref(rootScene.scene);
-    const camera = ref(rootScene.camera);
-    const updated = ref(rootScene.updated);
+    const scene = container.resolve(RootScene);
+    const camera = scene.camera;
+    const updated = scene.updated;
 
-    for (let i = 0; i != 30; ++i) {
-      rootScene.addCube();
-    }
+    const addCubes = () => {
+      for (let i = 0; i != 20; ++i) {
+        scene.addCube();
+      }
+    };
+
+    addCubes();
 
     return {
       history,
@@ -109,6 +115,8 @@ export default defineComponent({
       scene,
       camera,
       updated,
+
+      addCubes,
     };
   },
 });
