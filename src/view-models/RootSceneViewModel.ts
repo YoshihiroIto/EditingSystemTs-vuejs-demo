@@ -11,7 +11,7 @@ export class RootSceneViewModel extends ThScene {
     super();
 
     this.camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
-    this.camera.position.set(0, 0, 3);
+    this.camera.position.set(0, 0, 20);
     this.camera.lookAt(0, 0, 0);
   }
 }

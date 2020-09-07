@@ -25,7 +25,7 @@ export class RootScene extends SeScene {
       this.add(mesh);
       this.meshes.push(mesh);
 
-      mesh.position = new SeVector3((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, Math.random() * -10);
+      mesh.position = new SeVector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
       mesh.rotation = new SeVector3(
         Math.random() * Math.PI * 2,
         Math.random() * Math.PI * 2,

@@ -7,6 +7,7 @@ import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/compos
 import { Camera, Scene, WebGLRenderer } from 'three';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 type Props = {
   scene: Scene;
@@ -28,6 +29,7 @@ export default defineComponent({
     const canvas = ref<HTMLCanvasElement>();
 
     let renderer: WebGLRenderer;
+    let controls: OrbitControls;
 
     const render = () => renderer.render(props.scene, props.camera);
     const setAspect = () => CameraHelper.SetAspect(props.camera, props.width / props.height);
@@ -38,11 +40,16 @@ export default defineComponent({
         canvas: canvas.value,
       });
 
+      controls = new OrbitControls(props.camera, renderer.domElement);
+
       props.updated.on(render);
     });
 
     onUnmounted(() => {
       props.updated.off(render);
+
+      controls?.dispose();
+      renderer?.dispose();
     });
 
     watch(() => props.width, setAspect);
