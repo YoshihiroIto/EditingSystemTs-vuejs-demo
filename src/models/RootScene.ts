@@ -1,52 +1,52 @@
-﻿import { Camera, PerspectiveCamera, BoxGeometry, MeshNormalMaterial, Mesh } from 'three';
+﻿import { History } from '../../externals/EditingSystemTs/src/History';
 import { EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
-import { History } from '../../externals/EditingSystemTs/src/History';
-import { SeMesh } from './se/SeMesh';
-import { SeScene } from './se/SeScene';
 import { container, injectable } from 'tsyringe';
+import { SeScene } from '@/se/SeScene';
+import { SeMesh } from '@/se/SeMesh';
+import { SeVector3 } from '@/se/math/SeVector3';
 
 @injectable()
 export class RootScene extends SeScene {
-  public readonly camera: Camera;
   public readonly updated = new TypedEvent();
 
-  private readonly cubes = new Array<Mesh>();
+  private readonly meshes = new Array<SeMesh>();
 
   constructor(history: History) {
     super(history);
 
-    this.camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
-    this.camera.position.set(0, 0, 3);
-    this.camera.lookAt(0, 0, 0);
-
     this.animate();
   }
 
-  static geometry = new BoxGeometry(1, 1, 1);
-  static material = new MeshNormalMaterial();
-
   public addCube(): void {
-    const cube = container.resolve(SeMesh);
+    try {
+      this.history.beginBatch();
 
-    cube.geometry = RootScene.geometry;
-    cube.material = RootScene.material;
+      const mesh = container.resolve(SeMesh);
+      this.add(mesh);
+      this.meshes.push(mesh);
 
-    cube.position.x = (Math.random() - 0.5) * 8;
-    cube.position.y = (Math.random() - 0.5) * 8;
-    cube.position.z = Math.random() * -10;
-    cube.rotation.x = Math.random() * Math.PI * 2;
-    cube.rotation.y = Math.random() * Math.PI * 2;
-    cube.rotation.z = Math.random() * Math.PI * 2;
-
-    this.add(cube);
-    this.cubes.push(cube);
+      mesh.position = new SeVector3((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, Math.random() * -10);
+      mesh.rotation = new SeVector3(
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2
+      );
+    } finally {
+      this.history.endBatch();
+    }
   }
 
   public doUpdate(): void {
-    const speed = 0.03;
-    for (const cube of this.cubes) {
-      cube.rotation.x += speed;
-      cube.rotation.y += speed * 0.7;
+    try {
+      this.history.beginPause();
+
+      const speed = 0.03;
+
+      for (const cube of this.meshes) {
+        cube.rotation = new SeVector3(cube.rotation.x + speed, cube.rotation.y + speed * 0.7, cube.rotation.z);
+      }
+    } finally {
+      this.history.endPause();
     }
   }
 

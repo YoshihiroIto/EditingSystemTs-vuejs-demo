@@ -3,10 +3,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 import { Camera, Scene, WebGLRenderer } from 'three';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
-import { CameraHelper } from '../models/CameraHelper';
+import { CameraHelper } from '../foundations/CameraHelper';
 
 type Props = {
   scene: Scene;
@@ -29,16 +29,21 @@ export default defineComponent({
 
     let renderer: WebGLRenderer;
 
+    const render = () => renderer.render(props.scene, props.camera);
+    const setAspect = () => CameraHelper.SetAspect(props.camera, props.width / props.height);
+
     onMounted(() => {
       renderer = new WebGLRenderer({
         antialias: true,
         canvas: canvas.value,
       });
+
+      props.updated.on(render);
     });
 
-    props.updated.on(() => renderer.render(props.scene, props.camera));
-
-    const setAspect = () => CameraHelper.SetAspect(props.camera, props.width / props.height);
+    onUnmounted(() => {
+      props.updated.off(render);
+    });
 
     watch(() => props.width, setAspect);
     watch(() => props.height, setAspect);

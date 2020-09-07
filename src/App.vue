@@ -25,15 +25,16 @@
     <br />
     <button @click="addCubes">Add cubes</button>
     <br />
-    <Viewport :scene="scene" :camera="camera" :updated="updated" :width="800" :height="600" />
+    <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, onUnmounted, ref } from '@vue/composition-api';
 import { TestModel } from './models/TestModel';
-
 import { RootScene } from './models/RootScene';
+
+import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
 
@@ -87,37 +88,58 @@ export default defineComponent({
       }
     };
 
-    const scene = container.resolve(RootScene);
-    const camera = scene.camera;
-    const updated = scene.updated;
+    try {
+      _history.beginPause();
 
-    const addCubes = () => {
-      for (let i = 0; i != 20; ++i) {
-        scene.addCube();
-      }
-    };
+      // rootScene
+      const rootScene = container.resolve(RootScene);
+      const updated = rootScene.updated;
 
-    addCubes();
+      // rootSceneViewModel
+      const rootSceneViewModel = container.resolve(RootSceneViewModel);
+      rootSceneViewModel.setup(rootScene);
 
-    return {
-      history,
-      testModel,
-      valueA,
+      const camera = rootSceneViewModel.camera;
 
-      undo,
-      redo,
-      inc,
-      dec,
+      //
+      const addCubes = () => {
+        try {
+          _history.beginBatch();
 
-      onBeginContinuousEditing,
-      onEndContinuousEditing,
+          for (let i = 0; i != 20; ++i) {
+            rootScene.addCube();
+          }
+        } finally {
+          _history.endBatch();
+        }
+      };
 
-      scene,
-      camera,
-      updated,
+      onUnmounted(() => {
+        rootSceneViewModel.dispose();
+      });
 
-      addCubes,
-    };
+      return {
+        history,
+        testModel,
+        valueA,
+
+        undo,
+        redo,
+        inc,
+        dec,
+
+        onBeginContinuousEditing,
+        onEndContinuousEditing,
+
+        rootSceneViewModel,
+        camera,
+        updated,
+
+        addCubes,
+      };
+    } finally {
+      _history.endPause();
+    }
   },
 });
 </script>
