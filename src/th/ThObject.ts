@@ -12,6 +12,7 @@ import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Object3D } from 'three/src/core/Object3D';
 import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
 import { Constructor } from '../foundations/Mixin';
+import { nameof } from '../foundations/nameof';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Base: TBase) {
@@ -60,19 +61,19 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       Assert.isNotNull(this.viewModel);
 
       switch (e.propertyName) {
-        case 'position':
+        case nameof<SeObject3D>('position'):
           this.viewModel.position.x = this.model.position.x;
           this.viewModel.position.y = this.model.position.y;
           this.viewModel.position.z = this.model.position.z;
           break;
 
-        case 'rotation':
+        case nameof<SeObject3D>('rotation'):
           this.viewModel.rotation.x = this.model.rotation.x;
           this.viewModel.rotation.y = this.model.rotation.y;
           this.viewModel.rotation.z = this.model.rotation.z;
           break;
 
-        case 'scale':
+        case nameof<SeObject3D>('scale'):
           this.viewModel.scale.x = this.model.scale.x;
           this.viewModel.scale.y = this.model.scale.y;
           this.viewModel.scale.z = this.model.scale.z;
