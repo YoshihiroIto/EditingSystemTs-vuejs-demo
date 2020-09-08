@@ -4,30 +4,35 @@
     <br />
     (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
     <br />
-
     <button @click="undo">undo</button>
     <button @click="redo">redo</button>
-
     <button @click="inc">inc</button>
     <button @click="dec">dec</button>
-
     <br />
     <br />
-
     <NumberEditor
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
       :value.sync="testModel.valueA"
     />
     {{ testModel.valueA }}
-
-    <br />
     <br />
     <button @click="addCubes">Add cubes</button>
     <br />
-    <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
+    <div id="horizontal-container">
+      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
+      <ObjectTreeView :children="children" />
+    </div>
   </div>
 </template>
+
+<style scoped>
+#horizontal-container {
+  display: grid;
+  column-gap: 16px;
+  grid-template-columns: 800px 1fr;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from '@vue/composition-api';
@@ -37,15 +42,20 @@ import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
+import createReadonlyObservableArray from '../externals/EditingSystemTs/src/ReadOnlyObservableArray';
 
 import NumberEditor from './components/NumberEditor.vue';
 import Viewport from './components/Viewport.vue';
+import ObjectTreeView from './components/ObjectTreeView.vue';
+import { nameof } from './foundations/Nameof';
+import { nonReactivate } from './foundations/NonReactivate';
 
 export default defineComponent({
   name: 'App',
   components: {
     NumberEditor,
     Viewport,
+    ObjectTreeView,
   },
   setup() {
     const _history = container.resolve(History);
@@ -101,6 +111,10 @@ export default defineComponent({
 
       const camera = rootSceneViewModel.camera;
 
+      // ※子オブジェクト状態の伝搬はReadonlyObservableArrayで行うのでVue.js管理を外す
+      nonReactivate(rootScene, nameof<RootScene>('children'));
+      const children = createReadonlyObservableArray(rootScene.children);
+
       //
       const addCubes = () => {
         try {
@@ -134,6 +148,7 @@ export default defineComponent({
         rootSceneViewModel,
         camera,
         updated,
+        children,
 
         addCubes,
       };

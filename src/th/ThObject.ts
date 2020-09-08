@@ -12,7 +12,7 @@ import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Object3D } from 'three/src/core/Object3D';
 import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
 import { Constructor } from '../foundations/Mixin';
-import { nameof } from '../foundations/nameof';
+import { nameof } from '../foundations/Nameof';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Base: TBase) {
@@ -20,7 +20,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
     model: T | null = null;
     viewModel: Object3D | null = null;
 
-    childrenChanged = (sender: unknown, e: NotifyCollectionChangedEventArgs): void => {
+    private childrenChanged = (sender: unknown, e: NotifyCollectionChangedEventArgs): void => {
       Assert.isNotNull(this.viewModel);
 
       switch (e.action) {
@@ -56,7 +56,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       }
     };
 
-    propertyChanged = (_: unknown, e: PropertyChangedEventArgs): void => {
+    private propertyChanged = (_: unknown, e: PropertyChangedEventArgs): void => {
       Assert.isNotNull(this.model);
       Assert.isNotNull(this.viewModel);
 
