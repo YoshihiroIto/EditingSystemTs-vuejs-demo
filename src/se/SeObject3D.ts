@@ -9,7 +9,6 @@ import { EditingSystem } from '../../externals/EditingSystemTs/src/Decorators';
 @injectable()
 export class SeObject3D implements NotifyPropertyChanged {
   readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
-
   readonly children = new ObservableArray<SeObject3D>();
 
   position = SeVector3.Zero;
@@ -30,7 +29,7 @@ export class SeObject3D implements NotifyPropertyChanged {
       }
 
       object.parent = this;
-      this.children.push(object);
+      this.children.pushCore(object);
     }
   }
 
@@ -40,7 +39,7 @@ export class SeObject3D implements NotifyPropertyChanged {
 
       if (index !== -1) {
         object.parent = null;
-        this.children.splice(index, 1);
+        this.children.spliceCore(index, 1);
       }
     }
   }

@@ -47,8 +47,6 @@ import createReadonlyObservableArray from '../externals/EditingSystemTs/src/Read
 import NumberEditor from './components/NumberEditor.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
-import { nameof } from './foundations/Nameof';
-import { nonReactivate } from './foundations/NonReactivate';
 
 export default defineComponent({
   name: 'App',
@@ -110,10 +108,7 @@ export default defineComponent({
       rootSceneViewModel.setup(rootScene);
 
       const camera = rootSceneViewModel.camera;
-
-      // ※子オブジェクト状態の伝搬はReadonlyObservableArrayで行うのでVue.js管理を外す
-      nonReactivate(rootScene, nameof<RootScene>('children'));
-      const children = createReadonlyObservableArray(rootScene.children);
+      const children = rootScene.children;
 
       //
       const addCubes = () => {
