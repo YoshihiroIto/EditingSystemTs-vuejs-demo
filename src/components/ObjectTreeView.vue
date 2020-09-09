@@ -3,8 +3,8 @@
     <TreeView :children="children">
       <template #itemTemplate="item">
         {{ item.data.constructor.name }}
-        {{ item.data.position }}
-        <!-- {{ item.data.rotation }} -->
+        <!-- {{ item.data.position }} -->
+        {{ item.data.rotation }}
       </template>
     </TreeView>
   </div>
@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import { HasChildren } from './controls/HasChildren';
+// import { HasChildren } from './controls/HasChildren';
 import TreeView from './controls/TreeView.vue';
 
 // type Props = {
