@@ -42,9 +42,8 @@ import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
-import createReadonlyObservableArray from '../externals/EditingSystemTs/src/ReadOnlyObservableArray';
 
-import NumberEditor from './components/NumberEditor.vue';
+import NumberEditor from './components/controls/NumberEditor.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 
