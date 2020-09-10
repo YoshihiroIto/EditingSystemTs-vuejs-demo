@@ -1,54 +1,82 @@
 <template>
   <div id="app" class="app">
-    {{ testModel.valueA }}
-    (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
-    <button @click="undo">undo</button>
-    <button @click="redo">redo</button>
-    <button @click="inc">inc</button>
-    <button @click="dec">dec</button>
-    <br />
-    <NumberEditor
-      @begin-continuous-editing="onBeginContinuousEditing"
-      @end-continuous-editing="onEndContinuousEditing"
-      :value.sync="testModel.valueA"
-    />
-    {{ testModel.valueA }}
-    <br />
-    <button @click="addCubes">Add cubes</button>
-    <br />
-    <div id="horizontal-container">
-      <div id="vertical-container">
-        <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
-        <Inspector :selectedObject="testModel.selectedObject" />
-      </div>
+    <div class="header">
+      {{ testModel.valueA }}
+      (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
+      <button @click="undo">undo</button>
+      <button @click="redo">redo</button>
+      <button @click="inc">inc</button>
+      <button @click="dec">dec</button>
+      <br />
+      <NumberEditor
+        @begin-continuous-editing="onBeginContinuousEditing"
+        @end-continuous-editing="onEndContinuousEditing"
+        :value.sync="testModel.valueA"
+      />
+      {{ testModel.valueA }}
+      <br />
 
-      <ObjectTreeView class="scrollable" :children="children" :selectedObject.sync="testModel.selectedObject" />
+      <button @click="addCubes">Add cubes</button>
     </div>
+
+    <div class="viewport">
+      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" width="800" height="600" />
+    </div>
+
+    <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
+    <Inspector class="inspector" :selectedObject="testModel.selectedObject" />
   </div>
 </template>
 
 <style scoped>
-#horizontal-container {
-  display: grid;
-  column-gap: 16px;
-  grid-template-columns: 800px 1fr;
-  height: 60vh;
-}
-
-#vertical-container {
-  display: grid;
-  column-gap: 16px;
-  grid-template-rows: 600px 1fr;
-}
-
 .app {
-  max-width: 100vw;
-  max-height: 100vh;
-  margin: 8px;
+  display: grid;
+
+  max-height: calc(100vh - 8px);
+  min-height: calc(100vh - 8px);
+  height: calc(100vh - 8px);
+  max-width: calc(100vw - 8px);
+  min-width: calc(100vw - 8px);
+  width: calc(100vw - 8px);
+
+  margin: 4px;
+
+  row-gap: 4px;
+  column-gap: 4px;
+
+  grid-template-rows: auto 1fr 1fr;
+  grid-template-columns: 1fr 900px;
+
+  grid-template-areas:
+    'header   header'
+    'viewport tree'
+    'viewport inspector';
 }
 
-.scrollable {
-  overflow: scroll;
+.header {
+  grid-area: header;
+}
+
+.viewport {
+  grid-area: viewport;
+
+  border: 1px solid #abb;
+}
+
+.tree {
+  grid-area: tree;
+  overflow-y: auto;
+
+  padding: 4px;
+  border: 1px solid #aab;
+}
+
+.inspector {
+  grid-area: inspector;
+  overflow-y: auto;
+
+  padding: 4px;
+  border: 1px solid #aab;
 }
 </style>
 
