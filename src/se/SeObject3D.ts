@@ -11,6 +11,8 @@ export class SeObject3D implements NotifyPropertyChanged {
   readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
   readonly children = new ObservableArray<SeObject3D>();
 
+  name = `Obj${SeObject3D.instanceCount++}`;
+
   position = SeVector3.Zero;
   rotation = SeVector3.Zero;
   scale = SeVector3.One;
@@ -43,4 +45,6 @@ export class SeObject3D implements NotifyPropertyChanged {
       }
     }
   }
+
+  private static instanceCount = 0;
 }

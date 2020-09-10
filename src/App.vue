@@ -1,14 +1,11 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     {{ testModel.valueA }}
-    <br />
     (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
-    <br />
     <button @click="undo">undo</button>
     <button @click="redo">redo</button>
     <button @click="inc">inc</button>
     <button @click="dec">dec</button>
-    <br />
     <br />
     <NumberEditor
       @begin-continuous-editing="onBeginContinuousEditing"
@@ -20,8 +17,12 @@
     <button @click="addCubes">Add cubes</button>
     <br />
     <div id="horizontal-container">
-      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
-      <ObjectTreeView :children="children" />
+      <div id="vertical-container">
+        <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" :width="800" :height="600" />
+        <Inspector :selectedObject="testModel.selectedObject" />
+      </div>
+
+      <ObjectTreeView class="scrollable" :children="children" :selectedObject.sync="testModel.selectedObject" />
     </div>
   </div>
 </template>
@@ -31,21 +32,38 @@
   display: grid;
   column-gap: 16px;
   grid-template-columns: 800px 1fr;
+  height: 60vh;
+}
+
+#vertical-container {
+  display: grid;
+  column-gap: 16px;
+  grid-template-rows: 600px 1fr;
+}
+
+.app {
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 8px;
+}
+
+.scrollable {
+  overflow: scroll;
 }
 </style>
 
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from '@vue/composition-api';
-import { TestModel } from './models/TestModel';
-import { RootScene } from './models/RootScene';
-
-import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
+import { TestModel } from './models/TestModel';
+import { RootScene } from './models/RootScene';
+import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 
 import NumberEditor from './components/controls/NumberEditor.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
+import Inspector from './components/Inspector.vue';
 
 export default defineComponent({
   name: 'App',
@@ -53,6 +71,7 @@ export default defineComponent({
     NumberEditor,
     Viewport,
     ObjectTreeView,
+    Inspector,
   },
   setup() {
     const _history = container.resolve(History);
@@ -60,7 +79,6 @@ export default defineComponent({
 
     const history = ref(_history);
     const testModel = ref(_testModel);
-    const valueA = ref(_testModel.valueA);
 
     const undo = () => _history.undo();
     const redo = () => _history.redo();
@@ -129,7 +147,6 @@ export default defineComponent({
       return {
         history,
         testModel,
-        valueA,
 
         undo,
         redo,
