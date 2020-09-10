@@ -40,9 +40,7 @@
   width: calc(100vw - 8px);
 
   margin: 4px;
-
-  row-gap: 4px;
-  column-gap: 4px;
+  gap: 4px;
 
   grid-template-rows: auto 1fr 1fr;
   grid-template-columns: 1fr 900px;
