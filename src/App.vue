@@ -58,7 +58,7 @@
 .viewport {
   grid-area: viewport;
 
-  border: 1px solid #abb;
+  border: 1px solid #aab;
 }
 
 .tree {
