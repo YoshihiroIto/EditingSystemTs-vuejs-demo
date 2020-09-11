@@ -1,16 +1,9 @@
 ﻿<template>
-  <div ref="canvasWrapper" id="canvasWrapper">
-    <canvas ref="canvas" />
-  </div>
+  <canvas ref="canvas" />
 </template>
 
 <style scoped>
 canvas {
-  width: 100%;
-  height: 100%;
-}
-
-#canvasWrapper {
   width: 100%;
   height: 100%;
 }
@@ -37,7 +30,6 @@ export default defineComponent({
   },
   setup(props: Props) {
     const canvas = ref<HTMLCanvasElement>();
-    const canvasWrapper = ref<HTMLDivElement>();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -59,7 +51,7 @@ export default defineComponent({
       });
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      resizeObserver.observe(canvasWrapper.value);
+      resizeObserver.observe(canvas.value);
       props.updated.on(render);
 
       cameraControls = new OrbitControls(props.camera, renderer.domElement);
@@ -68,7 +60,7 @@ export default defineComponent({
     onUnmounted(() => {
       props.updated.off(render);
 
-      resizeObserver.unobserve(canvasWrapper.value);
+      resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
 
       cameraControls?.dispose();
@@ -79,7 +71,6 @@ export default defineComponent({
 
     return {
       canvas,
-      canvasWrapper,
     };
   },
 });
