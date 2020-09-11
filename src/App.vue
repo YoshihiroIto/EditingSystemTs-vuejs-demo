@@ -20,7 +20,7 @@
     </div>
 
     <div class="viewport">
-      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" width="800" height="600" />
+      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" />
     </div>
 
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
@@ -43,7 +43,7 @@
   gap: 4px;
 
   grid-template-rows: auto 1fr 1fr;
-  grid-template-columns: 1fr 900px;
+  grid-template-columns: 1fr 1fr;
 
   grid-template-areas:
     'header   header'
