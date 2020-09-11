@@ -33,7 +33,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
               return mesh;
             });
 
-            this.viewModel.children.splice(e.newStartingIndex, 0, ...newObjects);
+            this.viewModel.add(...newObjects);
           }
 
           break;
@@ -41,13 +41,10 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
 
         case NotifyCollectionChangedActions.Remove:
           if (e.oldItems) {
-            const children = this.viewModel.children.map(x => (x as any).model);
+            const modelsLookup = new Set<SeObject3D>(e.oldItems as Array<SeObject3D>);
+            const targetChildren = this.viewModel.children.filter(x => modelsLookup.has((x as any).model));
 
-            for (const oldItem of e.oldItems) {
-              const index = children.indexOf(oldItem as SeObject3D);
-
-              this.viewModel.children.splice(index, 1);
-            }
+            this.viewModel.remove(...targetChildren);
           }
           break;
 
