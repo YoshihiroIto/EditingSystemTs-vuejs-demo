@@ -19,10 +19,7 @@
       <button @click="addCubes">Add cubes</button>
     </div>
 
-    <div class="viewport">
-      <Viewport :scene="rootSceneViewModel" :camera="camera" :updated="updated" />
-    </div>
-
+    <Viewport class="viewport" :scene="rootSceneViewModel" :camera="camera" :updated="updated" />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <Inspector class="inspector" :selectedObject="testModel.selectedObject" />
   </div>
@@ -57,8 +54,6 @@
 
 .viewport {
   grid-area: viewport;
-
-  border: 1px solid #aab;
 }
 
 .tree {
