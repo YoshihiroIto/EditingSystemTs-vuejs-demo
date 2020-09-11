@@ -17,6 +17,7 @@
       <br />
 
       <button @click="addCubes">Add cubes</button>
+      <button @click="addChild">Add child</button>
     </div>
 
     <Viewport class="viewport" :scene="rootSceneViewModel" :camera="camera" :updated="updated" />
@@ -85,6 +86,9 @@ import NumberEditor from './components/controls/NumberEditor.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import Inspector from './components/Inspector.vue';
+import { SeObject3D } from './se/SeObject3D';
+import { SeMesh } from './se/SeMesh';
+import { SeVector3 } from './se/math/SeVector3';
 
 export default defineComponent({
   name: 'App',
@@ -161,6 +165,25 @@ export default defineComponent({
         }
       };
 
+      const addChild = () => {
+        let parent: SeObject3D = rootScene;
+
+        while (parent.children.length > 0) {
+          parent = parent.children[0];
+        }
+
+        try {
+          _history.beginBatch();
+
+          const mesh = container.resolve(SeMesh);
+          parent.add(mesh);
+
+          mesh.position = new SeVector3(5, 0, 0);
+        } finally {
+          _history.endBatch();
+        }
+      };
+
       onUnmounted(() => {
         rootSceneViewModel.dispose();
       });
@@ -183,6 +206,7 @@ export default defineComponent({
         children,
 
         addCubes,
+        addChild,
       };
     } finally {
       _history.endPause();
