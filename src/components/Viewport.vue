@@ -46,7 +46,7 @@ export default defineComponent({
       const h = entries[0].contentRect.height;
 
       CameraHelper.SetAspect(props.camera, w / h);
-      renderer?.setSize(w, h);
+      renderer?.setSize(w, h, false);
     });
 
     let renderer: WebGLRenderer | null = null;
