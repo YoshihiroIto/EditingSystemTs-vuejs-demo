@@ -2,13 +2,22 @@
   <div>
     <TreeView :children="children" @selectedItem="onSelectedItem">
       <template #itemTemplate="item">
-        {{ item.data.name }}
-        {{ item.data.position }}
-        <!-- {{ item.data.rotation }} -->
+        <div class="item">
+          {{ item.data.name }}
+          {{ item.data.position }}
+          <!-- {{ item.data.rotation }} -->
+        </div>
       </template>
     </TreeView>
   </div>
 </template>
+
+<style scoped>
+.item {
+  user-select: none;
+  cursor: pointer;
+}
+</style>
 
 <script lang="ts">
 import { SeObject3D } from '@/se/SeObject3D';
