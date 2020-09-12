@@ -1,6 +1,6 @@
 ﻿<template>
   <div v-if="children != null">
-    <TreeViewItem @click.native="onItemClicked(child)" v-for="(child, index) in children" :data="child" :key="index">
+    <TreeViewItem v-for="(child, index) in children" :data="child" :key="index" :root="root">
       <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
         <slot :name="slotName" v-bind="data" />
       </template>
@@ -25,13 +25,19 @@ export default defineComponent({
     TreeViewItem,
   },
   setup(props: Props, context: SetupContext) {
-    const onItemClicked = (e: unknown) => {
-      context.emit('selectedItem', e);
-    };
+    const root = new TreeViewContext(context);
 
     return {
-      onItemClicked,
+      root,
     };
   },
 });
+
+export class TreeViewContext {
+  constructor(private readonly context: SetupContext) {}
+
+  SelectItem(e: unknown): void {
+    this.context.emit('selectedItem', e);
+  }
+}
 </script>
