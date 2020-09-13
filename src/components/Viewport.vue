@@ -1,9 +1,15 @@
 ﻿<template>
-  <canvas ref="canvas" />
+  <div class="wrapper" ref="canvasWrapper">
+    <canvas class="canvas" ref="canvas" />
+  </div>
 </template>
 
 <style scoped>
-canvas {
+.wrapper {
+  position: relative;
+}
+
+.canvas {
   width: 100%;
   height: 100%;
 }
@@ -15,6 +21,7 @@ import { Camera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 type Props = {
   scene: Scene;
@@ -30,6 +37,8 @@ export default defineComponent({
   },
   setup(props: Props) {
     const canvas = ref<HTMLCanvasElement>();
+    const canvasWrapper = ref<HTMLDivElement>();
+    const stats = Stats();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -54,7 +63,13 @@ export default defineComponent({
       resizeObserver.observe(canvas.value);
       props.updated.on(render);
 
+      // camera
       cameraControls = new OrbitControls(props.camera, renderer.domElement);
+
+      // stats
+      stats.dom.style.position = 'absolute';
+      stats.showPanel(0);
+      canvasWrapper.value?.appendChild(stats.dom);
     });
 
     onUnmounted(() => {
@@ -67,10 +82,14 @@ export default defineComponent({
       renderer?.dispose();
     });
 
-    const render = () => renderer?.render(props.scene, props.camera);
+    const render = () => {
+      renderer?.render(props.scene, props.camera);
+      stats.update();
+    };
 
     return {
       canvas,
+      canvasWrapper,
     };
   },
 });
