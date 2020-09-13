@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <div v-if="selectedObject != null">
-      {{ selectedObject.name }}
-      {{ selectedObject.rotation }}
-    </div>
+  <div v-if="selectedObject != null">
+    {{ selectedObject.name }}
+    {{ selectedObject.rotation }}
   </div>
 </template>
 
