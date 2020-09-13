@@ -2,23 +2,21 @@
   <div>
     <div :style="{ 'padding-left': indent }" class="item" @click="onClick(itemData, $event)">
       <input type="checkbox" v-model="isExpanded" v-show="hasChildren" id="Expander" />
-
       <slot name="itemTemplate" :data="itemData" />
     </div>
 
-    <div :class="children" v-show="isExpanded">
-      <TreeViewItem
-        v-for="(child, childIndex) in children"
-        :root="root"
-        :data="child"
-        :key="childIndex"
-        :depth="depth + 1"
-      >
-        <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
-          <slot :name="slotName" v-bind="data" />
-        </template>
-      </TreeViewItem>
-    </div>
+    <TreeViewItem
+      v-show="isExpanded"
+      v-for="(child, childIndex) in children"
+      :root="root"
+      :data="child"
+      :key="childIndex"
+      :depth="depth + 1"
+    >
+      <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
+        <slot :name="slotName" v-bind="data" />
+      </template>
+    </TreeViewItem>
   </div>
 </template>
 

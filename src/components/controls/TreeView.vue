@@ -1,5 +1,5 @@
 ﻿<template>
-  <div v-if="children != null">
+  <div>
     <TreeViewItem v-for="(child, index) in children" :data="child" :key="index" :root="root" :depth="0">
       <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
         <slot :name="slotName" v-bind="data" />
