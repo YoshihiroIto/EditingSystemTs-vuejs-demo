@@ -15,7 +15,6 @@
 <style scoped>
 .item {
   user-select: none;
-  cursor: pointer;
 }
 </style>
 

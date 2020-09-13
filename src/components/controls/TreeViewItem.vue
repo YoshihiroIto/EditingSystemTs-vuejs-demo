@@ -1,15 +1,19 @@
 ﻿<template>
   <div>
-    <div :class="[hasChildren ? 'hasChildren' : 'doNotHasChildren']">
-      <input type="checkbox" v-model="isExpanded" v-show="hasChildren" />
+    <div :style="{ 'padding-left': indent }" class="item" @click="onClick(itemData, $event)">
+      <input type="checkbox" v-model="isExpanded" v-show="hasChildren" id="Expander" />
 
-      <div @click="onClick(itemData)">
-        <slot name="itemTemplate" :data="itemData" />
-      </div>
+      <slot name="itemTemplate" :data="itemData" />
     </div>
 
     <div :class="children" v-show="isExpanded">
-      <TreeViewItem v-for="(child, childIndex) in children" :root="root" :data="child" :key="childIndex">
+      <TreeViewItem
+        v-for="(child, childIndex) in children"
+        :root="root"
+        :data="child"
+        :key="childIndex"
+        :depth="depth + 1"
+      >
         <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
           <slot :name="slotName" v-bind="data" />
         </template>
@@ -19,22 +23,15 @@
 </template>
 
 <style scoped>
-.children {
-  padding-left: 20px;
-}
-
-.doNotHasChildren {
-  padding-left: 20px;
-
+.item {
   display: flex;
   flex-flow: row no-wrap;
+
+  cursor: pointer;
 }
 
-.hasChildren {
-  padding-left: 0px;
-
-  display: flex;
-  flex-flow: row no-wrap;
+.item:hover {
+  background-color: #eee;
 }
 </style>
 
@@ -46,6 +43,7 @@ import { TreeViewContext } from './TreeView.vue';
 type Props = {
   data: HasChildren;
   root: TreeViewContext;
+  depth: number;
 };
 
 export default defineComponent({
@@ -53,19 +51,32 @@ export default defineComponent({
   props: {
     data: { default: null },
     root: { default: null },
+    depth: { default: 0 },
   },
   setup(props: Props) {
+    const calcHasChildren = () => children.value != null && children.value.length > 0;
+
     const itemData = ref(props.data);
     const children = ref(props.data.children);
     const isExpanded = ref(true);
-    const hasChildren = computed(() => children.value != null && children.value.length > 0);
-    const onClick = (e: unknown) => props.root.SelectItem(e);
+    const hasChildren = computed(() => calcHasChildren());
+    const indent = computed(() => (props.depth + (calcHasChildren() ? 0 : 1)) * 20 + 'px');
+    const onClick = (item: unknown, e: MouseEvent) => {
+      if (e.target instanceof Element) {
+        if (e.target.id == 'Expander') {
+          return;
+        }
+      }
+
+      return props.root.SelectItem(item);
+    };
 
     return {
       itemData,
       children,
       isExpanded,
       hasChildren,
+      indent,
       onClick,
     };
   },
