@@ -1,9 +1,9 @@
 ﻿<template>
   <div>
     <div :class="[hasChildren ? 'hasChildren' : 'doNotHasChildren']">
-      <input class="item" type="checkbox" v-model="isExpanded" v-show="hasChildren" />
+      <input type="checkbox" v-model="isExpanded" v-show="hasChildren" />
 
-      <div class="item" @click="onClick(itemData)">
+      <div @click="onClick(itemData)">
         <slot name="itemTemplate" :data="itemData" />
       </div>
     </div>
@@ -19,22 +19,22 @@
 </template>
 
 <style scoped>
-.item {
-  float: left;
-}
-
 .children {
   padding-left: 20px;
 }
 
 .doNotHasChildren {
   padding-left: 20px;
-  overflow: hidden;
+
+  display: flex;
+  flex-flow: row no-wrap;
 }
 
 .hasChildren {
   padding-left: 0px;
-  overflow: hidden;
+
+  display: flex;
+  flex-flow: row no-wrap;
 }
 </style>
 

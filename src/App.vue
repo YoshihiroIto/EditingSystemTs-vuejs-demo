@@ -59,7 +59,8 @@
 
 .tree {
   grid-area: tree;
-  overflow-y: auto;
+  overflow: auto;
+  white-space: nowrap;
 
   padding: 4px;
   border: 1px solid #aab;
@@ -67,7 +68,8 @@
 
 .inspector {
   grid-area: inspector;
-  overflow-y: auto;
+  overflow: auto;
+  white-space: nowrap;
 
   padding: 4px;
   border: 1px solid #aab;
