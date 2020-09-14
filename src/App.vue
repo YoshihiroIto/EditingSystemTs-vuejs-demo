@@ -1,13 +1,14 @@
 <template>
   <div id="app" class="app">
     <div class="header">
-      {{ testModel.valueA }}
       (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
-      <button @click="undo">undo</button>
-      <button @click="redo">redo</button>
-      <button @click="inc">inc</button>
-      <button @click="dec">dec</button>
+      <button @click="undo">Undo</button>
+      <button @click="redo">Redo</button>
+      <button @click="clearHistory">Clear history</button>
       <br />
+      {{ testModel.valueA }}
+      <button @click="inc">Inc</button>
+      <button @click="dec">Dec</button>
       <NumberEditor
         @begin-continuous-editing="onBeginContinuousEditing"
         @end-continuous-editing="onEndContinuousEditing"
@@ -109,6 +110,7 @@ export default defineComponent({
 
     const undo = () => _history.undo();
     const redo = () => _history.redo();
+    const clearHistory = () => _history.clear();
     const inc = () => ++_testModel.valueA;
     const dec = () => --_testModel.valueA;
 
@@ -196,6 +198,7 @@ export default defineComponent({
 
         undo,
         redo,
+        clearHistory,
         inc,
         dec,
 
