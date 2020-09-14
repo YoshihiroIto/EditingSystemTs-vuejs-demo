@@ -1,52 +1,26 @@
-import { Ref, SetupContext } from '@vue/composition-api';
+import { ref, Ref, SetupContext } from '@vue/composition-api';
 
 export class TreeViewContext {
-  constructor(private readonly context: SetupContext) {}
+  private selectedItem: Ref<unknown>;
 
-  selectedTreeViewItemContext: TreeViewItemContext | null = null;
-
-  SelectItem(item: unknown, treeViewItemContext: TreeViewItemContext): void {
-    this.selectedTreeViewItemContext?.Unselect();
-
-    this.context.emit('selectedItem', item);
-
-    this.selectedTreeViewItemContext = treeViewItemContext;
-    this.selectedTreeViewItemContext?.Select();
+  constructor(private readonly context: SetupContext, selectedItem: unknown) {
+    this.selectedItem = ref(selectedItem);
   }
 
-  UnselectItem(treeViewItemContext: TreeViewItemContext): void {
-    if (this.selectedTreeViewItemContext == null) {
+  IsSelectedItem(item: unknown): boolean {
+    return this.selectedItem.value == item;
+  }
+
+  SelectItem(item: unknown): void {
+    if (this.selectedItem.value === item) {
       return;
     }
 
-    if (this.selectedTreeViewItemContext.isSelected !== treeViewItemContext.isSelected) {
-      return;
-    }
-
-    this.selectedTreeViewItemContext?.Unselect();
-
-    this.context.emit('selectedItem', null);
-
-    this.selectedTreeViewItemContext = null;
+    this.context.emit('selectItem', item);
+    this.selectedItem.value = item;
   }
 
-  ToggleSelectItem(item: unknown, treeViewItemContext: TreeViewItemContext): void {
-    if (treeViewItemContext.isSelected.value === false) {
-      this.SelectItem(item, treeViewItemContext);
-    } else {
-      this.UnselectItem(treeViewItemContext);
-    }
-  }
-}
-
-export class TreeViewItemContext {
-  constructor(public readonly isSelected: Ref<boolean>) {}
-
-  Select(): void {
-    this.isSelected.value = true;
-  }
-
-  Unselect(): void {
-    this.isSelected.value = false;
+  ToggleSelectItem(item: unknown): void {
+    this.SelectItem(this.selectedItem.value === item ? null : item);
   }
 }

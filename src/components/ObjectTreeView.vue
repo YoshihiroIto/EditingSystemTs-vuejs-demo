@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TreeView :children="children" @selectedItem="onSelectedItem">
+    <TreeView :children="children" @selectItem="onSelectItem" :selectedItem="selectedObject">
       <template #itemTemplate="item">
         <div>
           {{ item.data.name }}
@@ -31,12 +31,10 @@ export default defineComponent({
     TreeView,
   },
   setup: (props: Props, context: SetupContext) => {
-    const onSelectedItem = (e: unknown) => {
-      context.emit('update:selectedObject', e);
-    };
+    const onSelectItem = (e: unknown) => context.emit('update:selectedObject', e);
 
     return {
-      onSelectedItem,
+      onSelectItem,
     };
   },
 });

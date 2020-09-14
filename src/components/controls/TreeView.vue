@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, SetupContext } from '@vue/composition-api';
+import { defineComponent, SetupContext, watch } from '@vue/composition-api';
 import TreeViewItem from './TreeViewItem.vue';
 import { TreeViewContext } from './TreeViewContext';
 
@@ -26,7 +26,12 @@ export default defineComponent({
     TreeViewItem,
   },
   setup(props: Props, context: SetupContext) {
-    const root = new TreeViewContext(context);
+    const root = new TreeViewContext(context, props.selectedItem);
+
+    watch(
+      () => props.selectedItem,
+      newValue => root.SelectItem(newValue)
+    );
 
     return {
       root,

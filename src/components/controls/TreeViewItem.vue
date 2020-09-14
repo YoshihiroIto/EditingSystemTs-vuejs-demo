@@ -55,7 +55,7 @@
 }
 
 .expander {
-  margin: 3px 4px;
+  margin: 4px 4px;
   width: 12px;
   height: 12pxk;
 }
@@ -72,7 +72,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from '@vue/composition-api';
 import { HasChildren } from './HasChildren';
-import { TreeViewContext, TreeViewItemContext } from './TreeViewContext';
+import { TreeViewContext } from './TreeViewContext';
 
 type Props = {
   data: HasChildren;
@@ -93,21 +93,20 @@ export default defineComponent({
     const itemData = ref(props.data);
     const children = ref(props.data.children);
     const isExpanded = ref(true);
-    const isSelected = ref(false);
+    const isSelected = computed(() => props.root.IsSelectedItem(props.data));
     const hasChildren = computed(() => calcHasChildren());
     const indent = computed(() => (props.depth + (calcHasChildren() ? 0 : 1)) * 20 + 'px');
 
     const onClickItem = (item: unknown, e: MouseEvent) => {
       if (e.ctrlKey) {
-        props.root.ToggleSelectItem(item, new TreeViewItemContext(isSelected));
+        props.root.ToggleSelectItem(item);
       } else {
-        props.root.SelectItem(item, new TreeViewItemContext(isSelected));
+        props.root.SelectItem(item);
       }
     };
 
     const onClickExpander = (e: Event) => {
       isExpanded.value = !isExpanded.value;
-
       e.stopPropagation();
     };
 
