@@ -1,7 +1,10 @@
 ﻿<template>
   <div>
-    <div :style="{ 'padding-left': indent }" class="item" @click="onClick(itemData, $event)">
-      <input type="checkbox" v-model="isExpanded" v-show="hasChildren" id="Expander" />
+    <div :style="{ 'padding-left': indent }" class="item" @click="onClickItem(itemData)">
+      <div v-if="hasChildren" class="expanderWrapper" @click="onClickExpander">
+        <font-awesome-icon class="expander" :icon="isExpanded ? 'chevron-down' : 'chevron-right'" />
+      </div>
+
       <slot name="itemTemplate" :data="itemData" />
     </div>
 
@@ -31,6 +34,16 @@
 .item:hover {
   background-color: #eee;
 }
+
+.expander {
+  margin: 3px 4px;
+  width: 12px;
+  height: 12px;
+}
+
+.expanderWrapper:hover {
+  background: #ccc;
+}
 </style>
 
 <script lang="ts">
@@ -59,14 +72,12 @@ export default defineComponent({
     const isExpanded = ref(true);
     const hasChildren = computed(() => calcHasChildren());
     const indent = computed(() => (props.depth + (calcHasChildren() ? 0 : 1)) * 20 + 'px');
-    const onClick = (item: unknown, e: MouseEvent) => {
-      if (e.target instanceof Element) {
-        if (e.target.id == 'Expander') {
-          return;
-        }
-      }
 
-      return props.root.SelectItem(item);
+    const onClickItem = (item: unknown) => props.root.SelectItem(item);
+    const onClickExpander = (e: Event) => {
+      isExpanded.value = !isExpanded.value;
+
+      e.stopPropagation();
     };
 
     return {
@@ -75,7 +86,8 @@ export default defineComponent({
       isExpanded,
       hasChildren,
       indent,
-      onClick,
+      onClickItem,
+      onClickExpander,
     };
   },
 });
