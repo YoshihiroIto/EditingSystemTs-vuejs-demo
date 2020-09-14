@@ -9,8 +9,6 @@ import { SeVector3 } from '@/se/math/SeVector3';
 export class RootScene extends SeScene {
   public readonly updated = new TypedEvent();
 
-  private readonly meshes = new Array<SeMesh>();
-
   constructor(history: History) {
     super(history);
 
@@ -23,7 +21,6 @@ export class RootScene extends SeScene {
 
       const mesh = container.resolve(SeMesh);
       this.add(mesh);
-      this.meshes.push(mesh);
 
       mesh.position = new SeVector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
       mesh.rotation = new SeVector3(
@@ -42,7 +39,7 @@ export class RootScene extends SeScene {
 
       const speed = 0.03;
 
-      for (const cube of this.meshes) {
+      for (const cube of this.children) {
         cube.rotation = new SeVector3(cube.rotation.x + speed, cube.rotation.y + speed * 0.7, cube.rotation.z);
       }
     } finally {
