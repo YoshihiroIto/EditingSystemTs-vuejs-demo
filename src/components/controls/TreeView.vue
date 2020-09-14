@@ -11,6 +11,7 @@
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
 import TreeViewItem from './TreeViewItem.vue';
+import { TreeViewContext } from './TreeViewContext';
 
 type Props = {
   selectedItem: unknown;
@@ -32,12 +33,4 @@ export default defineComponent({
     };
   },
 });
-
-export class TreeViewContext {
-  constructor(private readonly context: SetupContext) {}
-
-  SelectItem(e: unknown): void {
-    this.context.emit('selectedItem', e);
-  }
-}
 </script>

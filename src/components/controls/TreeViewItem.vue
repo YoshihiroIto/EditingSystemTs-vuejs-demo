@@ -1,7 +1,15 @@
 ﻿<template>
   <div>
-    <div :style="{ 'padding-left': indent }" class="item" @click="onClickItem(itemData)">
-      <div v-if="hasChildren" class="expanderWrapper" @click="onClickExpander">
+    <div
+      :style="{ 'padding-left': indent }"
+      :class="isSelected ? 'itemSelected' : 'item'"
+      @click="onClickItem(itemData, $event)"
+    >
+      <div
+        v-if="hasChildren"
+        :class="isSelected ? 'expanderWrapperSelected' : 'expanderWrapper'"
+        @click="onClickExpander"
+      >
         <font-awesome-icon class="expander" :icon="isExpanded ? 'chevron-down' : 'chevron-right'" />
       </div>
 
@@ -27,7 +35,6 @@
 .item {
   display: flex;
   flex-flow: row no-wrap;
-
   cursor: pointer;
 }
 
@@ -35,21 +42,37 @@
   background-color: #eee;
 }
 
+.itemSelected {
+  display: flex;
+  flex-flow: row no-wrap;
+  cursor: pointer;
+
+  background-color: #aaf;
+}
+
+.itemSelected:hover {
+  background-color: #ccf;
+}
+
 .expander {
   margin: 3px 4px;
   width: 12px;
-  height: 12px;
+  height: 12pxk;
 }
 
 .expanderWrapper:hover {
   background: #ccc;
+}
+
+.expanderWrapperSelected:hover {
+  background-color: #aaf;
 }
 </style>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from '@vue/composition-api';
 import { HasChildren } from './HasChildren';
-import { TreeViewContext } from './TreeView.vue';
+import { TreeViewContext, TreeViewItemContext } from './TreeViewContext';
 
 type Props = {
   data: HasChildren;
@@ -70,10 +93,18 @@ export default defineComponent({
     const itemData = ref(props.data);
     const children = ref(props.data.children);
     const isExpanded = ref(true);
+    const isSelected = ref(false);
     const hasChildren = computed(() => calcHasChildren());
     const indent = computed(() => (props.depth + (calcHasChildren() ? 0 : 1)) * 20 + 'px');
 
-    const onClickItem = (item: unknown) => props.root.SelectItem(item);
+    const onClickItem = (item: unknown, e: MouseEvent) => {
+      if (e.ctrlKey) {
+        props.root.ToggleSelectItem(item, new TreeViewItemContext(isSelected));
+      } else {
+        props.root.SelectItem(item, new TreeViewItemContext(isSelected));
+      }
+    };
+
     const onClickExpander = (e: Event) => {
       isExpanded.value = !isExpanded.value;
 
@@ -84,6 +115,7 @@ export default defineComponent({
       itemData,
       children,
       isExpanded,
+      isSelected,
       hasChildren,
       indent,
       onClickItem,
