@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="selectedObject != null">
+    <template v-if="selectedObject != null">
       {{ selectedObject.name }}
       {{ selectedObject.rotation }}
-    </div>
+    </template>
 
-    <div v-else>unselected</div>
+    <template v-else>unselected</template>
   </div>
 </template>
 

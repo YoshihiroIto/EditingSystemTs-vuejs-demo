@@ -2,11 +2,9 @@
   <div>
     <TreeView :children="children" @selectItem="onSelectItem" :selectedItem="selectedObject">
       <template #itemTemplate="item">
-        <div>
-          {{ item.data.name }}
-          {{ item.data.position }}
-          <!-- {{ item.data.rotation }} -->
-        </div>
+        {{ item.data.name }}
+        {{ item.data.position }}
+        <!-- {{ item.data.rotation }} -->
       </template>
     </TreeView>
   </div>
