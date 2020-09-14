@@ -44,6 +44,10 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
             const modelsLookup = new Set<SeObject3D>(e.oldItems as Array<SeObject3D>);
             const targetChildren = this.viewModel.children.filter(x => modelsLookup.has((x as any).model));
 
+            for (const vm of targetChildren) {
+              ((vm as unknown) as Disposable).dispose();
+            }
+
             this.viewModel.remove(...targetChildren);
           }
           break;
@@ -95,8 +99,8 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
     }
 
     dispose(): void {
-      this.model?.children.collectionChanged.off(this.childrenChanged);
       this.model?.propertyChanged.off(this.propertyChanged);
+      this.model?.children.collectionChanged.off(this.childrenChanged);
     }
   };
 }
