@@ -20,7 +20,11 @@ export class SeObject3D implements NotifyPropertyChanged {
   @EditingSystem.ignore
   parent: SeObject3D | null = null;
 
-  constructor(readonly history: History) {
+  @EditingSystem.ignore
+  history: History;
+
+  constructor(history: History) {
+    this.history = history;
     history.register(this);
   }
 
