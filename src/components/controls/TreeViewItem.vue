@@ -3,7 +3,7 @@
     <div
       :style="{ 'padding-left': indent }"
       :class="isSelected ? 'itemSelected' : 'item'"
-      @click="onClickItem(itemData, $event)"
+      @click="onClickItem(data, $event)"
     >
       <div
         v-if="hasChildren"
@@ -13,12 +13,12 @@
         <font-awesome-icon class="expander" :icon="isExpanded ? 'chevron-down' : 'chevron-right'" />
       </div>
 
-      <slot name="itemTemplate" :data="itemData" />
+      <slot name="itemTemplate" :data="data" />
     </div>
 
     <TreeViewItem
       v-show="isExpanded"
-      v-for="(child, childIndex) in children"
+      v-for="(child, childIndex) in data.children"
       :root="root"
       :data="child"
       :key="childIndex"
@@ -57,7 +57,7 @@
 .expander {
   margin: 4px 4px;
   width: 12px;
-  height: 12pxk;
+  height: 12px;
 }
 
 .expanderWrapper:hover {
@@ -88,10 +88,8 @@ export default defineComponent({
     depth: { default: 0 },
   },
   setup(props: Props) {
-    const calcHasChildren = () => children.value != null && children.value.length > 0;
+    const calcHasChildren = () => props.data.children != null && props.data.children.length > 0;
 
-    const itemData = ref(props.data);
-    const children = ref(props.data.children);
     const isExpanded = ref(true);
     const isSelected = computed(() => props.root.IsSelectedItem(props.data));
     const hasChildren = computed(() => calcHasChildren());
@@ -111,8 +109,6 @@ export default defineComponent({
     };
 
     return {
-      itemData,
-      children,
       isExpanded,
       isSelected,
       hasChildren,
