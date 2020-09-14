@@ -16,18 +16,19 @@
       <slot name="itemTemplate" :data="data" />
     </div>
 
-    <TreeViewItem
-      v-show="isExpanded"
-      v-for="(child, childIndex) in data.children"
-      :root="root"
-      :data="child"
-      :key="childIndex"
-      :depth="depth + 1"
-    >
-      <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
-        <slot :name="slotName" v-bind="data" />
-      </template>
-    </TreeViewItem>
+    <div v-show="isExpanded">
+      <TreeViewItem
+        v-for="(child, childIndex) in data.children"
+        :root="root"
+        :data="child"
+        :key="childIndex"
+        :depth="depth + 1"
+      >
+        <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
+          <slot :name="slotName" v-bind="data" />
+        </template>
+      </TreeViewItem>
+    </div>
   </div>
 </template>
 
