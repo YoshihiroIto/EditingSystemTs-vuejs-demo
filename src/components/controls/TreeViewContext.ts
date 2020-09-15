@@ -8,7 +8,7 @@ export class TreeViewContext {
   }
 
   IsSelectedItem(item: unknown): boolean {
-    return this.selectedItem.value == item;
+    return this.selectedItem.value === item;
   }
 
   SelectItem(item: unknown): void {
