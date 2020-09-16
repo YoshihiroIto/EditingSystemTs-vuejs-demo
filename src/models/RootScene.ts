@@ -4,10 +4,11 @@ import { injectable } from 'tsyringe';
 import { SeScene } from '@/se/SeScene';
 import { SeVector3 } from '@/se/math/SeVector3';
 import { ObjectCreator } from './ObjectCreator';
+import { SeObject3D } from '@/se/SeObject3D';
 
 @injectable()
 export class RootScene extends SeScene {
-  public readonly updated = new TypedEvent();
+  readonly updated = new TypedEvent();
 
   constructor(history: History, private readonly objectCreator: ObjectCreator) {
     super(history);
@@ -15,11 +16,15 @@ export class RootScene extends SeScene {
     this.animate();
   }
 
-  public addCube(): void {
+  createCube(): SeObject3D {
+    return this.objectCreator.create('cube');
+  }
+
+  addCube(): void {
     try {
       this.history.beginBatch();
 
-      const cube = this.objectCreator.create('cube');
+      const cube = this.createCube();
 
       this.add(cube);
 
@@ -34,7 +39,7 @@ export class RootScene extends SeScene {
     }
   }
 
-  public doUpdate(): void {
+  doUpdate(): void {
     try {
       this.history.beginPause();
 
@@ -48,7 +53,7 @@ export class RootScene extends SeScene {
     }
   }
 
-  public animate(): void {
+  animate(): void {
     const animate = () => {
       this.doUpdate();
       this.updated.emit(this, EventArgs.empty);
