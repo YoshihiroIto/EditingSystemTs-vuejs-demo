@@ -16,7 +16,11 @@ export class ObjectCreator {
       throw new Error(`not fount ${name}`);
     }
 
-    return objDef.create();
+    const obj = objDef.create();
+
+    obj.objectDefinitionName = name;
+
+    return obj;
   }
 
   readonly objectDefinitions = new Map<string, ObjectDefinition>();

@@ -13,6 +13,8 @@ export class SeObject3D implements NotifyPropertyChanged {
 
   name = `Obj${SeObject3D.instanceCount++}`;
 
+  objectDefinitionName: string | null = null;
+
   position = SeVector3.Zero;
   rotation = SeVector3.Zero;
   scale = SeVector3.One;
