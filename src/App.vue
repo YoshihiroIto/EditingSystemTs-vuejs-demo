@@ -90,7 +90,6 @@ import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import Inspector from './components/Inspector.vue';
 import { SeObject3D } from './se/SeObject3D';
-import { SeMesh } from './se/SeMesh';
 import { SeVector3 } from './se/math/SeVector3';
 
 export default defineComponent({
@@ -179,10 +178,10 @@ export default defineComponent({
         try {
           _history.beginBatch();
 
-          const mesh = container.resolve(SeMesh);
-          parent.add(mesh);
+          const cube = rootScene.createCube();
+          parent.add(cube);
 
-          mesh.position = new SeVector3(5, 0, 0);
+          cube.position = new SeVector3(5, 0, 0);
         } finally {
           _history.endBatch();
         }
