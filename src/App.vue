@@ -42,7 +42,7 @@
   gap: 4px;
 
   grid-template-rows: auto 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 400px;
 
   grid-template-areas:
     'header   header'
