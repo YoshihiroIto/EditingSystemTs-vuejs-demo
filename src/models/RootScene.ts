@@ -1,15 +1,15 @@
 ﻿import { History } from '../../externals/EditingSystemTs/src/History';
 import { EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
-import { container, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { SeScene } from '@/se/SeScene';
-import { SeMesh } from '@/se/SeMesh';
 import { SeVector3 } from '@/se/math/SeVector3';
+import { ObjectCreator } from './ObjectCreator';
 
 @injectable()
 export class RootScene extends SeScene {
   public readonly updated = new TypedEvent();
 
-  constructor(history: History) {
+  constructor(history: History, private readonly objectCreator: ObjectCreator) {
     super(history);
 
     this.animate();
@@ -19,11 +19,12 @@ export class RootScene extends SeScene {
     try {
       this.history.beginBatch();
 
-      const mesh = container.resolve(SeMesh);
-      this.add(mesh);
+      const cube = this.objectCreator.create('cube');
 
-      mesh.position = new SeVector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
-      mesh.rotation = new SeVector3(
+      this.add(cube);
+
+      cube.position = new SeVector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
+      cube.rotation = new SeVector3(
         Math.random() * Math.PI * 2,
         Math.random() * Math.PI * 2,
         Math.random() * Math.PI * 2

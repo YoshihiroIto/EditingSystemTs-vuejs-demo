@@ -170,7 +170,7 @@ export default defineComponent({
       };
 
       const addChild = () => {
-        let parent: SeObject3D = rootScene;
+        let parent = rootScene as SeObject3D;
 
         while (parent.children.length > 0) {
           parent = parent.children[0];
