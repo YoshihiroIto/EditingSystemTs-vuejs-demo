@@ -1,4 +1,8 @@
 ﻿* {
-  font-family: 'Source Sans Pro', sans-serif;
-  user-select: none;
+  font-family: 'Source Sans Pro', sans-serif; user-select: none;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
 }
