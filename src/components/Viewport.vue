@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { Camera, Scene, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
@@ -25,14 +25,12 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 
 type Props = {
   scene: Scene;
-  camera: Camera;
   updated: TypedEvent;
 };
 
 export default defineComponent({
   props: {
     scene: { default: null },
-    camera: { default: null },
     updated: { default: null },
   },
   setup(props: Props) {
@@ -40,13 +38,18 @@ export default defineComponent({
     const canvasWrapper = ref<HTMLDivElement>();
     const stats = Stats();
 
+    // camera
+    const camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
+    camera.position.set(0, 0, 20);
+    camera.lookAt(0, 0, 0);
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
       const w = entries[0].contentRect.width;
       const h = entries[0].contentRect.height;
 
-      CameraHelper.SetAspect(props.camera, w / h);
+      CameraHelper.SetAspect(camera, w / h);
       renderer?.setSize(w, h, false);
     });
 
@@ -63,8 +66,7 @@ export default defineComponent({
       resizeObserver.observe(canvas.value);
       props.updated.on(render);
 
-      // camera
-      cameraControls = new OrbitControls(props.camera, renderer.domElement);
+      cameraControls = new OrbitControls(camera, renderer.domElement);
 
       // stats
       stats.dom.style.position = 'absolute';
@@ -83,7 +85,7 @@ export default defineComponent({
     });
 
     const render = () => {
-      renderer?.render(props.scene, props.camera);
+      renderer?.render(props.scene, camera);
       stats.update();
     };
 

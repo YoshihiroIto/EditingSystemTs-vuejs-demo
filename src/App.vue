@@ -21,7 +21,7 @@
       <button @click="addChild">Add child</button>
     </div>
 
-    <Viewport class="viewport" :scene="rootSceneViewModel" :camera="camera" :updated="updated" />
+    <Viewport class="viewport" :scene="rootSceneViewModel" :updated="updated" />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <Inspector class="inspector" :selectedObject="testModel.selectedObject" />
   </div>
@@ -152,7 +152,6 @@ export default defineComponent({
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
       rootSceneViewModel.setup(rootScene);
 
-      const camera = rootSceneViewModel.camera;
       const children = rootScene.children;
 
       //
@@ -205,7 +204,6 @@ export default defineComponent({
         onEndContinuousEditing,
 
         rootSceneViewModel,
-        camera,
         updated,
         children,
 
