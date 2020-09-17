@@ -1,12 +1,21 @@
 ﻿<template>
   <div class="wrapper" ref="canvasWrapper">
-    <canvas class="canvas" ref="canvas" />
+    <canvas class="canvas" ref="canvas" height="60" />
+    <div class="info">FrameCount: {{ frameCount }}</div>
   </div>
 </template>
 
 <style scoped>
 .wrapper {
   position: relative;
+}
+
+.info {
+  position: absolute;
+  color: lightgray;
+  font-size: small;
+  top: 50px;
+  left: 0px;
 }
 
 .canvas {
@@ -51,6 +60,8 @@ export default defineComponent({
 
       CameraHelper.SetAspect(camera, w / h);
       renderer?.setSize(w, h, false);
+
+      requestRender();
     });
 
     let renderer: WebGLRenderer | null = null;
@@ -64,9 +75,10 @@ export default defineComponent({
       renderer.setPixelRatio(window.devicePixelRatio);
 
       resizeObserver.observe(canvas.value);
-      props.updated.on(render);
+      props.updated.on(requestRender);
 
       cameraControls = new OrbitControls(camera, renderer.domElement);
+      cameraControls.addEventListener('change', requestRender);
 
       // stats
       stats.dom.style.position = 'absolute';
@@ -75,7 +87,9 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      props.updated.off(render);
+      cameraControls?.removeEventListener('change', requestRender);
+
+      props.updated.off(requestRender);
 
       resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
@@ -84,7 +98,26 @@ export default defineComponent({
       renderer?.dispose();
     });
 
+    let isRequestRender = false;
+
+    const requestRender = () => {
+      if (isRequestRender) {
+        return;
+      }
+
+      const animate = () => {
+        render();
+        isRequestRender = false;
+      };
+
+      isRequestRender = true;
+      requestAnimationFrame(animate);
+    };
+
+    let frameCount = ref(0);
     const render = () => {
+      ++frameCount.value;
+
       renderer?.render(props.scene, camera);
       stats.update();
     };
@@ -92,6 +125,7 @@ export default defineComponent({
     return {
       canvas,
       canvasWrapper,
+      frameCount,
     };
   },
 });

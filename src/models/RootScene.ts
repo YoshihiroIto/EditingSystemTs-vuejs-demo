@@ -1,5 +1,5 @@
 ﻿import { History } from '../../externals/EditingSystemTs/src/History';
-import { EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { injectable } from 'tsyringe';
 import { SeScene } from '@/se/SeScene';
 import { SeVector3 } from '@/se/math/SeVector3';
@@ -13,7 +13,7 @@ export class RootScene extends SeScene {
   constructor(history: History, private readonly objectCreator: ObjectCreator) {
     super(history);
 
-    this.animate();
+    //this.animate();
   }
 
   createCube(): SeObject3D {
@@ -56,7 +56,6 @@ export class RootScene extends SeScene {
   animate(): void {
     const animate = () => {
       this.doUpdate();
-      this.updated.emit(this, EventArgs.empty);
 
       requestAnimationFrame(animate);
     };

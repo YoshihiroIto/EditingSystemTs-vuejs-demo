@@ -81,6 +81,7 @@
 import { defineComponent, onUnmounted, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
+import { EventArgs } from '../externals/EditingSystemTs/src/TypedEvent';
 import { TestModel } from './models/TestModel';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './view-models/RootSceneViewModel';
@@ -142,6 +143,8 @@ export default defineComponent({
     };
 
     try {
+      _history.edited.on(() => updated.emit(null, EventArgs.empty));
+
       _history.beginPause();
 
       // rootScene
