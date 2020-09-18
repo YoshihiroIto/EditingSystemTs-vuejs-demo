@@ -1,24 +1,39 @@
 <template>
   <div id="app" class="app">
     <div class="header">
-      (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
-      <button @click="undo">Undo</button>
-      <button @click="redo">Redo</button>
-      <button @click="clearHistory">Clear history</button>
-      <br />
-      {{ testModel.valueA }}
-      <button @click="inc">Inc</button>
-      <button @click="dec">Dec</button>
-      <NumberEditor
-        @begin-continuous-editing="onBeginContinuousEditing"
-        @end-continuous-editing="onEndContinuousEditing"
-        :value.sync="testModel.valueA"
-      />
-      {{ testModel.valueA }}
-      <br />
+      <div class="block">
+        (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
+        <button @click="undo">Undo</button>
+        <button @click="redo">Redo</button>
+        <button @click="clearHistory">Clear history</button>
+      </div>
 
-      <button @click="addCubes">Add cubes</button>
-      <button @click="addChild">Add child</button>
+      <div class="block">
+        <div class="block">
+          <button @click="inc">Inc</button>
+          <button @click="dec">Dec</button>
+          <NumberEditor
+            @begin-continuous-editing="onBeginContinuousEditing"
+            @end-continuous-editing="onEndContinuousEditing"
+            :value.sync="testModel.valueNumber"
+          />
+          {{ testModel.valueNumber }}
+        </div>
+
+        <div class="block block_h_2nd">
+          <TextBox
+            @begin-continuous-editing="onBeginContinuousEditing"
+            @end-continuous-editing="onEndContinuousEditing"
+            :value.sync="testModel.valueString"
+          />
+          {{ testModel.valueString }}
+        </div>
+      </div>
+
+      <div class="block">
+        <button @click="addCubes">Add cubes</button>
+        <button @click="addChild">Add child</button>
+      </div>
     </div>
 
     <Viewport class="viewport" :scene="rootSceneViewModel" :updated="updated" />
@@ -75,6 +90,16 @@
   padding: 4px;
   border: 1px solid #aab;
 }
+
+.block {
+  display: flex;
+  flex-flow: row no-wrap;
+  margin-top: 4px;
+}
+
+.block_h_2nd {
+  margin-left: 64px;
+}
 </style>
 
 <script lang="ts">
@@ -87,6 +112,7 @@ import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 
 import NumberEditor from './components/controls/NumberEditor.vue';
+import TextBox from './components/controls/TextBox.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import Inspector from './components/Inspector.vue';
@@ -97,6 +123,7 @@ export default defineComponent({
   name: 'App',
   components: {
     NumberEditor,
+    TextBox,
     Viewport,
     ObjectTreeView,
     Inspector,
@@ -111,8 +138,8 @@ export default defineComponent({
     const undo = () => _history.undo();
     const redo = () => _history.redo();
     const clearHistory = () => _history.clear();
-    const inc = () => ++_testModel.valueA;
-    const dec = () => --_testModel.valueA;
+    const inc = () => ++_testModel.valueNumber;
+    const dec = () => --_testModel.valueNumber;
 
     const onBeginContinuousEditing = () => {
       if (_history.isInBatch == false) {
