@@ -3,14 +3,15 @@
     <input
       type="number"
       :value="value"
-      @mousedown="textMouseDown"
-      @mouseup="textMouseUp"
       @keydown="textKeyDown"
       @keyup="textKeyUp"
+      @focusin="textFocusin"
+      @focusout="textFocusout"
       @input="$emit('update:value', parseInt($event.target.value))"
     />
 
     <input
+      id="slider"
       type="range"
       min="0"
       max="1000"
@@ -22,6 +23,21 @@
     />
   </div>
 </template>
+<style scoped>
+#slider {
+  vertical-align: middle;
+}
+
+/* Hide spin buttons */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
@@ -40,14 +56,19 @@ export default defineComponent({
 
     const sliderMouseDown = emitBeginContinuousEditing;
     const sliderMouseUp = emitEndContinuousEditing;
-    const textMouseDown = emitBeginContinuousEditing;
-    const textMouseUp = emitEndContinuousEditing;
+    const textFocusin = emitBeginContinuousEditing;
+    const textFocusout = emitEndContinuousEditing;
 
     const textKeyDown = (e: KeyboardEvent) => {
       if (e.repeat == false) {
         if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
           emitBeginContinuousEditing();
         }
+      }
+
+      if (e.key == 'Enter') {
+        emitEndContinuousEditing();
+        emitBeginContinuousEditing();
       }
     };
 
@@ -61,10 +82,10 @@ export default defineComponent({
       sliderMouseDown,
       sliderMouseUp,
       //
-      textMouseDown,
-      textMouseUp,
       textKeyDown,
       textKeyUp,
+      textFocusin,
+      textFocusout,
     };
   },
 });
