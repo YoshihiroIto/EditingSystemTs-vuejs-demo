@@ -3,23 +3,26 @@
     <input
       type="number"
       :value="value"
+      :min="min"
+      :max="max"
+      :step="step"
       @keydown="textKeyDown"
       @keyup="textKeyUp"
       @focusin="textFocusin"
       @focusout="textFocusout"
-      @input="$emit('update:value', parseInt($event.target.value))"
+      @input="$emit('update:value', parseFloat($event.target.value))"
     />
 
     <input
       id="slider"
       type="range"
-      min="0"
-      max="1000"
-      step="1"
       :value="value"
+      :min="min"
+      :max="max"
+      :step="step"
       @mousedown="sliderMouseDown"
       @mouseup="sliderMouseUp"
-      @input="$emit('update:value', parseInt($event.target.value))"
+      @input="$emit('update:value', parseFloat($event.target.value))"
     />
   </div>
 </template>
@@ -44,11 +47,17 @@ import { defineComponent, SetupContext } from '@vue/composition-api';
 
 type Props = {
   value: number;
+  min: number;
+  max: number;
+  step: number;
 };
 
 export default defineComponent({
   props: {
     value: { type: Number, default: 0 },
+    min: { type: Number, default: -100 },
+    max: { type: Number, default: +100 },
+    step: { type: Number, default: 1 },
   },
   setup(props: Props, context: SetupContext) {
     const emitBeginContinuousEditing = () => context.emit('begin-continuous-editing');

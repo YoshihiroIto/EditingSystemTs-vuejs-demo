@@ -15,6 +15,9 @@
           <NumberEditor
             @begin-continuous-editing="onBeginContinuousEditing"
             @end-continuous-editing="onEndContinuousEditing"
+            :min="-500"
+            :max="500"
+            :step="0.01"
             :value.sync="testModel.valueNumber"
           />
           {{ testModel.valueNumber }}
