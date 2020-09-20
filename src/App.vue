@@ -41,7 +41,12 @@
 
     <Viewport class="viewport" :scene="rootSceneViewModel" :updated="updated" />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
-    <Inspector class="inspector" :selectedObject="testModel.selectedObject" />
+    <Inspector
+      class="inspector"
+      :target="testModel.selectedObject"
+      @begin-continuous-editing="onBeginContinuousEditing"
+      @end-continuous-editing="onEndContinuousEditing"
+    />
   </div>
 </template>
 
