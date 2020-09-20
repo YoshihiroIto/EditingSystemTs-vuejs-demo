@@ -62,6 +62,10 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       Assert.isNotNull(this.viewModel);
 
       switch (e.propertyName) {
+        case nameof<SeObject3D>('name'):
+          this.viewModel.name = this.model.name;
+          break;
+
         case nameof<SeObject3D>('position'):
           this.viewModel.position.x = this.model.position.x;
           this.viewModel.position.y = this.model.position.y;

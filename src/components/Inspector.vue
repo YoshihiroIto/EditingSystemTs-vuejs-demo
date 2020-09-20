@@ -1,10 +1,12 @@
 <template>
   <div>
     <template v-if="target != null">
-      name: {{ target.name }}
-      <br />
-      objectDefinitionName: {{ target.objectDefinitionName }}
-      <br />
+      name:
+      <TextBox
+        @begin-continuous-editing="emitBeginContinuousEditing"
+        @end-continuous-editing="emitEndContinuousEditing"
+        :value.sync="target.name"
+      />
 
       <br />
       position:
@@ -38,8 +40,9 @@
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
 import { SeObject3D } from '@/se/SeObject3D';
-import VectorEditor from './controls/VectorEditor.vue';
 import { createComputedVector3 } from './ComponentHelper';
+import VectorEditor from './controls/VectorEditor.vue';
+import TextBox from './controls/TextBox.vue';
 
 type Props = {
   target: SeObject3D | null;
@@ -51,6 +54,7 @@ export default defineComponent({
   },
   components: {
     VectorEditor,
+    TextBox,
   },
   setup: (props: Props, context: SetupContext) => {
     const emitBeginContinuousEditing = () => context.emit('begin-continuous-editing');
@@ -74,9 +78,6 @@ export default defineComponent({
       }
     );
 
-    const npi = -Math.PI;
-    const ppi = Math.PI;
-
     return {
       emitBeginContinuousEditing,
       emitEndContinuousEditing,
@@ -88,8 +89,8 @@ export default defineComponent({
       rotationY,
       rotationZ,
       //
-      npi,
-      ppi,
+      npi: -Math.PI,
+      ppi: Math.PI,
     };
   },
 });
