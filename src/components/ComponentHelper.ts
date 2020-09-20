@@ -1,46 +1,65 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SeVector3 } from '@/se/math/SeVector3';
 import { computed, WritableComputedRef } from '@vue/composition-api';
 
 export function createComputedVector3(
-  getter: () => SeVector3 | null | undefined,
-  setter: (v: SeVector3) => void
+  getter: () => unknown,
+  propertyName: string
 ): [WritableComputedRef<number>, WritableComputedRef<number>, WritableComputedRef<number>] {
   const x = computed({
-    get: () => getter()?.x ?? 0,
-    set: (value: number) => {
-      const v = getter();
+    get: () => {
+      const target = getter() as any;
+      if (target == null) {
+        return 0;
+      }
 
-      if (v == null) {
+      return target[propertyName]?.x ?? 0;
+    },
+    set: (value: number) => {
+      const target = getter() as any;
+      if (target == null) {
         return;
       }
 
-      setter(new SeVector3(value, v.y, v.z));
+      target[propertyName] = new SeVector3(value, target[propertyName].y, target[propertyName].z);
     },
   });
 
   const y = computed({
-    get: () => getter()?.y ?? 0,
-    set: (value: number) => {
-      const v = getter();
+    get: () => {
+      const target = getter() as any;
+      if (target == null) {
+        return 0;
+      }
 
-      if (v == null) {
+      return target[propertyName]?.y ?? 0;
+    },
+    set: (value: number) => {
+      const target = getter() as any;
+      if (target == null) {
         return;
       }
 
-      setter(new SeVector3(v.x, value, v.z));
+      target[propertyName] = new SeVector3(target[propertyName].x, value, target[propertyName].z);
     },
   });
 
   const z = computed({
-    get: () => getter()?.z ?? 0,
-    set: (value: number) => {
-      const v = getter();
+    get: () => {
+      const target = getter() as any;
+      if (target == null) {
+        return 0;
+      }
 
-      if (v == null) {
+      return target[propertyName]?.z ?? 0;
+    },
+    set: (value: number) => {
+      const target = getter() as any;
+      if (target == null) {
         return;
       }
 
-      setter(new SeVector3(v.x, v.y, value));
+      target[propertyName] = new SeVector3(target[propertyName].x, target[propertyName].y, value);
     },
   });
 
