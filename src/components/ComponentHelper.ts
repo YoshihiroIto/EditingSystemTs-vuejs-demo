@@ -65,3 +65,15 @@ export function createComputedVector3(
 
   return [x, y, z];
 }
+
+export function isUndo(e: KeyboardEvent): boolean {
+  return e.ctrlKey && e.key === 'z' && isRedo(e) === false;
+}
+
+export function isRedo(e: KeyboardEvent): boolean {
+  return (e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z');
+}
+
+export function isEditingConfirmation(e: KeyboardEvent): boolean {
+  return e.key == 'Enter' || isUndo(e) || isRedo(e);
+}

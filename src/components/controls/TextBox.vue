@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
+import { isEditingConfirmation } from '../ComponentHelper';
 
 type Props = {
   value: string;
@@ -28,7 +29,7 @@ export default defineComponent({
     const textFocusout = emitEndContinuousEditing;
 
     const textKeyDown = (e: KeyboardEvent) => {
-      if (e.key == 'Enter') {
+      if (isEditingConfirmation(e)) {
         emitEndContinuousEditing();
         emitBeginContinuousEditing();
       }

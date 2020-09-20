@@ -126,6 +126,7 @@ import ObjectTreeView from './components/ObjectTreeView.vue';
 import Inspector from './components/Inspector.vue';
 import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
+import { isRedo, isUndo } from './components/ComponentHelper';
 
 export default defineComponent({
   name: 'App',
@@ -162,18 +163,12 @@ export default defineComponent({
     };
 
     document.body.onkeydown = (e: KeyboardEvent) => {
-      if (e.ctrlKey) {
-        switch (e.key) {
-          case 'z':
-            e.preventDefault();
-            _history.undo();
-            break;
-
-          case 'y':
-            e.preventDefault();
-            _history.redo();
-            break;
-        }
+      if (isUndo(e)) {
+        e.preventDefault();
+        _history.undo();
+      } else if (isRedo(e)) {
+        e.preventDefault();
+        _history.redo();
       }
     };
 

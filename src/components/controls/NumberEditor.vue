@@ -44,6 +44,7 @@ input[type='number'] {
 
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
+import { isEditingConfirmation } from '../ComponentHelper';
 
 type Props = {
   value: number;
@@ -75,7 +76,7 @@ export default defineComponent({
         }
       }
 
-      if (e.key == 'Enter') {
+      if (isEditingConfirmation(e)) {
         emitEndContinuousEditing();
         emitBeginContinuousEditing();
       }
