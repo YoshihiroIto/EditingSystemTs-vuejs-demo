@@ -1,6 +1,6 @@
 import { Scene } from 'three/src/scenes/Scene';
-import { WithThObject } from './ThObject';
+import { injectable } from 'tsyringe';
+import { WithThObject } from './WithThObject';
 
-class ThSceneInternal extends Scene {}
-
-export const ThScene = WithThObject(ThSceneInternal);
+@injectable()
+export class ThScene extends WithThObject(Scene) {}

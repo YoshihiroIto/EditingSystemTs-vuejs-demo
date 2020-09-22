@@ -1,9 +1,13 @@
-import { BoxGeometry, BufferGeometry, Geometry, Material, Mesh, MeshNormalMaterial } from 'three';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
+import { Geometry } from 'three/src/core/Geometry';
+import { BoxGeometry } from 'three/src/geometries/Geometries';
+import { Material } from 'three/src/materials/Material';
+import { MeshNormalMaterial } from 'three/src/materials/Materials';
+import { Mesh } from 'three/src/objects/Mesh';
 import { injectable } from 'tsyringe';
-import { WithThObject } from './ThObject';
+import { WithThObject } from './WithThObject';
 
-@injectable()
-export class ThMeshInternal extends Mesh<Geometry | BufferGeometry, Material | Material[]> {
+class ThMeshInternal extends Mesh<Geometry | BufferGeometry, Material | Material[]> {
   static readonly geometry = new BoxGeometry(1, 1, 1);
   static readonly material = new MeshNormalMaterial();
 
@@ -13,4 +17,5 @@ export class ThMeshInternal extends Mesh<Geometry | BufferGeometry, Material | M
   }
 }
 
-export const ThMesh = WithThObject(ThMeshInternal);
+@injectable()
+export class ThMesh extends WithThObject(ThMeshInternal) {}
