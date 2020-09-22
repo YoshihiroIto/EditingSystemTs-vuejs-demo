@@ -5460,6 +5460,11 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
+linq-to-typescript@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/linq-to-typescript/-/linq-to-typescript-6.0.1.tgz#7102dd04b990eac6e789a37b5db6c97f70b04222"
+  integrity sha512-m6PNSkwL98j1fKEI9bYFYdS561nUR+zKbnuXChSb7mOpvU18oT8FgXCor+GnX2KNU4vkRhok5sHqjIqkBpY3Lg==
+
 loader-fs-cache@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/loader-fs-cache/-/loader-fs-cache-1.0.3.tgz#f08657646d607078be2f0a032f8bd69dd6f277d9"

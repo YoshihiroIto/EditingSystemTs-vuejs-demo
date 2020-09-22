@@ -5,7 +5,7 @@ import {
   NotifyCollectionChangedActions,
   PropertyChangedEventArgs,
 } from '../../externals/EditingSystemTs/src/Event';
-import { container } from 'tsyringe';
+import { container, injectable } from 'tsyringe';
 import { ThMesh } from './ThMesh';
 import { SeObject3D } from '@/se/SeObject3D';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
@@ -17,7 +17,11 @@ import { nameof } from '../foundations/Nameof';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Base: TBase) {
   return class extends Base implements Disposable {
-    private model: T | null = null;
+    get model(): SeObject3D | null {
+      return this._model;
+    }
+
+    private _model: T | null = null;
     private viewModel: Object3D | null = null;
 
     private childrenChanged = (sender: unknown, e: NotifyCollectionChangedEventArgs): void => {
@@ -58,24 +62,24 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
     };
 
     private propertyChanged = (_: unknown, e: PropertyChangedEventArgs): void => {
-      Assert.isNotNull(this.model);
+      Assert.isNotNull(this._model);
       Assert.isNotNull(this.viewModel);
 
       switch (e.propertyName) {
         case nameof<SeObject3D>('name'):
-          this.viewModel.name = this.model.name;
+          this.viewModel.name = this._model.name;
           break;
 
         case nameof<SeObject3D>('position'):
-          this.viewModel.position.set(this.model.position.x, this.model.position.y, this.model.position.z);
+          this.viewModel.position.set(this._model.position.x, this._model.position.y, this._model.position.z);
           break;
 
         case nameof<SeObject3D>('rotation'):
-          this.viewModel.rotation.set(this.model.rotation.x, this.model.rotation.y, this.model.rotation.z);
+          this.viewModel.rotation.set(this._model.rotation.x, this._model.rotation.y, this._model.rotation.z);
           break;
 
         case nameof<SeObject3D>('scale'):
-          this.viewModel.scale.set(this.model.scale.x, this.model.scale.y, this.model.scale.z);
+          this.viewModel.scale.set(this._model.scale.x, this._model.scale.y, this._model.scale.z);
           break;
 
         default:
@@ -87,10 +91,10 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       Assert.isNotNull(model);
 
       this.viewModel = (this as unknown) as Object3D;
-      this.model = model;
+      this._model = model;
 
-      this.model.children.collectionChanged.on(this.childrenChanged);
-      this.model.propertyChanged.on(this.propertyChanged);
+      this._model.children.collectionChanged.on(this.childrenChanged);
+      this._model.propertyChanged.on(this.propertyChanged);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any)?.setupInternal?.call(this);
@@ -103,11 +107,11 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
     }
 
     dispose(): void {
-      this.model?.propertyChanged.off(this.propertyChanged);
-      this.model?.children.collectionChanged.off(this.childrenChanged);
+      this._model?.propertyChanged.off(this.propertyChanged);
+      this._model?.children.collectionChanged.off(this.childrenChanged);
     }
 
-    *allChildren() {
+    *allChildren(): Generator<Object3D, void, unknown> {
       yield* this.allChildrenInternal(this.viewModel);
     }
 
@@ -127,3 +131,6 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
     }
   };
 }
+
+@injectable()
+export class ThObject3D extends WithThObject(Object3D) {}

@@ -132,7 +132,6 @@ import Inspector from './components/Inspector.vue';
 import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
-import { Object3D } from 'three/src/core/Object3D';
 
 export default defineComponent({
   name: 'App',
