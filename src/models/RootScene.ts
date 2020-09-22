@@ -15,7 +15,11 @@ export class RootScene extends SeScene {
   }
 
   createCube(): SeObject3D {
-    return this.objectCreator.create('cube');
+    const cube = this.objectCreator.create('cube');
+
+    cube.name = `Obj${RootScene.instanceCount++}`;
+
+    return cube;
   }
 
   addCube(): void {
@@ -36,4 +40,6 @@ export class RootScene extends SeScene {
       this.history.endBatch();
     }
   }
+
+  private static instanceCount = 0;
 }

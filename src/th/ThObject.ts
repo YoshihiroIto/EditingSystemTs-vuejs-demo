@@ -67,21 +67,15 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
           break;
 
         case nameof<SeObject3D>('position'):
-          this.viewModel.position.x = this.model.position.x;
-          this.viewModel.position.y = this.model.position.y;
-          this.viewModel.position.z = this.model.position.z;
+          this.viewModel.position.set(this.model.position.x, this.model.position.y, this.model.position.z);
           break;
 
         case nameof<SeObject3D>('rotation'):
-          this.viewModel.rotation.x = this.model.rotation.x;
-          this.viewModel.rotation.y = this.model.rotation.y;
-          this.viewModel.rotation.z = this.model.rotation.z;
+          this.viewModel.rotation.set(this.model.rotation.x, this.model.rotation.y, this.model.rotation.z);
           break;
 
         case nameof<SeObject3D>('scale'):
-          this.viewModel.scale.x = this.model.scale.x;
-          this.viewModel.scale.y = this.model.scale.y;
-          this.viewModel.scale.z = this.model.scale.z;
+          this.viewModel.scale.set(this.model.scale.x, this.model.scale.y, this.model.scale.z);
           break;
 
         default:
@@ -100,6 +94,12 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any)?.setupInternal?.call(this);
+
+      // todo: 自動化
+      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('name'), null));
+      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('position'), null));
+      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('rotation'), null));
+      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('scale'), null));
     }
 
     dispose(): void {

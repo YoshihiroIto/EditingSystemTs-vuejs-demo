@@ -11,7 +11,7 @@ export class SeObject3D implements NotifyPropertyChanged {
   readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
   readonly children = new ObservableArray<SeObject3D>();
 
-  name = `Obj${SeObject3D.instanceCount++}`;
+  name = '';
 
   objectDefinitionName: string | null = null;
 
@@ -54,6 +54,4 @@ export class SeObject3D implements NotifyPropertyChanged {
       }
     }
   }
-
-  private static instanceCount = 0;
 }
