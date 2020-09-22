@@ -17,8 +17,8 @@ import { nameof } from '../foundations/Nameof';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Base: TBase) {
   return class extends Base implements Disposable {
-    model: T | null = null;
-    viewModel: Object3D | null = null;
+    private model: T | null = null;
+    private viewModel: Object3D | null = null;
 
     private childrenChanged = (sender: unknown, e: NotifyCollectionChangedEventArgs): void => {
       Assert.isNotNull(this.viewModel);

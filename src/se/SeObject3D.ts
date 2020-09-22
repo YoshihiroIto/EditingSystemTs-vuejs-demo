@@ -25,6 +25,9 @@ export class SeObject3D implements NotifyPropertyChanged {
   @EditingSystem.ignore
   history: History;
 
+  @EditingSystem.ignore
+  isSelected = false;
+
   constructor(history: History) {
     this.history = history;
     history.register(this);

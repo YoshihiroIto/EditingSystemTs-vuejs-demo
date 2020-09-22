@@ -25,21 +25,25 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { SeObject3D } from '@/se/SeObject3D';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
-import Stats from 'three/examples/jsm/libs/stats.module';
 
 type Props = {
   scene: Scene;
+  selectedObject: SeObject3D | null;
   updated: TypedEvent;
 };
 
 export default defineComponent({
   props: {
     scene: { default: null },
+    selectedObject: { default: null },
     updated: { default: null },
   },
   setup(props: Props) {
@@ -66,6 +70,7 @@ export default defineComponent({
 
     let renderer: WebGLRenderer | null = null;
     let cameraControls: OrbitControls | null = null;
+    let gizmo: TransformControls | null = null;
 
     onMounted(() => {
       renderer = new WebGLRenderer({
@@ -80,6 +85,13 @@ export default defineComponent({
       cameraControls = new OrbitControls(camera, renderer.domElement);
       cameraControls.addEventListener('change', requestRender);
 
+      gizmo = new TransformControls(camera, renderer.domElement);
+      gizmo.addEventListener('change', requestRender);
+
+      if (props.scene != null) {
+        props.scene.add(gizmo);
+      }
+
       // stats
       stats.dom.style.position = 'absolute';
       stats.showPanel(0);
@@ -87,16 +99,31 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      cameraControls?.removeEventListener('change', requestRender);
-
       props.updated.off(requestRender);
 
       resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
 
+      gizmo?.removeEventListener('change', requestRender);
+      gizmo?.dispose();
+
+      cameraControls?.removeEventListener('change', requestRender);
       cameraControls?.dispose();
+
       renderer?.dispose();
     });
+
+    watch(
+      () => props.selectedObject,
+      (newObj: SeObject3D | null) => {
+        gizmo?.detach();
+
+        if (newObj != null) {
+          console.log(newObj.name);
+          // gizmo?.attach(xxx);
+        }
+      }
+    );
 
     let isRequestRender = false;
 

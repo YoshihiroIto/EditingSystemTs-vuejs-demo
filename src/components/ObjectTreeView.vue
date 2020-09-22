@@ -3,7 +3,7 @@
     <TreeView :children="children" @selectItem="onSelectItem" :selectedItem="selectedObject">
       <template #itemTemplate="item">
         {{ item.data.name }}
-        ({{ item.data.objectDefinitionName }})
+        ({{ item.data.objectDefinitionName }}, isSelected:{{ item.data.isSelected }})
         <!-- {{ item.data.rotation }} -->
       </template>
     </TreeView>

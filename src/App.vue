@@ -39,7 +39,12 @@
       </div>
     </div>
 
-    <Viewport class="viewport" :scene="rootSceneViewModel" :updated="updated" />
+    <Viewport
+      class="viewport"
+      :scene="rootSceneViewModel"
+      :selectedObject="testModel.selectedObject"
+      :updated="updated"
+    />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <Inspector
       class="inspector"
