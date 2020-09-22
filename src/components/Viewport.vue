@@ -36,6 +36,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
+import { ViewportController } from './Viewportcontroller';
 
 type Props = {
   scene: RootSceneViewModel;
@@ -72,8 +73,7 @@ export default defineComponent({
     });
 
     let renderer: WebGLRenderer | null = null;
-    let cameraControls: OrbitControls | null = null;
-    let gizmo: TransformControls | null = null;
+    let controller: ViewportController | null = null;
 
     onMounted(() => {
       renderer = new WebGLRenderer({
@@ -85,15 +85,7 @@ export default defineComponent({
       resizeObserver.observe(canvas.value);
       props.updated.on(requestRender);
 
-      cameraControls = new OrbitControls(camera, renderer.domElement);
-      cameraControls.addEventListener('change', requestRender);
-
-      gizmo = new TransformControls(camera, renderer.domElement);
-      gizmo.addEventListener('change', requestRender);
-
-      if (props.scene != null) {
-        props.scene.add(gizmo);
-      }
+      controller = new ViewportController(props.scene, camera, renderer.domElement, requestRender);
 
       // stats
       stats.dom.style.position = 'absolute';
@@ -107,19 +99,14 @@ export default defineComponent({
       resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
 
-      gizmo?.removeEventListener('change', requestRender);
-      gizmo?.dispose();
-
-      cameraControls?.removeEventListener('change', requestRender);
-      cameraControls?.dispose();
-
+      controller?.dispose();
       renderer?.dispose();
     });
 
     watch(
       () => props.selectedObject,
       (newObj: SeObject3D | null) => {
-        gizmo?.detach();
+        let isAttached = false;
 
         if (newObj != null) {
           const obj = from(props.scene.allChildren()).firstOrDefault(x => {
@@ -127,8 +114,13 @@ export default defineComponent({
           });
 
           if (obj != null) {
-            gizmo?.attach(obj);
+            controller?.attachTargetObject(obj as ThObject3D);
+            isAttached = true;
           }
+        }
+
+        if (isAttached == false) {
+          controller?.detachTargetObject();
         }
       }
     );
