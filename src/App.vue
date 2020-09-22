@@ -44,6 +44,8 @@
       :scene="rootSceneViewModel"
       :selectedObject="testModel.selectedObject"
       :updated="updated"
+      @begin-continuous-editing="onBeginContinuousEditing"
+      @end-continuous-editing="onEndContinuousEditing"
     />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <Inspector

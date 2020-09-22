@@ -28,7 +28,7 @@
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
 import { RootSceneViewModel } from '@/view-models/RootSceneViewModel';
-import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { from } from 'linq-to-typescript';
 import { PerspectiveCamera, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -50,7 +50,7 @@ export default defineComponent({
     selectedObject: { default: null },
     updated: { default: null },
   },
-  setup(props: Props) {
+  setup(props: Props, context: SetupContext) {
     const canvas = ref<HTMLCanvasElement>();
     const canvasWrapper = ref<HTMLDivElement>();
     const stats = Stats();
@@ -86,6 +86,8 @@ export default defineComponent({
       props.updated.on(requestRender);
 
       controller = new ViewportController(props.scene, camera, renderer.domElement, requestRender);
+      controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
+      controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
 
       // stats
       stats.dom.style.position = 'absolute';
