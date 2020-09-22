@@ -106,5 +106,24 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       this.model?.propertyChanged.off(this.propertyChanged);
       this.model?.children.collectionChanged.off(this.childrenChanged);
     }
+
+    *allChildren() {
+      yield* this.allChildrenInternal(this.viewModel);
+    }
+
+    private *allChildrenInternal(parent: Object3D | null | undefined) {
+      if (parent?.children == null) {
+        return;
+      }
+
+      for (const child of parent.children) {
+        if ((child as any)?.allChildren == null) {
+          continue;
+        }
+
+        yield child;
+        yield* (child as any).allChildren.call(child);
+      }
+    }
   };
 }
