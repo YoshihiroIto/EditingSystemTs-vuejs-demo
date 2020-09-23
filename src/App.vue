@@ -134,6 +134,7 @@ import Inspector from './components/Inspector.vue';
 import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
+import { Color } from 'three/src/math/Color';
 
 export default defineComponent({
   name: 'App',
@@ -190,6 +191,7 @@ export default defineComponent({
 
       // rootSceneViewModel
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
+      rootSceneViewModel.background = new Color(0x24292e);
       rootSceneViewModel.setup(rootScene);
 
       const children = rootScene.children;
