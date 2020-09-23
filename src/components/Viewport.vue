@@ -34,6 +34,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
 import { ViewportController } from './ViewportController';
+import { ViewportHelper } from './ViewportHelper';
 
 type Props = {
   scene: ThObject3D;
@@ -71,6 +72,7 @@ export default defineComponent({
 
     let renderer: WebGLRenderer | null = null;
     let controller: ViewportController | null = null;
+    let helper: ViewportHelper | null = null;
 
     onMounted(() => {
       renderer = new WebGLRenderer({
@@ -87,6 +89,8 @@ export default defineComponent({
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.objectsPicked.on((_, e) => context.emit('update:selectedObject', e.objects[0].model));
 
+      helper = new ViewportHelper(props.scene);
+
       // stats
       stats.dom.style.position = 'absolute';
       stats.showPanel(0);
@@ -99,6 +103,7 @@ export default defineComponent({
       resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
 
+      helper?.dispose();
       controller?.dispose();
       renderer?.dispose();
     });
