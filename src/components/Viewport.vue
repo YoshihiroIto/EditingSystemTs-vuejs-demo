@@ -93,7 +93,7 @@ export default defineComponent({
 
       // stats
       stats.dom.style.position = 'absolute';
-      stats.showPanel(0);
+      stats.showPanel(2);
       canvasWrapper.value?.appendChild(stats.dom);
     });
 
