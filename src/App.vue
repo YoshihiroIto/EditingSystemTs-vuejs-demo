@@ -42,7 +42,7 @@
     <Viewport
       class="viewport"
       :scene="rootSceneViewModel"
-      :selectedObject="testModel.selectedObject"
+      :selectedObject.sync="testModel.selectedObject"
       :updated="updated"
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
@@ -223,10 +223,6 @@ export default defineComponent({
           cube.position = new SeVector3(5, 0, 0);
         } finally {
           _history.endBatch();
-        }
-
-        for (const child of rootSceneViewModel.allChildren()) {
-          console.log(child.name);
         }
       };
 

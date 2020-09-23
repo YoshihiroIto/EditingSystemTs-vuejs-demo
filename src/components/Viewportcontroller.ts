@@ -1,51 +1,64 @@
-import { ThObject3D } from '@/th/ThObject';
 import { Camera } from 'three/src/cameras/Camera';
 import { Event } from 'three/src/core/EventDispatcher';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+import { Raycaster } from 'three/src/core/Raycaster';
+import { ThObject3D } from '@/th/ThObject';
 import { TypedEvent, Disposable, EventArgs } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { SeVector3 } from '@/se/math/SeVector3';
+import { Vector2 } from 'three/src/math/Vector2';
+import { from } from 'linq-to-typescript/sync/Enumerable';
 
 export class ViewportController implements Disposable {
   readonly cameraControls: OrbitControls;
   readonly gizmo: TransformControls;
-  private attachedObject: ThObject3D | null = null;
 
   readonly beginContinuousEditing = new TypedEvent();
   readonly endContinuousEditing = new TypedEvent();
+  readonly objectsPicked = new TypedEvent<ObjectsPickedEventArgs>();
+
+  private attachedObject: ThObject3D | null = null;
+  private raycaster = new Raycaster();
 
   constructor(
     private readonly parent: ThObject3D,
-    camera: Camera,
-    domElement: HTMLCanvasElement,
+    private readonly camera: Camera,
+    private readonly domElement: HTMLCanvasElement,
     private readonly requestRender: () => void
   ) {
-    this.cameraControls = new OrbitControls(camera, domElement);
+    this.domElement.addEventListener('pointerdown', this.onClickElement, false);
+
+    //
+    this.cameraControls = new OrbitControls(camera, this.domElement);
     this.cameraControls.addEventListener('change', this.requestRender);
 
-    this.gizmo = new TransformControls(camera, domElement);
+    //
+    this.gizmo = new TransformControls(camera, this.domElement);
     this.gizmo.addEventListener('change', this.requestRender);
-    this.gizmo.addEventListener('objectChange', () => this.onObjectChange());
-    this.gizmo.addEventListener('mouseDown', () => this.onMouseDown());
-    this.gizmo.addEventListener('mouseUp', () => this.onMouseUp());
+    this.gizmo.addEventListener('objectChange', this.onObjectChangeGizmo);
+    this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
+    this.gizmo.addEventListener('mouseUp', this.onMouseUpGizmo);
     this.gizmo.addEventListener('dragging-changed', (event: Event) => {
       return (this.cameraControls.enabled = !event.value);
     });
-
     this.parent.add(this.gizmo);
   }
 
   dispose(): void {
     this.detachTargetObject();
 
+    //
     this.parent.remove(this.gizmo);
-
     this.gizmo.removeEventListener('change', this.requestRender);
     this.gizmo.dispose();
 
+    //
     this.cameraControls.removeEventListener('change', this.requestRender);
     this.cameraControls.dispose();
+
+    //
+    this.domElement.removeEventListener('click', this.onClickElement, false);
   }
 
   detachTargetObject(): void {
@@ -58,15 +71,15 @@ export class ViewportController implements Disposable {
     this.attachedObject = target;
   }
 
-  onMouseDown(): void {
+  private onMouseDownGizmo = (): void => {
     this.beginContinuousEditing.emit(this, EventArgs.empty);
-  }
+  };
 
-  onMouseUp(): void {
+  private onMouseUpGizmo = (): void => {
     this.endContinuousEditing.emit(this, EventArgs.empty);
-  }
+  };
 
-  onObjectChange(): void {
+  private onObjectChangeGizmo = (): void => {
     Assert.isNotNull(this.attachedObject?.model);
 
     this.attachedObject.model.position = new SeVector3(
@@ -86,5 +99,28 @@ export class ViewportController implements Disposable {
       this.attachedObject.scale.y,
       this.attachedObject.scale.z
     );
+  };
+
+  private onClickElement = (event: Event): void => {
+    const x = event.offsetX;
+    const y = event.offsetY;
+    const w = this.domElement.offsetWidth;
+    const h = this.domElement.offsetHeight;
+
+    const mouse = new Vector2((x / w) * 2 - 1, -(y / h) * 2 + 1);
+    this.raycaster.setFromCamera(mouse, this.camera);
+
+    const intersects = this.raycaster.intersectObjects(from(this.parent.allChildren()).toArray());
+    if (intersects.length == 0) {
+      return;
+    }
+
+    this.objectsPicked.emit(this, new ObjectsPickedEventArgs(intersects.map(x => x.object as ThObject3D)));
+  };
+}
+
+export class ObjectsPickedEventArgs extends EventArgs {
+  constructor(readonly objects: ThObject3D[]) {
+    super();
   }
 }

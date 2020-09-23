@@ -27,19 +27,16 @@
 <script lang="ts">
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
-import { RootSceneViewModel } from '@/view-models/RootSceneViewModel';
 import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { from } from 'linq-to-typescript';
 import { PerspectiveCamera, WebGLRenderer } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
-import { ViewportController } from './Viewportcontroller';
+import { ViewportController } from './ViewportController';
 
 type Props = {
-  scene: RootSceneViewModel;
+  scene: ThObject3D;
   selectedObject: SeObject3D | null;
   updated: TypedEvent;
 };
@@ -88,6 +85,7 @@ export default defineComponent({
       controller = new ViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
+      controller.objectsPicked.on((_, e) => context.emit('update:selectedObject', e.objects[0].model));
 
       // stats
       stats.dom.style.position = 'absolute';
