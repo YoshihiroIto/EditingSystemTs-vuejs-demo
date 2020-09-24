@@ -84,9 +84,9 @@ type Props = {
 export default defineComponent({
   name: 'TreeViewItem',
   props: {
-    data: { default: null },
-    root: { default: null },
-    depth: { default: 0 },
+    data: { type: Object as () => HasChildren, default: null },
+    root: { type: TreeViewContext, default: null },
+    depth: { type: Number, default: 0 },
   },
   setup(props: Props, context: SetupContext) {
     const calcHasChildren = () => props.data.children != null && props.data.children.length > 0;
