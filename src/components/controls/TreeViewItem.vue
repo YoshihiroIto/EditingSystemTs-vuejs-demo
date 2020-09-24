@@ -24,7 +24,7 @@
         :key="childIndex"
         :depth="depth + 1"
       >
-        <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
+        <template v-for="slotName of Object.keys(slots)" #[slotName]="data">
           <slot :name="slotName" v-bind="data" />
         </template>
       </TreeViewItem>
@@ -71,7 +71,7 @@
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from '@vue/composition-api';
+import { computed, defineComponent, ref, SetupContext } from '@vue/composition-api';
 import { HasChildren } from './HasChildren';
 import { TreeViewContext } from './TreeViewContext';
 
@@ -88,7 +88,7 @@ export default defineComponent({
     root: { default: null },
     depth: { default: 0 },
   },
-  setup(props: Props) {
+  setup(props: Props, context: SetupContext) {
     const calcHasChildren = () => props.data.children != null && props.data.children.length > 0;
 
     const isExpanded = ref(true);
@@ -116,6 +116,7 @@ export default defineComponent({
       indent,
       onClickItem,
       onClickExpander,
+      slots: context.slots,
     };
   },
 });

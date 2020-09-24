@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
     <TreeViewItem v-for="(child, index) in children" :data="child" :key="index" :root="root" :depth="0">
-      <template v-for="slotName of Object.keys($scopedSlots)" #[slotName]="data">
+      <template v-for="slotName of Object.keys(slots)" #[slotName]="data">
         <slot :name="slotName" v-bind="data" />
       </template>
     </TreeViewItem>
@@ -35,6 +35,7 @@ export default defineComponent({
 
     return {
       root,
+      slots: context.slots,
     };
   },
 });
