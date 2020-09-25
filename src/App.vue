@@ -48,7 +48,7 @@
       @end-continuous-editing="onEndContinuousEditing"
     />
     <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
-    <Inspector
+    <ObjectInspector
       class="inspector"
       :target="testModel.selectedObject"
       @begin-continuous-editing="onBeginContinuousEditing"
@@ -133,7 +133,7 @@ import NumberEditor from './components/controls/NumberEditor.vue';
 import TextBox from './components/controls/TextBox.vue';
 import Viewport from './components/Viewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
-import Inspector from './components/Inspector.vue';
+import ObjectInspector from './components/ObjectInspector.vue';
 import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
@@ -146,7 +146,7 @@ export default defineComponent({
     TextBox,
     Viewport,
     ObjectTreeView,
-    Inspector,
+    ObjectInspector,
   },
   setup() {
     const _history = container.resolve(History);
