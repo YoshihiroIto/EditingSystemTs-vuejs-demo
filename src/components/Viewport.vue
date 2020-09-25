@@ -14,8 +14,8 @@
   position: absolute;
   color: lightgray;
   font-size: small;
-  top: 50px;
-  left: 0px;
+  top: 0px;
+  left: 84px;
 }
 
 .canvas {
