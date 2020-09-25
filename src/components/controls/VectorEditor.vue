@@ -1,7 +1,7 @@
 <template>
   <div id="container">
-    <div id="x-name">X:</div>
-    <div id="x-value">
+    <div>X:</div>
+    <div>
       <NumberEditor
         :value.sync="x"
         :min="min"
@@ -12,8 +12,8 @@
       />
     </div>
 
-    <div id="y-name">Y:</div>
-    <div id="y-value">
+    <div>Y:</div>
+    <div>
       <NumberEditor
         :value.sync="y"
         :min="min"
@@ -24,8 +24,8 @@
       />
     </div>
 
-    <div id="z-name">Z:</div>
-    <div id="z-value">
+    <div>Z:</div>
+    <div>
       <NumberEditor
         :value.sync="z"
         :min="min"
@@ -38,42 +38,12 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 #container {
   display: grid;
 
-  grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: auto 1fr;
-}
-
-.x-name {
-  grid-row: 1;
-  grid-column: 1;
-}
-
-.y-name {
-  grid-row: 2;
-  grid-column: 1;
-}
-
-.x-name {
-  grid-row: 3;
-  grid-column: 1;
-}
-
-.x-value {
-  grid-row: 1;
-  grid-column: 2;
-}
-
-.y-value {
-  grid-row: 2;
-  grid-column: 2;
-}
-
-.x-value {
-  grid-row: 3;
-  grid-column: 2;
+  grid-template-rows: 1fr 1fr 1fr;
 }
 </style>
 

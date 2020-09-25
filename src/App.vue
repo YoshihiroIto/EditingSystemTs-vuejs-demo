@@ -57,22 +57,26 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+$base-gap: 4px;
+$window-width: calc(100vw - #{$base-gap * 2});
+$window-height: calc(100vh - #{$base-gap * 2});
+
 .app {
   display: grid;
 
-  max-height: calc(100vh - 8px);
-  min-height: calc(100vh - 8px);
-  height: calc(100vh - 8px);
-  max-width: calc(100vw - 8px);
-  min-width: calc(100vw - 8px);
-  width: calc(100vw - 8px);
+  max-width: $window-width;
+  min-width: $window-width;
+  width: $window-width;
+  max-height: $window-height;
+  min-height: $window-height;
+  height: $window-height;
 
-  margin: 4px;
-  gap: 4px;
+  margin: $base-gap;
+  gap: $base-gap;
 
-  grid-template-rows: auto 1fr 1fr;
   grid-template-columns: 1fr 400px;
+  grid-template-rows: auto 1fr 1fr;
 
   grid-template-areas:
     'header   header'
@@ -84,32 +88,31 @@
   grid-area: header;
 }
 
+.pane_base {
+  overflow: auto;
+  white-space: nowrap;
+  padding: $base-gap;
+  border: 1px solid #aab;
+}
+
 .viewport {
   grid-area: viewport;
 }
 
 .tree {
+  @extend .pane_base;
   grid-area: tree;
-  overflow: auto;
-  white-space: nowrap;
-
-  padding: 4px;
-  border: 1px solid #aab;
 }
 
 .inspector {
+  @extend .pane_base;
   grid-area: inspector;
-  overflow: auto;
-  white-space: nowrap;
-
-  padding: 4px;
-  border: 1px solid #aab;
 }
 
 .block {
   display: flex;
   flex-flow: row no-wrap;
-  margin-top: 4px;
+  margin-top: $base-gap;
 }
 
 .block_h_2nd {

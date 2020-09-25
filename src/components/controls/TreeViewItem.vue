@@ -32,27 +32,28 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+$selected-color: #6d99ff;
+$hover-color: #eee;
+
 .item {
   display: flex;
   flex-flow: row no-wrap;
   cursor: pointer;
-}
 
-.item:hover {
-  background-color: #eee;
+  &:hover {
+    background: $hover-color;
+  }
 }
 
 .itemSelected {
-  display: flex;
-  flex-flow: row no-wrap;
-  cursor: pointer;
+  @extend .item;
+  background: $selected-color;
 
-  background-color: #aaf;
-}
-
-.itemSelected:hover {
-  background-color: #ccf;
+  &:hover {
+    // background-color: #ccf;
+    background: lighten($selected-color, 5%);
+  }
 }
 
 .expander {
@@ -62,11 +63,11 @@
 }
 
 .expanderWrapper:hover {
-  background: #ccc;
+  background: darken($hover-color, 10%);
 }
 
 .expanderWrapperSelected:hover {
-  background-color: #aaf;
+  background: $selected-color;
 }
 </style>
 
