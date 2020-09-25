@@ -47,7 +47,7 @@
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
     />
-    <ObjectTreeView class="tree" :children="children" :selectedObject.sync="testModel.selectedObject" />
+    <ObjectTreeView class="treeview" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <ObjectInspector
       class="inspector"
       :target="testModel.selectedObject"
@@ -80,7 +80,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 
   grid-template-areas:
     'header   header'
-    'viewport tree'
+    'viewport treeview'
     'viewport inspector';
 }
 
@@ -88,7 +88,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
   grid-area: header;
 }
 
-.pane_base {
+.pane-base {
   overflow: auto;
   white-space: nowrap;
   padding: $base-gap;
@@ -99,13 +99,13 @@ $window-height: calc(100vh - #{$base-gap * 2});
   grid-area: viewport;
 }
 
-.tree {
-  @extend .pane_base;
-  grid-area: tree;
+.treeview {
+  @extend .pane-base;
+  grid-area: treeview;
 }
 
 .inspector {
-  @extend .pane_base;
+  @extend .pane-base;
   grid-area: inspector;
 }
 
