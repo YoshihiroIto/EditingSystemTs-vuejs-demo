@@ -28,6 +28,7 @@
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
 import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
+import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { from } from 'linq-to-typescript';
 import { PerspectiveCamera, WebGLRenderer } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
@@ -37,9 +38,9 @@ import { ViewportController } from './ViewportController';
 import { ViewportHelper } from './ViewportHelper';
 
 type Props = {
-  scene: ThObject3D;
+  scene: ThObject3D | null;
   selectedObject: SeObject3D | null;
-  updated: TypedEvent;
+  updated: TypedEvent | null;
 };
 
 export default defineComponent({
@@ -75,6 +76,8 @@ export default defineComponent({
     let helper: ViewportHelper | null = null;
 
     onMounted(() => {
+      Assert.isNotNull(props.scene);
+
       renderer = new WebGLRenderer({
         antialias: true,
         canvas: canvas.value,
@@ -82,7 +85,7 @@ export default defineComponent({
       renderer.setPixelRatio(window.devicePixelRatio);
 
       resizeObserver.observe(canvas.value);
-      props.updated.on(requestRender);
+      props.updated?.on(requestRender);
 
       controller = new ViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
@@ -98,7 +101,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      props.updated.off(requestRender);
+      props.updated?.off(requestRender);
 
       resizeObserver.unobserve(canvas.value);
       resizeObserver.disconnect();
@@ -111,6 +114,8 @@ export default defineComponent({
     watch(
       () => props.selectedObject,
       (newObj: SeObject3D | null) => {
+        Assert.isNotNull(props.scene);
+
         let isAttached = false;
 
         if (newObj != null) {
@@ -148,6 +153,8 @@ export default defineComponent({
 
     let frameCount = ref(0);
     const render = () => {
+      Assert.isNotNull(props.scene);
+
       ++frameCount.value;
 
       renderer?.render(props.scene, camera);
