@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <Viewport
+    <SceneViewport
       class="viewport"
       :scene="rootSceneViewModel"
       :selectedObject.sync="testModel.selectedObject"
@@ -131,7 +131,7 @@ import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 
 import NumberEditor from './components/controls/NumberEditor.vue';
 import TextBox from './components/controls/TextBox.vue';
-import Viewport from './components/Viewport.vue';
+import SceneViewport from './components/SceneViewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import ObjectInspector from './components/ObjectInspector.vue';
 import { SeObject3D } from './se/SeObject3D';
@@ -144,7 +144,7 @@ export default defineComponent({
   components: {
     NumberEditor,
     TextBox,
-    Viewport,
+    SceneViewport,
     ObjectTreeView,
     ObjectInspector,
   },

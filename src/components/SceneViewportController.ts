@@ -10,7 +10,7 @@ import { SeVector3 } from '@/se/math/SeVector3';
 import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
 
-export class ViewportController implements Disposable {
+export class SceneViewportController implements Disposable {
   readonly cameraControls: OrbitControls;
   readonly gizmo: TransformControls;
 

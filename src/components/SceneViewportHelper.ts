@@ -4,7 +4,7 @@ import { AxesHelper } from 'three/src/helpers/AxesHelper';
 import { Color } from 'three/src/math/Color';
 import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
 
-export class ViewportHelper implements Disposable {
+export class SceneViewportHelper implements Disposable {
   readonly grid: GridHelper;
   readonly axes: AxesHelper;
 

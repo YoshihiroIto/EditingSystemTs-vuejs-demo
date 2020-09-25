@@ -34,8 +34,8 @@ import { PerspectiveCamera, WebGLRenderer } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
-import { ViewportController } from './ViewportController';
-import { ViewportHelper } from './ViewportHelper';
+import { SceneViewportController } from './SceneViewportController';
+import { SceneViewportHelper } from './SceneViewportHelper';
 
 type Props = {
   scene: ThObject3D | null;
@@ -72,8 +72,8 @@ export default defineComponent({
     });
 
     let renderer: WebGLRenderer | null = null;
-    let controller: ViewportController | null = null;
-    let helper: ViewportHelper | null = null;
+    let controller: SceneViewportController | null = null;
+    let helper: SceneViewportHelper | null = null;
 
     onMounted(() => {
       Assert.isNotNull(props.scene);
@@ -87,12 +87,12 @@ export default defineComponent({
       resizeObserver.observe(canvas.value);
       props.updated?.on(requestRender);
 
-      controller = new ViewportController(props.scene, camera, renderer.domElement, requestRender);
+      controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.objectsPicked.on((_, e) => context.emit('update:selectedObject', e.objects[0].model));
 
-      helper = new ViewportHelper(props.scene);
+      helper = new SceneViewportHelper(props.scene);
 
       // stats
       stats.dom.style.position = 'absolute';
