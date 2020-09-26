@@ -62,6 +62,7 @@ import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CameraHelper } from '../foundations/CameraHelper';
 import { SceneViewportController } from './SceneViewportController';
 import { SceneViewportHelper } from './SceneViewportHelper';
+import ResizeObserver from 'resize-observer-polyfill';
 
 type Props = {
   scene: ThObject3D | null;
@@ -87,8 +88,6 @@ export default defineComponent({
     camera.position.set(0, 0, 20);
     camera.lookAt(0, 0, 0);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
       Assert.isNotNull(canvasWrapper.value);
       Assert.isNotNull(toolbar.value);
@@ -115,7 +114,7 @@ export default defineComponent({
       });
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      resizeObserver.observe(container.value);
+      resizeObserver.observe(container.value as Element);
       props.updated?.on(requestRender);
 
       controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
@@ -134,7 +133,7 @@ export default defineComponent({
     onUnmounted(() => {
       props.updated?.off(requestRender);
 
-      resizeObserver.unobserve(canvas.value);
+      resizeObserver.unobserve(canvas.value as Element);
       resizeObserver.disconnect();
 
       helper?.dispose();
