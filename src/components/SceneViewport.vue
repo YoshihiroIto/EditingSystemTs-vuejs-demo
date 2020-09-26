@@ -1,6 +1,6 @@
 ﻿<template>
   <div id="container" ref="container">
-    <div id="toolbar" ref="toolbar" />
+    <SceneViewportToolbar id="toolbar" ref="toolbar" />
     <div id="canvas-wrapper" ref="canvasWrapper">
       <canvas id="canvas" ref="canvas" />
       <div id="info">
@@ -25,9 +25,6 @@
 
 #toolbar {
   grid-area: toolbar;
-
-  height: 48px;
-  background: lightgray;
 }
 
 #canvas-wrapper {
@@ -51,6 +48,7 @@
 </style>
 
 <script lang="ts">
+import SceneViewportToolbar from './SceneViewportToolbar.vue';
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
 import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
@@ -76,10 +74,13 @@ export default defineComponent({
     selectedObject: { default: null },
     updated: { default: null },
   },
+  components: {
+    SceneViewportToolbar,
+  },
   setup(props: Props, context: SetupContext) {
-    const container = ref<HTMLCanvasElement>();
-    const toolbar = ref<HTMLCanvasElement>();
-    const canvasWrapper = ref<HTMLDivElement>();
+    const container = ref<HTMLElement>();
+    const toolbar = ref<HTMLElement>();
+    const canvasWrapper = ref<HTMLElement>();
     const canvas = ref<HTMLCanvasElement>();
     const stats = Stats();
 
