@@ -106,8 +106,8 @@ export default defineComponent({
       requestRender();
     });
 
-    let renderer: WebGLRenderer | null = null;
-    let controller: SceneViewportController | null = null;
+    let renderer: WebGLRenderer;
+    let controller: SceneViewportController;
 
     const trash = new CompositeDisposable();
 
@@ -187,15 +187,10 @@ export default defineComponent({
       requestAnimationFrame(animate);
     };
 
-    let frameCount = ref(0);
-    let resizeCount = ref(0);
+    const frameCount = ref(0);
+    const resizeCount = ref(0);
     const render = () => {
-      if (renderer == null) {
-        return;
-      }
-      if (props.scene == null) {
-        return;
-      }
+      Assert.isNotNull(props.scene);
 
       // canvas size
       {
