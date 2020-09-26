@@ -1,16 +1,41 @@
 ﻿<template>
-  <div class="wrapper" ref="canvasWrapper">
-    <canvas class="canvas" ref="canvas" height="60" />
-    <div class="info">FrameCount: {{ frameCount }}</div>
+  <div id="container" ref="container">
+    <div id="toolbar" ref="toolbar" />
+    <div id="canvas-wrapper" ref="canvasWrapper">
+      <canvas id="canvas" ref="canvas" />
+      <div id="info">
+        FrameCount: {{ frameCount }}<br />
+        ResizeCount: {{ resizeCount }}
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.wrapper {
+#container {
+  display: grid;
+
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+
+  grid-template-areas:
+    'toolbar'
+    'canvas';
+}
+
+#toolbar {
+  grid-area: toolbar;
+
+  height: 48px;
+  background: lightgray;
+}
+
+#canvas-wrapper {
+  grid-area: canvas;
   position: relative;
 }
 
-.info {
+#info {
   position: absolute;
   color: lightgray;
   font-size: small;
@@ -18,9 +43,10 @@
   left: 84px;
 }
 
-.canvas {
+#canvas {
   width: 100%;
   height: 100%;
+  display: block;
 }
 </style>
 
@@ -50,8 +76,10 @@ export default defineComponent({
     updated: { default: null },
   },
   setup(props: Props, context: SetupContext) {
-    const canvas = ref<HTMLCanvasElement>();
+    const container = ref<HTMLCanvasElement>();
+    const toolbar = ref<HTMLCanvasElement>();
     const canvasWrapper = ref<HTMLDivElement>();
+    const canvas = ref<HTMLCanvasElement>();
     const stats = Stats();
 
     // camera
@@ -62,11 +90,14 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
-      const w = entries[0].contentRect.width;
-      const h = entries[0].contentRect.height;
+      Assert.isNotNull(canvasWrapper.value);
+      Assert.isNotNull(toolbar.value);
 
-      CameraHelper.SetAspect(camera, w / h);
-      renderer?.setSize(w, h, false);
+      // const w = entries[0].contentRect.width;
+      const h = entries[0].contentRect.height - toolbar.value.clientHeight;
+
+      // canvasWrapper.value.style.width = w + 'px';
+      canvasWrapper.value.style.height = h + 'px';
 
       requestRender();
     });
@@ -84,7 +115,7 @@ export default defineComponent({
       });
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      resizeObserver.observe(canvas.value);
+      resizeObserver.observe(container.value);
       props.updated?.on(requestRender);
 
       controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
@@ -152,8 +183,29 @@ export default defineComponent({
     };
 
     let frameCount = ref(0);
+    let resizeCount = ref(0);
     const render = () => {
-      Assert.isNotNull(props.scene);
+      if (renderer == null) {
+        return;
+      }
+      if (props.scene == null) {
+        return;
+      }
+
+      // canvas size
+      {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+
+        if (needResize) {
+          renderer.setSize(width, height, false);
+          CameraHelper.SetAspect(camera, width / height);
+
+          ++resizeCount.value;
+        }
+      }
 
       ++frameCount.value;
 
@@ -162,9 +214,12 @@ export default defineComponent({
     };
 
     return {
-      canvas,
+      container,
+      toolbar,
       canvasWrapper,
+      canvas,
       frameCount,
+      resizeCount,
     };
   },
 });
