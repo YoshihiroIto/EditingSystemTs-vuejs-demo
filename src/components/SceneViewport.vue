@@ -56,6 +56,7 @@ import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
 import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
+import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { from } from 'linq-to-typescript';
 import { PerspectiveCamera, WebGLRenderer } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
@@ -107,10 +108,14 @@ export default defineComponent({
 
     let renderer: WebGLRenderer | null = null;
     let controller: SceneViewportController | null = null;
-    let helper: SceneViewportHelper | null = null;
+
+    const trash = new CompositeDisposable();
 
     onMounted(() => {
       Assert.isNotNull(props.scene);
+
+      resizeObserver.observe(container.value as Element);
+      props.updated?.on(requestRender);
 
       renderer = new WebGLRenderer({
         antialias: true,
@@ -118,15 +123,14 @@ export default defineComponent({
       });
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      resizeObserver.observe(container.value as Element);
-      props.updated?.on(requestRender);
-
       controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.objectsPicked.on((_, e) => context.emit('update:selectedObject', e.objects[0].model));
 
-      helper = new SceneViewportHelper(props.scene);
+      trash.push(renderer);
+      trash.push(controller);
+      trash.push(new SceneViewportHelper(props.scene));
 
       // stats
       stats.dom.style.position = 'absolute';
@@ -140,9 +144,7 @@ export default defineComponent({
       resizeObserver.unobserve(canvas.value as Element);
       resizeObserver.disconnect();
 
-      helper?.dispose();
-      controller?.dispose();
-      renderer?.dispose();
+      trash.dispose();
     });
 
     watch(
