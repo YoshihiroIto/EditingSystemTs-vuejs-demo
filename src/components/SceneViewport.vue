@@ -193,10 +193,12 @@ export default defineComponent({
 
       // canvas size
       {
-        const canvas = renderer.domElement;
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
+        // ref: https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html
+
+        const domElement = renderer.domElement;
+        const width = domElement.clientWidth;
+        const height = domElement.clientHeight;
+        const needResize = domElement.width !== width || domElement.height !== height;
 
         if (needResize) {
           renderer.setSize(width, height, false);
@@ -208,7 +210,7 @@ export default defineComponent({
 
       ++frameCount.value;
 
-      renderer?.render(props.scene, camera);
+      renderer.render(props.scene, camera);
       stats.update();
     };
 
