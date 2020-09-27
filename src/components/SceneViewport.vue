@@ -1,8 +1,6 @@
 ﻿<template>
   <div id="container" ref="container">
-    <div id="toolbar-wrapper" ref="toolbarWrapper">
-      <SceneViewportToolbar />
-    </div>
+    <SceneViewportToolbar id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
       <canvas id="canvas" ref="canvas" />
@@ -26,7 +24,7 @@
     'canvas';
 }
 
-#toolbar-wrapper {
+#toolbar {
   grid-area: toolbar;
 }
 
@@ -83,7 +81,7 @@ export default defineComponent({
   },
   setup(props: Props, context: SetupContext) {
     const container = ref<HTMLElement>();
-    const toolbarWrapper = ref<HTMLElement>();
+    const toolbar = ref<InstanceType<typeof SceneViewportToolbar>>();
     const canvasWrapper = ref<HTMLElement>();
     const canvas = ref<HTMLCanvasElement>();
     const stats = Stats();
@@ -95,10 +93,10 @@ export default defineComponent({
 
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
       Assert.isNotNull(canvasWrapper.value);
-      Assert.isNotNull(toolbarWrapper.value);
+      Assert.isNotNull(toolbar.value);
 
       // const w = entries[0].contentRect.width;
-      const h = entries[0].contentRect.height - toolbarWrapper.value.clientHeight;
+      const h = entries[0].contentRect.height - toolbar.value.$el.clientHeight;
 
       // canvasWrapper.value.style.width = w + 'px';
       canvasWrapper.value.style.height = h + 'px';
@@ -217,7 +215,7 @@ export default defineComponent({
 
     return {
       container,
-      toolbarWrapper,
+      toolbar,
       canvasWrapper,
       canvas,
       frameCount,

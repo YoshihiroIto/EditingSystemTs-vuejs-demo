@@ -27,6 +27,8 @@ export default defineComponent({
   },
   setup: (props: Props, context: SetupContext) => {
     //
+
+    return {};
   },
 });
 </script>
