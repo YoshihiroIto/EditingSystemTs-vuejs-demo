@@ -13,8 +13,8 @@
       <VectorEditor
         @begin-continuous-editing="emitBeginContinuousEditing"
         @end-continuous-editing="emitEndContinuousEditing"
-        :min="-10"
-        :max="10"
+        :min="-100"
+        :max="100"
         :valueX.sync="positionX"
         :valueY.sync="positionY"
         :valueZ.sync="positionZ"
@@ -30,6 +30,18 @@
         :valueX.sync="rotationX"
         :valueY.sync="rotationY"
         :valueZ.sync="rotationZ"
+      />
+
+      <br />
+      scale:
+      <VectorEditor
+        @begin-continuous-editing="emitBeginContinuousEditing"
+        @end-continuous-editing="emitEndContinuousEditing"
+        :min="0"
+        :max="10"
+        :valueX.sync="scaleX"
+        :valueY.sync="scaleY"
+        :valueZ.sync="scaleZ"
       />
     </template>
 
@@ -63,6 +75,7 @@ export default defineComponent({
 
     const [positionX, positionY, positionZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('position'));
     const [rotationX, rotationY, rotationZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('rotation'));
+    const [scaleX, scaleY, scaleZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('scale'));
 
     return {
       emitBeginContinuousEditing,
@@ -74,6 +87,9 @@ export default defineComponent({
       rotationX,
       rotationY,
       rotationZ,
+      scaleX,
+      scaleY,
+      scaleZ,
       //
       npi: -Math.PI,
       ppi: Math.PI,
