@@ -1,5 +1,5 @@
 ﻿<template>
-  <div id="container" ref="container">
+  <div id="container" ref="container" @keydown="onKeyDown" @keyup="onKeyUp">
     <SceneViewportToolbar :mode.sync="controllerMode" :space.sync="controllerSpace" id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
@@ -95,24 +95,11 @@ export default defineComponent({
     ///////////////////////////////////////////////////////////////////////////
     // controller
     ///////////////////////////////////////////////////////////////////////////
-    let _controllerMode = SceneViewportControllerModes.Translate as SceneViewportControllerMode;
-    let _controllerSpace = SceneViewportControllerSpaces.World as SceneViewportControllerSpace;
+    const controllerMode = ref(SceneViewportControllerModes.Translate as SceneViewportControllerMode);
+    const controllerSpace = ref(SceneViewportControllerSpaces.World as SceneViewportControllerSpace);
 
-    const controllerMode = computed({
-      get: () => _controllerMode,
-      set: (value: SceneViewportControllerMode) => {
-        _controllerMode = value;
-        controller.mode = value;
-      },
-    });
-
-    const controllerSpace = computed({
-      get: () => _controllerSpace,
-      set: (value: SceneViewportControllerSpace) => {
-        _controllerSpace = value;
-        controller.space = value;
-      },
-    });
+    watch(controllerMode, value => (controller.mode = value));
+    watch(controllerSpace, value => (controller.space = value));
 
     ///////////////////////////////////////////////////////////////////////////
     // camera
@@ -249,6 +236,44 @@ export default defineComponent({
       stats.update();
     };
 
+    ///////////////////////////////////////////////////////////////////////////
+    // shortcut keys
+    ///////////////////////////////////////////////////////////////////////////
+    const onKeyDown = (e: KeyboardEvent) => {
+      switch (e.keyCode) {
+        case 16: // [SHIFT]
+          controller.isSnap = true;
+          break;
+
+        case 87: // W
+          controllerMode.value = SceneViewportControllerModes.Translate;
+          break;
+
+        case 69: // E
+          controllerMode.value = SceneViewportControllerModes.Rotate;
+          break;
+
+        case 82: // R
+          controllerMode.value = SceneViewportControllerModes.Scale;
+          break;
+
+        case 81: // Q
+          controllerSpace.value =
+            controllerSpace.value == SceneViewportControllerSpaces.World
+              ? SceneViewportControllerSpaces.Local
+              : SceneViewportControllerSpaces.World;
+
+          break;
+      }
+    };
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      // [SHIFT]
+      if (e.keyCode == 16) {
+        controller.isSnap = false;
+      }
+    };
+
     return {
       container,
       toolbar,
@@ -259,6 +284,9 @@ export default defineComponent({
       //
       controllerMode,
       controllerSpace,
+      //
+      onKeyDown,
+      onKeyUp,
     };
   },
 });

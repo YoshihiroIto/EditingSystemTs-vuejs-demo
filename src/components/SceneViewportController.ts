@@ -10,6 +10,7 @@ import { SeVector3 } from '@/se/math/SeVector3';
 import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
 import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';
+import { MathUtils } from 'three/src/math/MathUtils';
 
 export class SceneViewportController implements Disposable {
   readonly beginContinuousEditing = new TypedEvent();
@@ -19,14 +20,47 @@ export class SceneViewportController implements Disposable {
   set mode(m: SceneViewportControllerMode) {
     this.gizmo.setMode(m);
   }
+  get mode(): SceneViewportControllerMode {
+    return this.gizmo.mode as SceneViewportControllerMode;
+  }
   set space(m: SceneViewportControllerSpace) {
     this.gizmo.setSpace(m);
+  }
+  get space(): SceneViewportControllerSpace {
+    return this.gizmo.space as SceneViewportControllerSpace;
+  }
+
+  get isSnap(): boolean {
+    return this._isSnap;
+  }
+
+  set isSnap(i: boolean) {
+    if (i === this._isSnap) {
+      return;
+    }
+
+    this._isSnap = i;
+
+    if (i === true) {
+      this.gizmo.setTranslationSnap(1);
+      this.gizmo.setRotationSnap(MathUtils.degToRad(15));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.gizmo as any).setScaleSnap(0.25);
+    } else {
+      this.gizmo.setTranslationSnap(null);
+      this.gizmo.setRotationSnap(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.gizmo as any).setScaleSnap(null);
+    }
   }
 
   private readonly cameraControls: OrbitControls;
   private readonly gizmo: TransformControls;
+
   private attachedObject: ThObject3D | null = null;
   private raycaster = new Raycaster();
+
+  private _isSnap = false;
 
   constructor(
     private readonly parent: ThObject3D,
