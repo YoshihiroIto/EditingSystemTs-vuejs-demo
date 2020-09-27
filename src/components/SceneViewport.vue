@@ -52,7 +52,7 @@
 import SceneViewportToolbar from './SceneViewportToolbar.vue';
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
-import { computed, defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { from } from 'linq-to-typescript';

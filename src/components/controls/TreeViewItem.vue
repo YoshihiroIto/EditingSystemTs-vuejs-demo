@@ -51,7 +51,6 @@ $hover-color: #eee;
   background: $selected-color;
 
   &:hover {
-    // background-color: #ccf;
     background: lighten($selected-color, 5%);
   }
 }
