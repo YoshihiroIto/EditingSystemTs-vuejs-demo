@@ -9,15 +9,22 @@ import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { SeVector3 } from '@/se/math/SeVector3';
 import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
+import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';
 
 export class SceneViewportController implements Disposable {
-  readonly cameraControls: OrbitControls;
-  readonly gizmo: TransformControls;
-
   readonly beginContinuousEditing = new TypedEvent();
   readonly endContinuousEditing = new TypedEvent();
   readonly objectsPicked = new TypedEvent<ObjectsPickedEventArgs>();
 
+  set mode(m: SceneViewportControllerMode) {
+    this.gizmo.setMode(m);
+  }
+  set space(m: SceneViewportControllerSpace) {
+    this.gizmo.setSpace(m);
+  }
+
+  private readonly cameraControls: OrbitControls;
+  private readonly gizmo: TransformControls;
   private attachedObject: ThObject3D | null = null;
   private raycaster = new Raycaster();
 

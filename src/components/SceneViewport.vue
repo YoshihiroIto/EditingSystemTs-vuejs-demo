@@ -1,6 +1,6 @@
 ﻿<template>
   <div id="container" ref="container">
-    <SceneViewportToolbar id="toolbar" ref="toolbar" />
+    <SceneViewportToolbar :mode.sync="controllerMode" :space.sync="controllerSpace" id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
       <canvas id="canvas" ref="canvas" />
@@ -52,7 +52,7 @@
 import SceneViewportToolbar from './SceneViewportToolbar.vue';
 import { SeObject3D } from '@/se/SeObject3D';
 import { ThObject3D } from '@/th/ThObject';
-import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
+import { computed, defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { from } from 'linq-to-typescript';
@@ -63,6 +63,12 @@ import { CameraHelper } from '../foundations/CameraHelper';
 import { SceneViewportController } from './SceneViewportController';
 import { SceneViewportHelper } from './SceneViewportHelper';
 import ResizeObserver from 'resize-observer-polyfill';
+import {
+  SceneViewportControllerMode,
+  SceneViewportControllerModes,
+  SceneViewportControllerSpace,
+  SceneViewportControllerSpaces,
+} from './SceneViewportConstants';
 
 type Props = {
   scene: ThObject3D | null;
@@ -86,7 +92,31 @@ export default defineComponent({
     const canvas = ref<HTMLCanvasElement>();
     const stats = Stats();
 
+    ///////////////////////////////////////////////////////////////////////////
+    // controller
+    ///////////////////////////////////////////////////////////////////////////
+    let _controllerMode = SceneViewportControllerModes.Translate as SceneViewportControllerMode;
+    let _controllerSpace = SceneViewportControllerSpaces.World as SceneViewportControllerSpace;
+
+    const controllerMode = computed({
+      get: () => _controllerMode,
+      set: (value: SceneViewportControllerMode) => {
+        _controllerMode = value;
+        controller.mode = value;
+      },
+    });
+
+    const controllerSpace = computed({
+      get: () => _controllerSpace,
+      set: (value: SceneViewportControllerSpace) => {
+        _controllerSpace = value;
+        controller.space = value;
+      },
+    });
+
+    ///////////////////////////////////////////////////////////////////////////
     // camera
+    ///////////////////////////////////////////////////////////////////////////
     const camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
     camera.position.set(0, 0, 20);
     camera.lookAt(0, 0, 0);
@@ -145,6 +175,9 @@ export default defineComponent({
       trash.dispose();
     });
 
+    ///////////////////////////////////////////////////////////////////////////
+    // selectedObject
+    ///////////////////////////////////////////////////////////////////////////
     watch(
       () => props.selectedObject,
       (newObj: SeObject3D | null) => {
@@ -169,6 +202,9 @@ export default defineComponent({
       }
     );
 
+    ///////////////////////////////////////////////////////////////////////////
+    // render
+    ///////////////////////////////////////////////////////////////////////////
     let isRequestRender = false;
 
     const requestRender = () => {
@@ -220,6 +256,9 @@ export default defineComponent({
       canvas,
       frameCount,
       resizeCount,
+      //
+      controllerMode,
+      controllerSpace,
     };
   },
 });
