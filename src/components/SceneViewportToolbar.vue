@@ -52,16 +52,14 @@ type Props = {
 
 export default defineComponent({
   props: {
-    mode: { type: String, default: SceneViewportControllerModes.Translate },
-    space: { type: String, default: SceneViewportControllerSpaces.World },
+    mode: { default: SceneViewportControllerModes.Translate },
+    space: { default: SceneViewportControllerSpaces.World },
   },
   components: {},
   setup: (props: Props, context: SetupContext) => {
     const modeInternal = computed({
       get: () => props.mode,
-      set: (value: SceneViewportControllerMode) => {
-        context.emit('update:mode', value);
-      },
+      set: (value: SceneViewportControllerMode) => context.emit('update:mode', value),
     });
 
     const spaceInternal = computed({
