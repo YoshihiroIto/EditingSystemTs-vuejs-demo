@@ -44,13 +44,11 @@ export class SceneViewportController implements Disposable {
     if (i === true) {
       this.gizmo.setTranslationSnap(1);
       this.gizmo.setRotationSnap(MathUtils.degToRad(15));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.gizmo as any).setScaleSnap(0.25);
+      this.gizmo.setScaleSnap(0.25);
     } else {
       this.gizmo.setTranslationSnap(null);
       this.gizmo.setRotationSnap(null);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.gizmo as any).setScaleSnap(null);
+      this.gizmo.setScaleSnap(null);
     }
   }
 
