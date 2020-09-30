@@ -197,7 +197,7 @@ export default defineComponent({
       rootSceneViewModel.background = new Color(0x24292e);
       rootSceneViewModel.setup(rootScene);
 
-      const children = rootScene.children;
+      const children = ref(rootScene.children);
 
       //
       const addCubes = () => {
