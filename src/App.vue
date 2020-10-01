@@ -19,15 +19,15 @@
       :scene="rootSceneViewModel"
       :selectedObject.sync="project.selectedObject"
       :updated="updated"
-      @begin-continuous-editing="onBeginContinuousEditing"
-      @end-continuous-editing="onEndContinuousEditing"
+      @begin-continuous-editing="beginBatchEditing.invoke()"
+      @end-continuous-editing="endBatchEditing.invoke()"
     />
     <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="project.selectedObject" />
     <ObjectInspector
       id="inspector"
       :target="project.selectedObject"
-      @begin-continuous-editing="onBeginContinuousEditing"
-      @end-continuous-editing="onEndContinuousEditing"
+      @begin-continuous-editing="beginBatchEditing.invoke()"
+      @end-continuous-editing="endBatchEditing.invoke()"
     />
   </div>
 </template>
@@ -115,6 +115,14 @@ import { UseCase } from './Di';
 import { UndoUseCase } from './useCases/history/UndoUseCase';
 import { RedoUseCase } from './useCases/history/RedoUseCase';
 import { ClearHistoryUseCase } from './useCases/history/ClearHistoryUseCase';
+import { BeginBatchEditingUseCase } from './useCases/history/BeginBatchEditingUseCase';
+import { EndBatchEditingUseCase } from './useCases/history/EndBatchEditingUseCase';
+import { BeginPauseEditingUseCase } from './useCases/history/BeginPauseEditingUseCase';
+import { EndPauseEditingUseCase } from './useCases/history/EndPauseEditingUseCase';
+
+import using from './foundations/Using';
+import { BatchEditingBlock } from './models/BatchEditingBlock';
+import { PauseEditingBlock } from './models/PauseEditingBlock';
 
 export default defineComponent({
   name: 'App',
@@ -124,45 +132,31 @@ export default defineComponent({
     ObjectInspector,
   },
   setup() {
-    const undo = container.resolve<UndoUseCase>(UseCase.undo);
-    const redo = container.resolve<RedoUseCase>(UseCase.redo);
-    const clearHistory = container.resolve<ClearHistoryUseCase>(UseCase.clearHistory);
+    return using(container.resolve(PauseEditingBlock), () => {
+      const undo = container.resolve<UndoUseCase>(UseCase.undo);
+      const redo = container.resolve<RedoUseCase>(UseCase.redo);
+      const clearHistory = container.resolve<ClearHistoryUseCase>(UseCase.clearHistory);
+      const beginBatchEditing = container.resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
+      const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
+      const beginPauseEditing = container.resolve<BeginPauseEditingUseCase>(UseCase.beginPauseEditing);
+      const endPauseEditing = container.resolve<EndPauseEditingUseCase>(UseCase.endPauseEditing);
 
-    const project = reactive(container.resolve(Project));
-    const history = reactive(container.resolve(History));
+      const project = reactive(container.resolve(Project));
+      const history = reactive(container.resolve(History));
 
-    const onBeginContinuousEditing = () => {
-      if (history.isInBatch == false) {
-        history.beginBatch();
-      }
-    };
+      document.body.onkeydown = (e: KeyboardEvent) => {
+        if (isUndo(e)) {
+          e.preventDefault();
+          undo.invoke();
+        } else if (isRedo(e)) {
+          e.preventDefault();
+          redo.invoke();
+        }
+      };
 
-    const onEndContinuousEditing = () => {
-      if (history.isInBatch) {
-        history.endBatch();
-      }
-    };
-
-    document.body.onkeydown = (e: KeyboardEvent) => {
-      if (isUndo(e)) {
-        e.preventDefault();
-        undo.invoke();
-      } else if (isRedo(e)) {
-        e.preventDefault();
-        redo.invoke();
-      }
-    };
-
-    // rootScene
-    const rootScene = container.resolve(RootScene);
-    const updated = rootScene.updated;
-
-    const emitUpdated = () => updated.emit(null, EventArgs.empty);
-
-    try {
-      history.edited.on(emitUpdated);
-
-      history.beginPause();
+      // rootScene
+      const rootScene = container.resolve(RootScene);
+      const updated = rootScene.updated;
 
       // rootSceneViewModel
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
@@ -173,15 +167,11 @@ export default defineComponent({
 
       //
       const addCubes = () => {
-        try {
-          history.beginBatch();
-
+        using(container.resolve(BatchEditingBlock), () => {
           for (let i = 0; i != 20; ++i) {
             rootScene.addCube();
           }
-        } finally {
-          history.endBatch();
-        }
+        });
       };
 
       const addChild = () => {
@@ -191,17 +181,16 @@ export default defineComponent({
           parent = parent.children[0];
         }
 
-        try {
-          history.beginBatch();
-
+        using(container.resolve(BatchEditingBlock), () => {
           const cube = rootScene.createCube();
           parent.add(cube);
 
           cube.position = new SeVector3(5, 0, 0);
-        } finally {
-          history.endBatch();
-        }
+        });
       };
+
+      const emitUpdated = () => updated.emit(null, EventArgs.empty);
+      history.edited.on(emitUpdated);
 
       onUnmounted(() => {
         history.edited.off(emitUpdated);
@@ -215,9 +204,10 @@ export default defineComponent({
         undo,
         redo,
         clearHistory,
-
-        onBeginContinuousEditing,
-        onEndContinuousEditing,
+        beginBatchEditing,
+        endBatchEditing,
+        beginPauseEditing,
+        endPauseEditing,
 
         rootSceneViewModel,
         updated,
@@ -226,9 +216,7 @@ export default defineComponent({
         addCubes,
         addChild,
       };
-    } finally {
-      history.endPause();
-    }
+    });
   },
 });
 </script>
