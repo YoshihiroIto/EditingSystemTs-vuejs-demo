@@ -1,10 +1,12 @@
 ﻿import { History } from '../../externals/EditingSystemTs/src/History';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
-import { injectable } from 'tsyringe';
+import { container, injectable } from 'tsyringe';
 import { SeScene } from '@/se/SeScene';
 import { SeVector3 } from '@/se/math/SeVector3';
 import { ObjectCreator } from './ObjectCreator';
 import { SeObject3D } from '@/se/SeObject3D';
+import { BatchEditingBlock } from './BatchEditingBlock';
+import using from '@/foundations/Using';
 
 @injectable()
 export class RootScene extends SeScene {
@@ -23,7 +25,7 @@ export class RootScene extends SeScene {
   }
 
   addCube(): void {
-    try {
+    using(container.resolve(BatchEditingBlock), () => {
       this.history.beginBatch();
 
       const cube = this.createCube();
@@ -36,9 +38,7 @@ export class RootScene extends SeScene {
         Math.random() * Math.PI * 2 - Math.PI,
         Math.random() * Math.PI * 2 - Math.PI
       );
-    } finally {
-      this.history.endBatch();
-    }
+    });
   }
 
   private static instanceCount = 0;
