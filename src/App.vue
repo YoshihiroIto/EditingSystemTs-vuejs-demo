@@ -2,7 +2,7 @@
   <div id="app">
     <div id="header">
       <div class="block">
-        (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
+        (undo:{{ undoRedoCount[0] }}, redo:{{ undoRedoCount[1] }})
         <button @click="undo.invoke()">Undo</button>
         <button @click="redo.invoke()">Redo</button>
         <button @click="clearHistory.invoke()">Clear history</button>
@@ -96,9 +96,8 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
+import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
-import { History } from '../externals/EditingSystemTs/src/History';
 import { EventArgs } from '../externals/EditingSystemTs/src/TypedEvent';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
@@ -120,6 +119,7 @@ import { EndBatchEditingUseCase } from './useCases/history/EndBatchEditingUseCas
 import { BeginPauseEditingUseCase } from './useCases/history/BeginPauseEditingUseCase';
 import { EndPauseEditingUseCase } from './useCases/history/EndPauseEditingUseCase';
 import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
+import { GetUndoRedoCountUseCase } from './useCases/history/GetUndoRedoCountUseCase';
 
 import using from './foundations/Using';
 import { BatchEditingBlock } from './models/BatchEditingBlock';
@@ -142,9 +142,10 @@ export default defineComponent({
       const beginPauseEditing = container.resolve<BeginPauseEditingUseCase>(UseCase.beginPauseEditing);
       const endPauseEditing = container.resolve<EndPauseEditingUseCase>(UseCase.endPauseEditing);
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
+      const getUndoRedoCount = container.resolve<GetUndoRedoCountUseCase>(UseCase.getUndoRedoCount);
 
       const project = reactive(container.resolve(Project));
-      const history = reactive(container.resolve(History));
+      const undoRedoCount = computed(() => getUndoRedoCount.invoke());
 
       document.body.onkeydown = (e: KeyboardEvent) => {
         if (isUndo(e)) {
@@ -201,7 +202,7 @@ export default defineComponent({
 
       return {
         project,
-        history,
+        undoRedoCount,
 
         undo,
         redo,

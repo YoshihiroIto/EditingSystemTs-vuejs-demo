@@ -8,7 +8,7 @@ import { BeginPauseEditingInteractor } from './interactors/history/BeginPauseEdi
 import { EndBatchEditingInteractor } from './interactors/history/EndBatchEditingInteractor';
 import { EndPauseEditingInteractor } from './interactors/history/EndPauseEditingInteractor';
 import { GetEditedInteractor } from './interactors/history/GetEditedInteractor';
-import { reactive } from '@vue/composition-api';
+import { GetUndoRedoCountInteractor } from './interactors/history/GetUndoRedoCountInteractor';
 
 const UseCase = {
   undo: Symbol(),
@@ -19,6 +19,7 @@ const UseCase = {
   beginPauseEditing: Symbol(),
   endPauseEditing: Symbol(),
   getEditedUseCase: Symbol(),
+  getUndoRedoCount: Symbol(),
 };
 
 export { UseCase };
@@ -32,6 +33,7 @@ export default function setupDi(): void {
   container.register(UseCase.beginPauseEditing, { useClass: BeginPauseEditingInteractor });
   container.register(UseCase.endPauseEditing, { useClass: EndPauseEditingInteractor });
   container.register(UseCase.getEditedUseCase, { useClass: GetEditedInteractor });
+  container.register(UseCase.getUndoRedoCount, { useClass: GetUndoRedoCountInteractor });
 
-  container.registerInstance(History, reactive(new History()));
+  container.registerInstance(History, new History());
 }
