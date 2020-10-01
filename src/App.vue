@@ -9,31 +9,6 @@
       </div>
 
       <div class="block">
-        <div class="block">
-          <button @click="inc">Inc</button>
-          <button @click="dec">Dec</button>
-          <NumberEditor
-            @begin-continuous-editing="onBeginContinuousEditing"
-            @end-continuous-editing="onEndContinuousEditing"
-            :min="-500"
-            :max="500"
-            :step="0.01"
-            :value.sync="testModel.valueNumber"
-          />
-          {{ testModel.valueNumber }}
-        </div>
-
-        <div class="block block_h_2nd">
-          <TextBox
-            @begin-continuous-editing="onBeginContinuousEditing"
-            @end-continuous-editing="onEndContinuousEditing"
-            :value.sync="testModel.valueString"
-          />
-          {{ testModel.valueString }}
-        </div>
-      </div>
-
-      <div class="block">
         <button @click="addCubes">Add cubes</button>
         <button @click="addChild">Add child</button>
       </div>
@@ -42,15 +17,15 @@
     <SceneViewport
       id="viewport"
       :scene="rootSceneViewModel"
-      :selectedObject.sync="testModel.selectedObject"
+      :selectedObject.sync="project.selectedObject"
       :updated="updated"
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
     />
-    <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="testModel.selectedObject" />
+    <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="project.selectedObject" />
     <ObjectInspector
       id="inspector"
-      :target="testModel.selectedObject"
+      :target="project.selectedObject"
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
     />
@@ -121,16 +96,13 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
 import { EventArgs } from '../externals/EditingSystemTs/src/TypedEvent';
-import { TestModel } from './models/TestModel';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './view-models/RootSceneViewModel';
 
-import NumberEditor from './components/controls/NumberEditor.vue';
-import TextBox from './components/controls/TextBox.vue';
 import SceneViewport from './components/SceneViewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import ObjectInspector from './components/ObjectInspector.vue';
@@ -138,55 +110,49 @@ import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Color } from 'three/src/math/Color';
+import { Project } from './models/Project';
 
 export default defineComponent({
   name: 'App',
   components: {
-    NumberEditor,
-    TextBox,
     SceneViewport,
     ObjectTreeView,
     ObjectInspector,
   },
   setup() {
-    const _history = container.resolve(History);
-    const _testModel = container.resolve(TestModel);
+    const project = reactive(container.resolve(Project));
+    const history = reactive(container.resolve(History));
 
-    const history = ref(_history);
-    const testModel = ref(_testModel);
-
-    const undo = () => _history.undo();
-    const redo = () => _history.redo();
-    const clearHistory = () => _history.clear();
-    const inc = () => ++_testModel.valueNumber;
-    const dec = () => --_testModel.valueNumber;
+    const undo = () => history.undo();
+    const redo = () => history.redo();
+    const clearHistory = () => history.clear();
 
     const onBeginContinuousEditing = () => {
-      if (_history.isInBatch == false) {
-        _history.beginBatch();
+      if (history.isInBatch == false) {
+        history.beginBatch();
       }
     };
 
     const onEndContinuousEditing = () => {
-      if (_history.isInBatch) {
-        _history.endBatch();
+      if (history.isInBatch) {
+        history.endBatch();
       }
     };
 
     document.body.onkeydown = (e: KeyboardEvent) => {
       if (isUndo(e)) {
         e.preventDefault();
-        _history.undo();
+        history.undo();
       } else if (isRedo(e)) {
         e.preventDefault();
-        _history.redo();
+        history.redo();
       }
     };
 
     try {
-      _history.edited.on(() => updated.emit(null, EventArgs.empty));
+      history.edited.on(() => updated.emit(null, EventArgs.empty));
 
-      _history.beginPause();
+      history.beginPause();
 
       // rootScene
       const rootScene = container.resolve(RootScene);
@@ -202,13 +168,13 @@ export default defineComponent({
       //
       const addCubes = () => {
         try {
-          _history.beginBatch();
+          history.beginBatch();
 
           for (let i = 0; i != 20; ++i) {
             rootScene.addCube();
           }
         } finally {
-          _history.endBatch();
+          history.endBatch();
         }
       };
 
@@ -220,14 +186,14 @@ export default defineComponent({
         }
 
         try {
-          _history.beginBatch();
+          history.beginBatch();
 
           const cube = rootScene.createCube();
           parent.add(cube);
 
           cube.position = new SeVector3(5, 0, 0);
         } finally {
-          _history.endBatch();
+          history.endBatch();
         }
       };
 
@@ -236,14 +202,12 @@ export default defineComponent({
       });
 
       return {
+        project,
         history,
-        testModel,
 
         undo,
         redo,
         clearHistory,
-        inc,
-        dec,
 
         onBeginContinuousEditing,
         onEndContinuousEditing,
@@ -256,7 +220,7 @@ export default defineComponent({
         addChild,
       };
     } finally {
-      _history.endPause();
+      history.endPause();
     }
   },
 });
