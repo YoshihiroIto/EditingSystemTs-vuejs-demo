@@ -119,6 +119,7 @@ import { BeginBatchEditingUseCase } from './useCases/history/BeginBatchEditingUs
 import { EndBatchEditingUseCase } from './useCases/history/EndBatchEditingUseCase';
 import { BeginPauseEditingUseCase } from './useCases/history/BeginPauseEditingUseCase';
 import { EndPauseEditingUseCase } from './useCases/history/EndPauseEditingUseCase';
+import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
 
 import using from './foundations/Using';
 import { BatchEditingBlock } from './models/BatchEditingBlock';
@@ -140,6 +141,7 @@ export default defineComponent({
       const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
       const beginPauseEditing = container.resolve<BeginPauseEditingUseCase>(UseCase.beginPauseEditing);
       const endPauseEditing = container.resolve<EndPauseEditingUseCase>(UseCase.endPauseEditing);
+      const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
 
       const project = reactive(container.resolve(Project));
       const history = reactive(container.resolve(History));
@@ -190,10 +192,10 @@ export default defineComponent({
       };
 
       const emitUpdated = () => updated.emit(null, EventArgs.empty);
-      history.edited.on(emitUpdated);
+      getEdited.invoke().on(emitUpdated);
 
       onUnmounted(() => {
-        history.edited.off(emitUpdated);
+        getEdited.invoke().off(emitUpdated);
         rootSceneViewModel.dispose();
       });
 

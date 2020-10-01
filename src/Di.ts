@@ -8,6 +8,7 @@ import { BeginBatchEditingInteractor } from './interactors/history/BeginBatchEdi
 import { BeginPauseEditingInteractor } from './interactors/history/BeginPauseEditingInteractor';
 import { EndBatchEditingInteractor } from './interactors/history/EndBatchEditingInteractor';
 import { EndPauseEditingInteractor } from './interactors/history/EndPauseEditingInteractor';
+import { GetEditedInteractor } from './interactors/history/GetEditedInteractor';
 
 const UseCase = {
   undo: Symbol(),
@@ -17,6 +18,7 @@ const UseCase = {
   endBatchEditing: Symbol(),
   beginPauseEditing: Symbol(),
   endPauseEditing: Symbol(),
+  getEditedUseCase: Symbol(),
 };
 
 export { UseCase };
@@ -29,6 +31,7 @@ export default function setupDi(): void {
   container.register(UseCase.endBatchEditing, { useClass: EndBatchEditingInteractor });
   container.register(UseCase.beginPauseEditing, { useClass: BeginPauseEditingInteractor });
   container.register(UseCase.endPauseEditing, { useClass: EndPauseEditingInteractor });
+  container.register(UseCase.getEditedUseCase, { useClass: GetEditedInteractor });
 
   container.registerInstance(History, container.resolve(Project).history);
 }
