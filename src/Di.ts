@@ -1,5 +1,4 @@
 import { container } from 'tsyringe';
-import { Project } from './models/Project';
 import { History } from '../externals/EditingSystemTs/src/History';
 import { UndoInteractor } from './interactors/history/UndoInteractor';
 import { RedoInteractor } from './interactors/history/RedoInteractor';
@@ -9,6 +8,7 @@ import { BeginPauseEditingInteractor } from './interactors/history/BeginPauseEdi
 import { EndBatchEditingInteractor } from './interactors/history/EndBatchEditingInteractor';
 import { EndPauseEditingInteractor } from './interactors/history/EndPauseEditingInteractor';
 import { GetEditedInteractor } from './interactors/history/GetEditedInteractor';
+import { reactive } from '@vue/composition-api';
 
 const UseCase = {
   undo: Symbol(),
@@ -33,5 +33,5 @@ export default function setupDi(): void {
   container.register(UseCase.endPauseEditing, { useClass: EndPauseEditingInteractor });
   container.register(UseCase.getEditedUseCase, { useClass: GetEditedInteractor });
 
-  container.registerInstance(History, container.resolve(Project).history);
+  container.registerInstance(History, reactive(new History()));
 }

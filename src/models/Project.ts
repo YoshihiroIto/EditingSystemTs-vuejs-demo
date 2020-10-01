@@ -8,11 +8,10 @@ import { SeObject3D } from '@/se/SeObject3D';
 @singleton()
 export class Project implements NotifyPropertyChanged {
   readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
-  readonly history = new History();
 
   selectedObject: SeObject3D | null = null;
 
-  constructor() {
+  constructor(private readonly history: History) {
     this.history.register(this);
 
     this.propertyChanged.on((_: unknown, e: PropertyChangedEventArgs) => {
