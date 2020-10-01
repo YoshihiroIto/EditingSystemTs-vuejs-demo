@@ -1,6 +1,6 @@
 <template>
-  <div id="app" class="app">
-    <div class="header">
+  <div id="app">
+    <div id="header">
       <div class="block">
         (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
         <button @click="undo">Undo</button>
@@ -40,16 +40,16 @@
     </div>
 
     <SceneViewport
-      class="viewport"
+      id="viewport"
       :scene="rootSceneViewModel"
       :selectedObject.sync="testModel.selectedObject"
       :updated="updated"
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
     />
-    <ObjectTreeView class="treeview" :children="children" :selectedObject.sync="testModel.selectedObject" />
+    <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="testModel.selectedObject" />
     <ObjectInspector
-      class="inspector"
+      id="inspector"
       :target="testModel.selectedObject"
       @begin-continuous-editing="onBeginContinuousEditing"
       @end-continuous-editing="onEndContinuousEditing"
@@ -62,7 +62,7 @@ $base-gap: 4px;
 $window-width: calc(100vw - #{$base-gap * 2});
 $window-height: calc(100vh - #{$base-gap * 2});
 
-.app {
+#app {
   display: grid;
 
   max-width: $window-width;
@@ -84,7 +84,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
     'viewport inspector';
 }
 
-.header {
+#header {
   grid-area: header;
 }
 
@@ -95,16 +95,16 @@ $window-height: calc(100vh - #{$base-gap * 2});
   border: 1px solid #aab;
 }
 
-.viewport {
+#viewport {
   grid-area: viewport;
 }
 
-.treeview {
+#treeview {
   @extend .pane-base;
   grid-area: treeview;
 }
 
-.inspector {
+#inspector {
   @extend .pane-base;
   grid-area: inspector;
 }
