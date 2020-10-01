@@ -3,9 +3,9 @@
     <div id="header">
       <div class="block">
         (undo:{{ history.undoRedoCount[0] }}, redo:{{ history.undoRedoCount[1] }})
-        <button @click="undo">Undo</button>
-        <button @click="redo">Redo</button>
-        <button @click="clearHistory">Clear history</button>
+        <button @click="undo.invoke()">Undo</button>
+        <button @click="redo.invoke()">Redo</button>
+        <button @click="clearHistory.invoke()">Clear history</button>
       </div>
 
       <div class="block">
@@ -101,7 +101,7 @@ import { container } from 'tsyringe';
 import { History } from '../externals/EditingSystemTs/src/History';
 import { EventArgs } from '../externals/EditingSystemTs/src/TypedEvent';
 import { RootScene } from './models/RootScene';
-import { RootSceneViewModel } from './view-models/RootSceneViewModel';
+import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 
 import SceneViewport from './components/SceneViewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
@@ -111,6 +111,10 @@ import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Color } from 'three/src/math/Color';
 import { Project } from './models/Project';
+import { UseCase } from './Di';
+import { UndoUseCase } from './useCases/history/UndoUseCase';
+import { RedoUseCase } from './useCases/history/RedoUseCase';
+import { ClearHistoryUseCase } from './useCases/history/ClearHistoryUseCase';
 
 export default defineComponent({
   name: 'App',
@@ -120,12 +124,12 @@ export default defineComponent({
     ObjectInspector,
   },
   setup() {
+    const undo = container.resolve<UndoUseCase>(UseCase.undo);
+    const redo = container.resolve<RedoUseCase>(UseCase.redo);
+    const clearHistory = container.resolve<ClearHistoryUseCase>(UseCase.clearHistory);
+
     const project = reactive(container.resolve(Project));
     const history = reactive(container.resolve(History));
-
-    const undo = () => history.undo();
-    const redo = () => history.redo();
-    const clearHistory = () => history.clear();
 
     const onBeginContinuousEditing = () => {
       if (history.isInBatch == false) {
@@ -142,21 +146,23 @@ export default defineComponent({
     document.body.onkeydown = (e: KeyboardEvent) => {
       if (isUndo(e)) {
         e.preventDefault();
-        history.undo();
+        undo.invoke();
       } else if (isRedo(e)) {
         e.preventDefault();
-        history.redo();
+        redo.invoke();
       }
     };
 
+    // rootScene
+    const rootScene = container.resolve(RootScene);
+    const updated = rootScene.updated;
+
+    const emitUpdated = () => updated.emit(null, EventArgs.empty);
+
     try {
-      history.edited.on(() => updated.emit(null, EventArgs.empty));
+      history.edited.on(emitUpdated);
 
       history.beginPause();
-
-      // rootScene
-      const rootScene = container.resolve(RootScene);
-      const updated = rootScene.updated;
 
       // rootSceneViewModel
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
@@ -198,6 +204,7 @@ export default defineComponent({
       };
 
       onUnmounted(() => {
+        history.edited.off(emitUpdated);
         rootSceneViewModel.dispose();
       });
 

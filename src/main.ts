@@ -7,7 +7,7 @@ import VueCompositionApi from '@vue/composition-api';
 Vue.use(VueCompositionApi);
 
 // DI
-import setupDi from './setupDi';
+import setupDi from './Di';
 setupDi();
 
 // Font Awesome

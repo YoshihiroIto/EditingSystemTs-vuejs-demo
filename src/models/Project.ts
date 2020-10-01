@@ -1,7 +1,7 @@
 import { History } from '../../externals/EditingSystemTs/src/History';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../externals/EditingSystemTs/src/Event';
-import { container, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import { nameof } from '@/foundations/Nameof';
 import { SeObject3D } from '@/se/SeObject3D';
 
@@ -13,8 +13,6 @@ export class Project implements NotifyPropertyChanged {
   selectedObject: SeObject3D | null = null;
 
   constructor() {
-    container.registerInstance(History, this.history);
-
     this.history.register(this);
 
     this.propertyChanged.on((_: unknown, e: PropertyChangedEventArgs) => {
