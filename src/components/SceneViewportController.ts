@@ -59,6 +59,7 @@ export class SceneViewportController implements Disposable {
   private raycaster = new Raycaster();
 
   private _isSnap = false;
+  private canPickObject = true;
 
   constructor(
     private readonly parent: ThObject3D,
@@ -66,8 +67,6 @@ export class SceneViewportController implements Disposable {
     private readonly domElement: HTMLCanvasElement,
     private readonly requestRender: () => void
   ) {
-    this.domElement.addEventListener('pointerdown', this.onClickElement, false);
-
     //
     this.cameraControls = new OrbitControls(camera, this.domElement);
     this.cameraControls.addEventListener('change', this.requestRender);
@@ -79,13 +78,20 @@ export class SceneViewportController implements Disposable {
     this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
     this.gizmo.addEventListener('mouseUp', this.onMouseUpGizmo);
     this.gizmo.addEventListener('dragging-changed', (event: Event) => {
-      return (this.cameraControls.enabled = !event.value);
+      this.cameraControls.enabled = !event.value;
+      this.canPickObject = !event.value;
     });
     this.parent.add(this.gizmo);
+
+    //
+    this.domElement.addEventListener('pointerdown', this.onClickElement, false);
   }
 
   dispose(): void {
     this.detachTargetObject();
+
+    //
+    this.domElement.removeEventListener('click', this.onClickElement, false);
 
     //
     this.parent.remove(this.gizmo);
@@ -95,9 +101,6 @@ export class SceneViewportController implements Disposable {
     //
     this.cameraControls.removeEventListener('change', this.requestRender);
     this.cameraControls.dispose();
-
-    //
-    this.domElement.removeEventListener('click', this.onClickElement, false);
   }
 
   detachTargetObject(): void {
@@ -141,6 +144,10 @@ export class SceneViewportController implements Disposable {
   };
 
   private onClickElement = (event: Event): void => {
+    if (this.canPickObject == false) {
+      return;
+    }
+
     const x = event.offsetX;
     const y = event.offsetY;
     const w = this.domElement.offsetWidth;
