@@ -1,17 +1,13 @@
 <template>
   <div id="app">
-    <div id="header">
-      <div class="block">
-        (undo:{{ undoRedoCount[0] }}, redo:{{ undoRedoCount[1] }})
-        <button @click="undo.invoke()">Undo</button>
-        <button @click="redo.invoke()">Redo</button>
-        <button @click="clearHistory.invoke()">Clear history</button>
-      </div>
+    <div id="header" class="block">
+      undo:{{ undoRedoCount[0] }}, redo:{{ undoRedoCount[1] }}
+      <button class="block_sep" @click="undo.invoke()">Undo</button>
+      <button @click="redo.invoke()">Redo</button>
+      <button @click="clearHistory.invoke()">Clear history</button>
 
-      <div class="block">
-        <button @click="addCubes">Add cubes</button>
-        <button @click="addChild">Add child</button>
-      </div>
+      <button class="block_sep" @click="addCubes">Add cubes</button>
+      <button @click="addChild">Add child</button>
     </div>
 
     <SceneViewport
@@ -22,7 +18,9 @@
       @begin-continuous-editing="beginBatchEditing.invoke()"
       @end-continuous-editing="endBatchEditing.invoke()"
     />
+
     <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="project.selectedObject" />
+
     <ObjectInspector
       id="inspector"
       :target="project.selectedObject"
@@ -90,7 +88,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
   margin-top: $base-gap;
 }
 
-.block_h_2nd {
+.block_sep {
   margin-left: 64px;
 }
 </style>
@@ -108,7 +106,6 @@ import ObjectInspector from './components/ObjectInspector.vue';
 import { SeObject3D } from './se/SeObject3D';
 import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
-import { Color } from 'three/src/math/Color';
 import { Project } from './models/Project';
 import { UseCase } from './Di';
 import { UndoUseCase } from './useCases/history/UndoUseCase';
@@ -157,18 +154,8 @@ export default defineComponent({
         }
       };
 
-      // rootScene
       const rootScene = container.resolve(RootScene);
-      const updated = rootScene.updated;
 
-      // rootSceneViewModel
-      const rootSceneViewModel = container.resolve(RootSceneViewModel);
-      rootSceneViewModel.background = new Color(0x24292e);
-      rootSceneViewModel.setup(rootScene);
-
-      const children = ref(rootScene.children);
-
-      //
       const addCubes = () => {
         using(container.resolve(BatchEditingBlock), () => {
           for (let i = 0; i != 20; ++i) {
@@ -192,8 +179,11 @@ export default defineComponent({
         });
       };
 
-      const emitUpdated = () => updated.emit(null, EventArgs.empty);
+      const emitUpdated = () => rootScene.updated.emit(null, EventArgs.empty);
       getEdited.invoke().on(emitUpdated);
+
+      const rootSceneViewModel = container.resolve(RootSceneViewModel);
+      rootSceneViewModel.setup(rootScene);
 
       onUnmounted(() => {
         getEdited.invoke().off(emitUpdated);
@@ -213,8 +203,8 @@ export default defineComponent({
         endPauseEditing,
 
         rootSceneViewModel,
-        updated,
-        children,
+        children: ref(rootScene.children),
+        updated: rootScene.updated,
 
         addCubes,
         addChild,
