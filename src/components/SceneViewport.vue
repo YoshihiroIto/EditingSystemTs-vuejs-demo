@@ -46,6 +46,10 @@
   height: 100%;
   display: block;
 }
+
+#canvas:focus {
+  outline: none;
+}
 </style>
 
 <script lang="ts">
