@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" @keydown="onKeyDown" tabindex="0">
     <div id="header" class="block">
       undo:{{ undoRedoCount[0] }}, redo:{{ undoRedoCount[1] }}
       <button class="block_sep" @click="undo.invoke()">Undo</button>
@@ -143,8 +143,9 @@ export default defineComponent({
 
       const project = reactive(container.resolve(Project));
       const undoRedoCount = computed(() => getUndoRedoCount.invoke());
+      const rootScene = container.resolve(RootScene);
 
-      document.body.onkeydown = (e: KeyboardEvent) => {
+      const onKeyDown = (e: KeyboardEvent) => {
         if (isUndo(e)) {
           e.preventDefault();
           undo.invoke();
@@ -153,8 +154,6 @@ export default defineComponent({
           redo.invoke();
         }
       };
-
-      const rootScene = container.resolve(RootScene);
 
       const addCubes = () => {
         using(container.resolve(BatchEditingBlock), () => {
@@ -208,6 +207,8 @@ export default defineComponent({
 
         addCubes,
         addChild,
+
+        onKeyDown,
       };
     });
   },
