@@ -82,8 +82,6 @@ export class SceneViewportController implements Disposable {
       this.parent.remove(this.gizmo);
       this.gizmo.removeEventListener('change', this.requestRender);
     }
-
-    this.requestRender();
   }
 
   private static readonly _allInstances = new Set<SceneViewportController>();
