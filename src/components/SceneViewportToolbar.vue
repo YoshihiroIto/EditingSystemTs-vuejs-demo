@@ -3,14 +3,14 @@
     <div id="container">
       <div id="rario-buttons">
         <label v-for="(data, index) in modes" :key="index">
-          <input type="radio" name="mode" v-model="modeInternal" :value="data" />
+          <input type="radio" :name="modeName" v-model="modeInternal" :value="data" />
           {{ data }}
         </label>
       </div>
 
       <div id="rario-buttons">
         <label v-for="(data, index) in spaces" :key="index">
-          <input type="radio" name="space" v-model="spaceInternal" :value="data" />
+          <input type="radio" :name="spaceName" v-model="spaceInternal" :value="data" />
           {{ data }}
         </label>
       </div>
@@ -50,6 +50,8 @@ type Props = {
   space: SceneViewportControllerSpace;
 };
 
+let countForUid = 0;
+
 export default defineComponent({
   props: {
     mode: { default: SceneViewportControllerModes.Translate },
@@ -57,6 +59,11 @@ export default defineComponent({
   },
   components: {},
   setup: (props: Props, context: SetupContext) => {
+    ++countForUid;
+
+    const modeName = countForUid * 2 + 0;
+    const spaceName = countForUid * 2 + 1;
+
     const modeInternal = computed({
       get: () => props.mode,
       set: (value: SceneViewportControllerMode) => context.emit('update:mode', value),
@@ -68,6 +75,9 @@ export default defineComponent({
     });
 
     return {
+      modeName,
+      spaceName,
+      //
       modeInternal,
       spaceInternal,
       //
