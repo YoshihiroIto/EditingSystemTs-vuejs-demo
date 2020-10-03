@@ -1,5 +1,5 @@
 ﻿<template>
-  <div>
+  <div id="container">
     <TreeViewItem v-for="(child, index) in children" :data="child" :key="index" :root="root" :depth="0">
       <template v-for="slotName of Object.keys(slots)" #[slotName]="data">
         <slot :name="slotName" v-bind="data" />
@@ -7,6 +7,12 @@
     </TreeViewItem>
   </div>
 </template>
+
+<style scoped lang="scss">
+#container {
+  width: max-content;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent, SetupContext, watch } from '@vue/composition-api';
