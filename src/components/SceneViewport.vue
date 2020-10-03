@@ -173,9 +173,9 @@ export default defineComponent({
       trash.dispose();
     });
 
-    const onCanvasMouseEnter = () => (controller.enabledGizmo = true);
-    const onCanvasMouseMove = () => (controller.enabledGizmo = true);
-    const onCanvasMouseLeave = () => (controller.enabledGizmo = false);
+    const onCanvasMouseEnter = () => (controller.IsVisibleGizmo = true);
+    const onCanvasMouseMove = () => (controller.IsVisibleGizmo = true);
+    const onCanvasMouseLeave = () => (controller.IsVisibleGizmo = false);
 
     ///////////////////////////////////////////////////////////////////////////
     // selectedObject
@@ -248,7 +248,7 @@ export default defineComponent({
 
       // Enable only own contoller
       for (const c of SceneViewportController.allInstances) {
-        c.enabledGizmo = c === controller;
+        c.IsVisibleGizmo = c === controller;
       }
 
       renderer.render(props.scene, camera);
@@ -259,38 +259,41 @@ export default defineComponent({
     // shortcut keys
     ///////////////////////////////////////////////////////////////////////////
     const onKeyDown = (e: KeyboardEvent) => {
-      switch (e.keyCode) {
-        case 16: // [SHIFT]
-          controller.isSnap = true;
-          break;
+      if (e.shiftKey) {
+        controller.isSnap = true;
+      }
+      if (e.ctrlKey) {
+        controller.isSnap = true;
+      } else {
+        switch (e.key) {
+          case 'w':
+          case 'W':
+            controllerMode.value = SceneViewportControllerModes.Translate;
+            break;
 
-        case 87: // W
-          controllerMode.value = SceneViewportControllerModes.Translate;
-          break;
+          case 'e':
+          case 'E':
+            controllerMode.value = SceneViewportControllerModes.Rotate;
+            break;
 
-        case 69: // E
-          controllerMode.value = SceneViewportControllerModes.Rotate;
-          break;
+          case 'r':
+          case 'R':
+            controllerMode.value = SceneViewportControllerModes.Scale;
+            break;
 
-        case 82: // R
-          controllerMode.value = SceneViewportControllerModes.Scale;
-          break;
-
-        case 81: // Q
-          controllerSpace.value =
-            controllerSpace.value == SceneViewportControllerSpaces.World
-              ? SceneViewportControllerSpaces.Local
-              : SceneViewportControllerSpaces.World;
-
-          break;
+          case 'q':
+          case 'Q':
+            controllerSpace.value =
+              controllerSpace.value == SceneViewportControllerSpaces.World
+                ? SceneViewportControllerSpaces.Local
+                : SceneViewportControllerSpaces.World;
+            break;
+        }
       }
     };
 
-    const onKeyUp = (e: KeyboardEvent) => {
-      // [SHIFT]
-      if (e.keyCode == 16) {
-        controller.isSnap = false;
-      }
+    const onKeyUp = () => {
+      controller.isSnap = false;
     };
 
     return {

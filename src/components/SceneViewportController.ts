@@ -56,11 +56,11 @@ export class SceneViewportController implements Disposable {
     }
   }
 
-  get enabledGizmo(): boolean {
+  get IsVisibleGizmo(): boolean {
     return this._enabledGizmo;
   }
 
-  set enabledGizmo(i: boolean) {
+  set IsVisibleGizmo(i: boolean) {
     if (i === this._enabledGizmo) {
       return;
     }
@@ -122,7 +122,7 @@ export class SceneViewportController implements Disposable {
     this.domElement.removeEventListener('click', this.onClickElement, false);
 
     //
-    this.enabledGizmo = false;
+    this.IsVisibleGizmo = false;
     this.gizmo.dispose();
 
     //
