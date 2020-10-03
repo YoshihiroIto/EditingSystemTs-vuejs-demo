@@ -64,10 +64,10 @@ $window-height: calc(100vh - #{$base-gap * 2});
     'header    header    header'
     'viewport1 viewport2 treeview'
     'viewport1 viewport2 inspector';
-}
 
-#app:focus {
-  outline: none;
+  &:focus {
+    outline: none;
+  }
 }
 
 #header {
