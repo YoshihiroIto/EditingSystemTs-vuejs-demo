@@ -247,7 +247,7 @@ export default defineComponent({
       }
 
       // Enable only own contoller
-      for (const c of SceneViewportController.allInstances()) {
+      for (const c of SceneViewportController.allInstances) {
         c.enabledGizmo = c === controller;
       }
 

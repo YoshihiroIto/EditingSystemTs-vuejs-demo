@@ -17,9 +17,8 @@ export class SceneViewportController implements Disposable {
   readonly endContinuousEditing = new TypedEvent();
   readonly objectsPicked = new TypedEvent<ObjectsPickedEventArgs>();
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static *allInstances() {
-    yield* SceneViewportController._allInstances;
+  static get allInstances(): ReadonlySet<SceneViewportController> {
+    return SceneViewportController._allInstances;
   }
 
   set mode(m: SceneViewportControllerMode) {
