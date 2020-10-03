@@ -11,7 +11,16 @@
     </div>
 
     <SceneViewport
-      id="viewport"
+      id="viewport1"
+      :scene="rootSceneViewModel"
+      :selectedObject.sync="project.selectedObject"
+      :updated="updated"
+      @begin-continuous-editing="beginBatchEditing.invoke()"
+      @end-continuous-editing="endBatchEditing.invoke()"
+    />
+
+    <SceneViewport
+      id="viewport2"
       :scene="rootSceneViewModel"
       :selectedObject.sync="project.selectedObject"
       :updated="updated"
@@ -48,13 +57,17 @@ $window-height: calc(100vh - #{$base-gap * 2});
   margin: $base-gap;
   gap: $base-gap;
 
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr 1fr 400px;
   grid-template-rows: auto 1fr 1fr;
 
   grid-template-areas:
-    'header   header'
-    'viewport treeview'
-    'viewport inspector';
+    'header    header    header'
+    'viewport1 viewport2 treeview'
+    'viewport1 viewport2 inspector';
+}
+
+#app:focus {
+  outline: none;
 }
 
 #header {
@@ -68,8 +81,12 @@ $window-height: calc(100vh - #{$base-gap * 2});
   border: 1px solid #aab;
 }
 
-#viewport {
-  grid-area: viewport;
+#viewport1 {
+  grid-area: viewport1;
+}
+
+#viewport2 {
+  grid-area: viewport2;
 }
 
 #treeview {

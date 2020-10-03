@@ -3,7 +3,14 @@
     <SceneViewportToolbar :mode.sync="controllerMode" :space.sync="controllerSpace" id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
-      <canvas id="canvas" ref="canvas" />
+      <canvas
+        id="canvas"
+        ref="canvas"
+        @mouseenter="onCanvasMouseEnter"
+        @mousemove="onCanvasMouseMove"
+        @mouseleave="onCanvasMouseLeave"
+      />
+
       <div id="info">
         FrameCount: {{ frameCount }}<br />
         ResizeCount: {{ resizeCount }}
@@ -166,6 +173,10 @@ export default defineComponent({
       trash.dispose();
     });
 
+    const onCanvasMouseEnter = () => (controller.enabledGizmo = true);
+    const onCanvasMouseMove = () => (controller.enabledGizmo = true);
+    const onCanvasMouseLeave = () => (controller.enabledGizmo = false);
+
     ///////////////////////////////////////////////////////////////////////////
     // selectedObject
     ///////////////////////////////////////////////////////////////////////////
@@ -217,10 +228,11 @@ export default defineComponent({
     const render = () => {
       Assert.isNotNull(props.scene);
 
+      ++frameCount.value;
+
       // canvas size
       {
         // ref: https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html
-
         const domElement = renderer.domElement;
         const width = domElement.clientWidth;
         const height = domElement.clientHeight;
@@ -234,7 +246,10 @@ export default defineComponent({
         }
       }
 
-      ++frameCount.value;
+      // Enable only own contoller
+      for (const c of SceneViewportController.allInstances()) {
+        c.enabledGizmo = c === controller;
+      }
 
       renderer.render(props.scene, camera);
       stats.update();
@@ -291,6 +306,10 @@ export default defineComponent({
       //
       onKeyDown,
       onKeyUp,
+      //
+      onCanvasMouseEnter,
+      onCanvasMouseMove,
+      onCanvasMouseLeave,
     };
   },
 });

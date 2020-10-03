@@ -17,6 +17,11 @@ export class SceneViewportController implements Disposable {
   readonly endContinuousEditing = new TypedEvent();
   readonly objectsPicked = new TypedEvent<ObjectsPickedEventArgs>();
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  static *allInstances() {
+    yield* SceneViewportController._allInstances;
+  }
+
   set mode(m: SceneViewportControllerMode) {
     this.gizmo.setMode(m);
   }
@@ -41,7 +46,7 @@ export class SceneViewportController implements Disposable {
 
     this._isSnap = i;
 
-    if (i === true) {
+    if (this._isSnap === true) {
       this.gizmo.setTranslationSnap(1);
       this.gizmo.setRotationSnap(MathUtils.degToRad(15));
       this.gizmo.setScaleSnap(0.25);
@@ -52,6 +57,37 @@ export class SceneViewportController implements Disposable {
     }
   }
 
+  get enabledGizmo(): boolean {
+    return this._enabledGizmo;
+  }
+
+  set enabledGizmo(i: boolean) {
+    if (i === this._enabledGizmo) {
+      return;
+    }
+
+    this._enabledGizmo = i;
+
+    if (this._enabledGizmo === true) {
+      this.gizmo.addEventListener('change', this.requestRender);
+      this.gizmo.addEventListener('objectChange', this.onObjectChangeGizmo);
+      this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
+      this.gizmo.addEventListener('mouseUp', this.onMouseUpGizmo);
+      this.gizmo.addEventListener('dragging-changed', (event: Event) => {
+        this.cameraControls.enabled = !event.value;
+        this.canPickObject = !event.value;
+      });
+      this.parent.add(this.gizmo);
+    } else {
+      this.parent.remove(this.gizmo);
+      this.gizmo.removeEventListener('change', this.requestRender);
+    }
+
+    this.requestRender();
+  }
+
+  private static readonly _allInstances = new Set<SceneViewportController>();
+
   private readonly cameraControls: OrbitControls;
   private readonly gizmo: TransformControls;
 
@@ -60,6 +96,7 @@ export class SceneViewportController implements Disposable {
 
   private _isSnap = false;
   private canPickObject = true;
+  private _enabledGizmo = false;
 
   constructor(
     private readonly parent: ThObject3D,
@@ -67,35 +104,28 @@ export class SceneViewportController implements Disposable {
     private readonly domElement: HTMLCanvasElement,
     private readonly requestRender: () => void
   ) {
+    SceneViewportController._allInstances.add(this);
     //
     this.cameraControls = new OrbitControls(camera, this.domElement);
     this.cameraControls.addEventListener('change', this.requestRender);
 
     //
     this.gizmo = new TransformControls(camera, this.domElement);
-    this.gizmo.addEventListener('change', this.requestRender);
-    this.gizmo.addEventListener('objectChange', this.onObjectChangeGizmo);
-    this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
-    this.gizmo.addEventListener('mouseUp', this.onMouseUpGizmo);
-    this.gizmo.addEventListener('dragging-changed', (event: Event) => {
-      this.cameraControls.enabled = !event.value;
-      this.canPickObject = !event.value;
-    });
-    this.parent.add(this.gizmo);
 
     //
     this.domElement.addEventListener('pointerdown', this.onClickElement, false);
   }
 
   dispose(): void {
+    SceneViewportController._allInstances.delete(this);
+
     this.detachTargetObject();
 
     //
     this.domElement.removeEventListener('click', this.onClickElement, false);
 
     //
-    this.parent.remove(this.gizmo);
-    this.gizmo.removeEventListener('change', this.requestRender);
+    this.enabledGizmo = false;
     this.gizmo.dispose();
 
     //
