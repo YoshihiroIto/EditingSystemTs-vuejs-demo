@@ -263,28 +263,24 @@ export default defineComponent({
         controller.isSnap = true;
       }
       if (e.ctrlKey) {
-        controller.isSnap = true;
+        controller.enabled = false;
       } else {
-        switch (e.key) {
+        switch (e.key.toLowerCase()) {
           case 'w':
-          case 'W':
             controllerMode.value = SceneViewportControllerModes.Translate;
             break;
 
           case 'e':
-          case 'E':
             controllerMode.value = SceneViewportControllerModes.Rotate;
             break;
 
           case 'r':
-          case 'R':
             controllerMode.value = SceneViewportControllerModes.Scale;
             break;
 
           case 'q':
-          case 'Q':
             controllerSpace.value =
-              controllerSpace.value == SceneViewportControllerSpaces.World
+              controllerSpace.value === SceneViewportControllerSpaces.World
                 ? SceneViewportControllerSpaces.Local
                 : SceneViewportControllerSpaces.World;
             break;
@@ -294,6 +290,7 @@ export default defineComponent({
 
     const onKeyUp = () => {
       controller.isSnap = false;
+      controller.enabled = true;
     };
 
     return {

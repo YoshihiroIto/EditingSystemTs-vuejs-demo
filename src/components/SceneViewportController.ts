@@ -33,11 +33,9 @@ export class SceneViewportController implements Disposable {
   get space(): SceneViewportControllerSpace {
     return this.gizmo.space as SceneViewportControllerSpace;
   }
-
   get isSnap(): boolean {
     return this._isSnap;
   }
-
   set isSnap(i: boolean) {
     if (i === this._isSnap) {
       return;
@@ -54,6 +52,13 @@ export class SceneViewportController implements Disposable {
       this.gizmo.setRotationSnap(null);
       this.gizmo.setScaleSnap(null);
     }
+  }
+
+  get enabled(): boolean {
+    return this.gizmo.enabled;
+  }
+  set enabled(i: boolean) {
+    this.gizmo.enabled = i;
   }
 
   get IsVisibleGizmo(): boolean {
