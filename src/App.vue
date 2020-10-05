@@ -7,7 +7,7 @@
       <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
 
       <button class="block_sep" @click="addCubes">Add cubes</button>
-      <button :disabled="project.selectedObject === null" @click="addChild">Add child</button>
+      <button :disabled="project.selectedObject === null" @click="addChildCube">Add child cube</button>
     </div>
 
     <SceneViewport
@@ -202,8 +202,8 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addCubes: () => appTest.addCubes(),
-        addChild: () => appTest.addChild(),
+        addCubes: () => appTest.addObjects('cube'),
+        addChildCube: () => appTest.addChildObject('cube'),
       };
     });
   },

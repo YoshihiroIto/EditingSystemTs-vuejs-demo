@@ -15,10 +15,10 @@ export class AppTest {
     private readonly rootScene: RootScene
   ) {}
 
-  addCubes(): void {
+  addObjects(name: string): void {
     using(container.resolve(BatchEditingBlock), () => {
       for (let i = 0; i != 20; ++i) {
-        const cube = this.createObject.invoke('cube');
+        const cube = this.createObject.invoke(name);
         this.rootScene.add(cube);
 
         cube.position = new SeVector3(
@@ -35,17 +35,17 @@ export class AppTest {
     });
   }
 
-  addChild(): void {
+  addChildObject(name: string): void {
     const parent = this.project.selectedObject;
     if (parent == null) {
       return;
     }
 
     using(container.resolve(BatchEditingBlock), () => {
-      const cube = this.createObject.invoke('cube');
+      const cube = this.createObject.invoke(name);
       parent.add(cube);
 
-      cube.position = new SeVector3(5, 0, 0);
+      cube.position = new SeVector3(5 + Math.random(), Math.random(), Math.random());
     });
   }
 }
