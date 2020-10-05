@@ -1,8 +1,8 @@
 ﻿import { History } from '../../externals/EditingSystemTs/src/History';
 import { SeScene } from '@/se/SeScene';
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
-@injectable()
+@singleton()
 export class RootScene extends SeScene {
   constructor(history: History) {
     super(history);

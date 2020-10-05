@@ -111,7 +111,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
+import { computed, defineComponent, onMounted, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
@@ -119,8 +119,6 @@ import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 import SceneViewport from './components/SceneViewport.vue';
 import ObjectTreeView from './components/ObjectTreeView.vue';
 import ObjectInspector from './components/ObjectInspector.vue';
-import { SeObject3D } from './se/SeObject3D';
-import { SeVector3 } from './se/math/SeVector3';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
 import { UseCase } from './Di';
@@ -133,9 +131,9 @@ import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
 import { GetHistoryStateUseCase } from './useCases/history/GetHistoryStateUseCase';
 
 import using from './foundations/Using';
-import { BatchEditingBlock } from './models/BatchEditingBlock';
 import { PauseEditingBlock } from './models/PauseEditingBlock';
-import { CreateObjectUseCase } from './useCases/project/CreateObjectUseCase';
+
+import { AppTest } from './models/AppTest';
 
 export default defineComponent({
   name: 'App',
@@ -153,11 +151,12 @@ export default defineComponent({
       const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
       const getHistoryState = container.resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
-      const createObject = container.resolve<CreateObjectUseCase>(UseCase.createObject);
 
       const project = reactive(container.resolve(Project));
       const rootScene = container.resolve(RootScene);
       const historyState = computed(() => getHistoryState.invoke());
+
+      const appTest = container.resolve(AppTest);
 
       const beginContinuousEditing = () => {
         if (getHistoryState.invoke().isInBatch == false) {
@@ -179,40 +178,6 @@ export default defineComponent({
           e.preventDefault();
           redo.invoke();
         }
-      };
-
-      const addCubes = () => {
-        using(container.resolve(BatchEditingBlock), () => {
-          for (let i = 0; i != 20; ++i) {
-            const cube = createObject.invoke('cube');
-            rootScene.add(cube);
-
-            cube.position = new SeVector3(
-              (Math.random() - 0.5) * 10,
-              (Math.random() - 0.5) * 10,
-              (Math.random() - 0.5) * 10
-            );
-            cube.rotation = new SeVector3(
-              Math.random() * Math.PI * 2 - Math.PI,
-              Math.random() * Math.PI * 2 - Math.PI,
-              Math.random() * Math.PI * 2 - Math.PI
-            );
-          }
-        });
-      };
-
-      const addChild = () => {
-        const parent = project.selectedObject;
-        if (parent == null) {
-          return;
-        }
-
-        using(container.resolve(BatchEditingBlock), () => {
-          const cube = createObject.invoke('cube');
-          parent.add(cube);
-
-          cube.position = new SeVector3(5, 0, 0);
-        });
       };
 
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
@@ -237,8 +202,8 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addCubes,
-        addChild,
+        addCubes: () => appTest.addCubes(),
+        addChild: () => appTest.addChild(),
       };
     });
   },
