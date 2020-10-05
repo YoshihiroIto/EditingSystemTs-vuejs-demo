@@ -2,12 +2,12 @@
   <div id="app" tabindex="0">
     <div id="header" class="block">
       undo:{{ historyState.undoCount }}, redo:{{ historyState.redoCount }}
-      <button class="block_sep" @click="undo.invoke()">Undo</button>
-      <button @click="redo.invoke()">Redo</button>
-      <button @click="clearHistory.invoke()">Clear history</button>
+      <button :disabled="historyState.canUndo === false" class="block_sep" @click="undo.invoke()">Undo</button>
+      <button :disabled="historyState.canRedo === false" @click="redo.invoke()">Redo</button>
+      <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
 
       <button class="block_sep" @click="addCubes">Add cubes</button>
-      <button @click="addChild">Add child</button>
+      <button :disabled="project.selectedObject === null" @click="addChild">Add child</button>
     </div>
 
     <SceneViewport
@@ -111,7 +111,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, reactive, ref } from '@vue/composition-api';
+import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
