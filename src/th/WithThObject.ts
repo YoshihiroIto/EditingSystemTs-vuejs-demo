@@ -99,11 +99,12 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any)?.setupInternal?.call(this);
 
-      // todo: 自動化
-      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('name'), null));
-      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('position'), null));
-      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('rotation'), null));
-      this.propertyChanged(this, new PropertyChangedEventArgs(nameof<SeObject3D>('scale'), null));
+      [
+        nameof<SeObject3D>('name'),
+        nameof<SeObject3D>('position'),
+        nameof<SeObject3D>('rotation'),
+        nameof<SeObject3D>('scale'),
+      ].forEach(x => this.propertyChanged(this, new PropertyChangedEventArgs(x, null)));
     }
 
     dispose(): void {
