@@ -131,7 +131,7 @@ import { ClearHistoryUseCase } from './useCases/history/ClearHistoryUseCase';
 import { BeginBatchEditingUseCase } from './useCases/history/BeginBatchEditingUseCase';
 import { EndBatchEditingUseCase } from './useCases/history/EndBatchEditingUseCase';
 import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
-import { GetUndoRedoCountUseCase } from './useCases/history/GetUndoRedoCountUseCase';
+import { GetHistoryStateUseCase } from './useCases/history/GetHistoryStateUseCase';
 
 import using from './foundations/Using';
 import { BatchEditingBlock } from './models/BatchEditingBlock';
@@ -153,12 +153,12 @@ export default defineComponent({
       const beginBatchEditing = container.resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
       const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
-      const getUndoRedoCount = container.resolve<GetUndoRedoCountUseCase>(UseCase.getUndoRedoCount);
+      const getHistoryState = container.resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
       const createObject = container.resolve<CreateObjectUseCase>(UseCase.createObject);
 
       const project = reactive(container.resolve(Project));
       const rootScene = container.resolve(RootScene);
-      const undoRedoCount = computed(() => getUndoRedoCount.invoke());
+      const undoRedoCount = computed(() => getHistoryState.invoke());
 
       const history = container.resolve(History);
 

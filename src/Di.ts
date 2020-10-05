@@ -8,7 +8,7 @@ import { BeginPauseEditingInteractor } from './interactors/history/BeginPauseEdi
 import { EndBatchEditingInteractor } from './interactors/history/EndBatchEditingInteractor';
 import { EndPauseEditingInteractor } from './interactors/history/EndPauseEditingInteractor';
 import { GetEditedInteractor } from './interactors/history/GetEditedInteractor';
-import { GetUndoRedoCountInteractor } from './interactors/history/GetUndoRedoCountInteractor';
+import { GetHistoryStateInteractor } from './interactors/history/GetHistoryStateInteractor';
 import { CreateObjectInteractor } from './interactors/project/CreateObjectInteractor';
 
 const UseCase = {
@@ -21,7 +21,7 @@ const UseCase = {
   beginPauseEditing: Symbol(),
   endPauseEditing: Symbol(),
   getEditedUseCase: Symbol(),
-  getUndoRedoCount: Symbol(),
+  getHistoryState: Symbol(),
 
   // project
   createObject: Symbol(),
@@ -39,7 +39,7 @@ export default function setupDi(): void {
   container.register(UseCase.beginPauseEditing, { useClass: BeginPauseEditingInteractor });
   container.register(UseCase.endPauseEditing, { useClass: EndPauseEditingInteractor });
   container.register(UseCase.getEditedUseCase, { useClass: GetEditedInteractor });
-  container.register(UseCase.getUndoRedoCount, { useClass: GetUndoRedoCountInteractor });
+  container.register(UseCase.getHistoryState, { useClass: GetHistoryStateInteractor });
   container.registerInstance(History, new History());
 
   // project

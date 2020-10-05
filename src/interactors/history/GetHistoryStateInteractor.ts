@@ -1,9 +1,9 @@
 import { History } from '../../../externals/EditingSystemTs/src/History';
-import { GetUndoRedoCountUseCase } from '@/useCases/history/GetUndoRedoCountUseCase';
+import { GetHistoryStateUseCase } from '@/useCases/history/GetHistoryStateUseCase';
 import { singleton } from 'tsyringe';
 
 @singleton()
-export class GetUndoRedoCountInteractor implements GetUndoRedoCountUseCase {
+export class GetHistoryStateInteractor implements GetHistoryStateUseCase {
   constructor(private readonly history: History) {}
 
   invoke(): [undo: number, redo: number] {
