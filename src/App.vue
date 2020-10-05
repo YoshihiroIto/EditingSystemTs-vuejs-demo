@@ -113,7 +113,6 @@ $window-height: calc(100vh - #{$base-gap * 2});
 <script lang="ts">
 import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
-import { EventArgs } from '../externals/EditingSystemTs/src/TypedEvent';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 
@@ -138,6 +137,7 @@ import { GetUndoRedoCountUseCase } from './useCases/history/GetUndoRedoCountUseC
 import using from './foundations/Using';
 import { BatchEditingBlock } from './models/BatchEditingBlock';
 import { PauseEditingBlock } from './models/PauseEditingBlock';
+import { CreateObjectUseCase } from './useCases/project/CreateObjectUseCase';
 
 export default defineComponent({
   name: 'App',
@@ -157,10 +157,11 @@ export default defineComponent({
       const endPauseEditing = container.resolve<EndPauseEditingUseCase>(UseCase.endPauseEditing);
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
       const getUndoRedoCount = container.resolve<GetUndoRedoCountUseCase>(UseCase.getUndoRedoCount);
+      const createObject = container.resolve<CreateObjectUseCase>(UseCase.createObject);
 
       const project = reactive(container.resolve(Project));
-      const undoRedoCount = computed(() => getUndoRedoCount.invoke());
       const rootScene = container.resolve(RootScene);
+      const undoRedoCount = computed(() => getUndoRedoCount.invoke());
 
       const onKeyDown = (e: KeyboardEvent) => {
         if (isUndo(e)) {
@@ -175,7 +176,19 @@ export default defineComponent({
       const addCubes = () => {
         using(container.resolve(BatchEditingBlock), () => {
           for (let i = 0; i != 20; ++i) {
-            rootScene.addCube();
+            const cube = createObject.invoke('cube');
+            rootScene.add(cube);
+
+            cube.position = new SeVector3(
+              (Math.random() - 0.5) * 10,
+              (Math.random() - 0.5) * 10,
+              (Math.random() - 0.5) * 10
+            );
+            cube.rotation = new SeVector3(
+              Math.random() * Math.PI * 2 - Math.PI,
+              Math.random() * Math.PI * 2 - Math.PI,
+              Math.random() * Math.PI * 2 - Math.PI
+            );
           }
         });
       };
@@ -188,21 +201,17 @@ export default defineComponent({
         }
 
         using(container.resolve(BatchEditingBlock), () => {
-          const cube = rootScene.createCube();
+          const cube = createObject.invoke('cube');
           parent.add(cube);
 
           cube.position = new SeVector3(5, 0, 0);
         });
       };
 
-      const emitUpdated = () => rootScene.updated.emit(null, EventArgs.empty);
-      getEdited.invoke().on(emitUpdated);
-
       const rootSceneViewModel = container.resolve(RootSceneViewModel);
       rootSceneViewModel.setup(rootScene);
 
       onUnmounted(() => {
-        getEdited.invoke().off(emitUpdated);
         rootSceneViewModel.dispose();
       });
 
@@ -220,7 +229,7 @@ export default defineComponent({
 
         rootSceneViewModel,
         children: ref(rootScene.children),
-        updated: rootScene.updated,
+        updated: getEdited.invoke(),
 
         addCubes,
         addChild,

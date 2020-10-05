@@ -7,8 +7,6 @@ export class EndBatchEditingInteractor implements EndBatchEditingUseCase {
   constructor(private readonly history: History) {}
 
   invoke(): void {
-    if (this.history.isInBatch) {
-      this.history.endBatch();
-    }
+    this.history.endBatch();
   }
 }

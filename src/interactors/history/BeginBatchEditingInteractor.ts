@@ -7,8 +7,6 @@ export class BeginBatchEditingInteractor implements BeginBatchEditingUseCase {
   constructor(private readonly history: History) {}
 
   invoke(): void {
-    if (this.history.isInBatch == false) {
-      this.history.beginBatch();
-    }
+    this.history.beginBatch();
   }
 }
