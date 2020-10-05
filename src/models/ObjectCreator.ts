@@ -1,4 +1,4 @@
-import { SeMesh } from '@/se/SeMesh';
+import { SeCubeMesh, SePointMesh } from '@/se/SeMesh';
 import { SeObject3D } from '@/se/SeObject3D';
 import { container, singleton } from 'tsyringe';
 import { ObjectDefinition } from './ObjectDefinition';
@@ -30,7 +30,14 @@ export class ObjectCreator {
     this.objectDefinitions.set(
       'cube',
       new ObjectDefinition(() => {
-        return container.resolve(SeMesh);
+        return container.resolve(SeCubeMesh);
+      })
+    );
+
+    this.objectDefinitions.set(
+      'point',
+      new ObjectDefinition(() => {
+        return container.resolve(SePointMesh);
       })
     );
   }

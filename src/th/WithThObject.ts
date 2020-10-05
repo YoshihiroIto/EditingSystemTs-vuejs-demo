@@ -97,7 +97,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       this._model.propertyChanged.on(this.propertyChanged);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this as any)?.setupInternal?.call(this);
+      (this as any)?.setupInternal?.call(this, model);
 
       [
         nameof<SeObject3D>('name'),
