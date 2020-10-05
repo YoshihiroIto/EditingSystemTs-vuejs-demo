@@ -112,7 +112,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
+import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
@@ -153,11 +153,10 @@ export default defineComponent({
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
       const getHistoryState = container.resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
 
+      const appTest = container.resolve(AppTest);
       const project = reactive(container.resolve(Project));
       const rootScene = container.resolve(RootScene);
       const historyState = computed(() => getHistoryState.invoke());
-
-      const appTest = container.resolve(AppTest);
 
       const beginContinuousEditing = () => {
         if (getHistoryState.invoke().isInBatch == false) {
@@ -181,13 +180,6 @@ export default defineComponent({
         }
       };
 
-      const rootSceneViewModel = container.resolve(RootSceneViewModel);
-      rootSceneViewModel.setup(rootScene);
-
-      onUnmounted(() => {
-        rootSceneViewModel.dispose();
-      });
-
       return {
         project,
         historyState,
@@ -199,7 +191,7 @@ export default defineComponent({
         beginContinuousEditing,
         endContinuousEditing,
 
-        rootSceneViewModel,
+        rootSceneViewModel: RootSceneViewModel.create(rootScene),
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
