@@ -15,8 +15,8 @@
       :scene="rootSceneViewModel"
       :selectedObject.sync="project.selectedObject"
       :updated="updated"
-      @begin-continuous-editing="beginBatchEditing.invoke()"
-      @end-continuous-editing="endBatchEditing.invoke()"
+      @begin-continuous-editing="beginContinuousEditing"
+      @end-continuous-editing="endContinuousEditing"
     />
 
     <SceneViewport
@@ -24,8 +24,8 @@
       :scene="rootSceneViewModel"
       :selectedObject.sync="project.selectedObject"
       :updated="updated"
-      @begin-continuous-editing="beginBatchEditing.invoke()"
-      @end-continuous-editing="endBatchEditing.invoke()"
+      @begin-continuous-editing="beginContinuousEditing"
+      @end-continuous-editing="endContinuousEditing"
     />
 
     <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="project.selectedObject" />
@@ -33,8 +33,8 @@
     <ObjectInspector
       id="inspector"
       :target="project.selectedObject"
-      @begin-continuous-editing="beginBatchEditing.invoke()"
-      @end-continuous-editing="endBatchEditing.invoke()"
+      @begin-continuous-editing="beginContinuousEditing"
+      @end-continuous-editing="endContinuousEditing"
     />
   </div>
 </template>
@@ -113,6 +113,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 <script lang="ts">
 import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
+import { History } from '../externals/EditingSystemTs/src/History';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 
@@ -129,8 +130,6 @@ import { RedoUseCase } from './useCases/history/RedoUseCase';
 import { ClearHistoryUseCase } from './useCases/history/ClearHistoryUseCase';
 import { BeginBatchEditingUseCase } from './useCases/history/BeginBatchEditingUseCase';
 import { EndBatchEditingUseCase } from './useCases/history/EndBatchEditingUseCase';
-import { BeginPauseEditingUseCase } from './useCases/history/BeginPauseEditingUseCase';
-import { EndPauseEditingUseCase } from './useCases/history/EndPauseEditingUseCase';
 import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
 import { GetUndoRedoCountUseCase } from './useCases/history/GetUndoRedoCountUseCase';
 
@@ -153,8 +152,6 @@ export default defineComponent({
       const clearHistory = container.resolve<ClearHistoryUseCase>(UseCase.clearHistory);
       const beginBatchEditing = container.resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
       const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
-      const beginPauseEditing = container.resolve<BeginPauseEditingUseCase>(UseCase.beginPauseEditing);
-      const endPauseEditing = container.resolve<EndPauseEditingUseCase>(UseCase.endPauseEditing);
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
       const getUndoRedoCount = container.resolve<GetUndoRedoCountUseCase>(UseCase.getUndoRedoCount);
       const createObject = container.resolve<CreateObjectUseCase>(UseCase.createObject);
@@ -162,6 +159,20 @@ export default defineComponent({
       const project = reactive(container.resolve(Project));
       const rootScene = container.resolve(RootScene);
       const undoRedoCount = computed(() => getUndoRedoCount.invoke());
+
+      const history = container.resolve(History);
+
+      const beginContinuousEditing = () => {
+        if (history.isInBatch == false) {
+          beginBatchEditing.invoke();
+        }
+      };
+
+      const endContinuousEditing = () => {
+        if (history.isInBatch) {
+          endBatchEditing.invoke();
+        }
+      };
 
       document.body.onkeydown = (e: KeyboardEvent) => {
         if (isUndo(e)) {
@@ -222,10 +233,9 @@ export default defineComponent({
         undo,
         redo,
         clearHistory,
-        beginBatchEditing,
-        endBatchEditing,
-        beginPauseEditing,
-        endPauseEditing,
+
+        beginContinuousEditing,
+        endContinuousEditing,
 
         rootSceneViewModel,
         children: ref(rootScene.children),
