@@ -8,8 +8,8 @@ import { injectable } from 'tsyringe';
 import { WithThObject } from './WithThObject';
 
 class ThMeshInternal extends Mesh<Geometry | BufferGeometry, Material | Material[]> {
-  static readonly geometry = new BoxGeometry(1, 1, 1);
-  static readonly material = new MeshNormalMaterial();
+  private static readonly geometry = new BoxGeometry(1, 1, 1);
+  private static readonly material = new MeshNormalMaterial();
 
   setupInternal(): void {
     this.geometry = ThMeshInternal.geometry;
