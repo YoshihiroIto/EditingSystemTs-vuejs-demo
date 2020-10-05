@@ -202,10 +202,9 @@ export default defineComponent({
       };
 
       const addChild = () => {
-        let parent = rootScene as SeObject3D;
-
-        while (parent.children.length > 0) {
-          parent = parent.children[0];
+        const parent = project.selectedObject;
+        if (parent == null) {
+          return;
         }
 
         using(container.resolve(BatchEditingBlock), () => {
