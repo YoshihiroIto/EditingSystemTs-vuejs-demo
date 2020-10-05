@@ -6,7 +6,11 @@ import { singleton } from 'tsyringe';
 export class GetHistoryStateInteractor implements GetHistoryStateUseCase {
   constructor(private readonly history: History) {}
 
-  invoke(): [undo: number, redo: number] {
-    return this.history.undoRedoCount;
+  invoke(): { undoCount: number; redoCount: number; isInBatch: boolean } {
+    return {
+      undoCount: this.history.undoRedoCount[0],
+      redoCount: this.history.undoRedoCount[1],
+      isInBatch: this.history.isInBatch,
+    };
   }
 }

@@ -1,3 +1,3 @@
 export interface GetHistoryStateUseCase {
-  invoke(): [undo: number, redo: number];
+  invoke(): { undoCount: number; redoCount: number; isInBatch: boolean };
 }

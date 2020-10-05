@@ -1,7 +1,7 @@
 <template>
   <div id="app" tabindex="0">
     <div id="header" class="block">
-      undo:{{ undoRedoCount[0] }}, redo:{{ undoRedoCount[1] }}
+      undo:{{ historyState.undoCount }}, redo:{{ historyState.redoCount }}
       <button class="block_sep" @click="undo.invoke()">Undo</button>
       <button @click="redo.invoke()">Redo</button>
       <button @click="clearHistory.invoke()">Clear history</button>
@@ -113,7 +113,6 @@ $window-height: calc(100vh - #{$base-gap * 2});
 <script lang="ts">
 import { computed, defineComponent, onUnmounted, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
-import { History } from '../externals/EditingSystemTs/src/History';
 import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 
@@ -158,18 +157,16 @@ export default defineComponent({
 
       const project = reactive(container.resolve(Project));
       const rootScene = container.resolve(RootScene);
-      const undoRedoCount = computed(() => getHistoryState.invoke());
-
-      const history = container.resolve(History);
+      const historyState = computed(() => getHistoryState.invoke());
 
       const beginContinuousEditing = () => {
-        if (history.isInBatch == false) {
+        if (getHistoryState.invoke().isInBatch == false) {
           beginBatchEditing.invoke();
         }
       };
 
       const endContinuousEditing = () => {
-        if (history.isInBatch) {
+        if (getHistoryState.invoke().isInBatch) {
           endBatchEditing.invoke();
         }
       };
@@ -228,7 +225,7 @@ export default defineComponent({
 
       return {
         project,
-        undoRedoCount,
+        historyState,
 
         undo,
         redo,
