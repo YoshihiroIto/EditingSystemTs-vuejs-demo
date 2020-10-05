@@ -1,4 +1,4 @@
-import { SeCubeMesh, SePointMesh } from '@/se/SeMesh';
+import { SeBoxMesh, SePointMesh } from '@/se/SeMesh';
 import { SeObject3D } from '@/se/SeObject3D';
 import { container, singleton } from 'tsyringe';
 import { ObjectDefinition } from './ObjectDefinition';
@@ -28,9 +28,9 @@ export class ObjectCreator {
   private registerObjectDefinitions(): void {
     //todo:オブジェクト定義ファイルを読み込んできて登録する
     this.objectDefinitions.set(
-      'cube',
+      'box',
       new ObjectDefinition(() => {
-        return container.resolve(SeCubeMesh);
+        return container.resolve(SeBoxMesh);
       })
     );
 

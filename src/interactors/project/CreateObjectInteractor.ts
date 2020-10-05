@@ -8,11 +8,11 @@ export class CreateObjectInteractor implements CreateObjectUseCase {
   constructor(private readonly objectCreator: ObjectCreator) {}
 
   invoke(name: string): SeObject3D {
-    const cube = this.objectCreator.create(name);
+    const box = this.objectCreator.create(name);
 
-    cube.name = `Obj${CreateObjectInteractor.instanceCount++}`;
+    box.name = `Obj${CreateObjectInteractor.instanceCount++}`;
 
-    return cube;
+    return box;
   }
 
   private static instanceCount = 0;

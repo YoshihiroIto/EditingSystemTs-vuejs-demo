@@ -6,8 +6,8 @@
       <button :disabled="historyState.canRedo === false" @click="redo.invoke()">Redo</button>
       <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
 
-      <button class="block_sep" @click="addCubes">Add cubes</button>
-      <button :disabled="project.selectedObject === null" @click="addChildCube">Add child cube</button>
+      <button class="block_sep" @click="addBoxes">Add boxes</button>
+      <button :disabled="project.selectedObject === null" @click="addChildBox">Add child box</button>
     </div>
 
     <SceneViewport
@@ -202,8 +202,8 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addCubes: () => appTest.addObjects('cube'),
-        addChildCube: () => appTest.addChildObject('cube'),
+        addBoxes: () => appTest.addObjects('box'),
+        addChildBox: () => appTest.addChildObject('box'),
       };
     });
   },

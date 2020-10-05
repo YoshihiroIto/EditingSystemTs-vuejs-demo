@@ -18,15 +18,15 @@ export class AppTest {
   addObjects(name: string): void {
     using(container.resolve(BatchEditingBlock), () => {
       for (let i = 0; i != 20; ++i) {
-        const cube = this.createObject.invoke(name);
-        this.rootScene.add(cube);
+        const obj = this.createObject.invoke(name);
+        this.rootScene.add(obj);
 
-        cube.position = new SeVector3(
+        obj.position = new SeVector3(
           (Math.random() - 0.5) * 10,
           (Math.random() - 0.5) * 10,
           (Math.random() - 0.5) * 10
         );
-        cube.rotation = new SeVector3(
+        obj.rotation = new SeVector3(
           Math.random() * Math.PI * 2 - Math.PI,
           Math.random() * Math.PI * 2 - Math.PI,
           Math.random() * Math.PI * 2 - Math.PI
@@ -42,10 +42,10 @@ export class AppTest {
     }
 
     using(container.resolve(BatchEditingBlock), () => {
-      const cube = this.createObject.invoke(name);
-      parent.add(cube);
+      const obj = this.createObject.invoke(name);
+      parent.add(obj);
 
-      cube.position = new SeVector3(5 + Math.random(), Math.random(), Math.random());
+      obj.position = new SeVector3(5 + Math.random(), Math.random(), Math.random());
     });
   }
 }

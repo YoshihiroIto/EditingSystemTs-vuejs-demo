@@ -16,11 +16,11 @@ export class SeMesh extends SeObject3D {
 }
 
 @injectable()
-export class SeCubeMesh extends SeMesh {
+export class SeBoxMesh extends SeMesh {
   constructor(history: History) {
     super(history);
 
-    this._meshType = MeshTypes.Cube;
+    this._meshType = MeshTypes.Box;
   }
 }
 
@@ -36,7 +36,7 @@ export class SePointMesh extends SeMesh {
 export const MeshTypes = {
   Unset: 'unset',
   //
-  Cube: 'cube',
+  Box: 'box',
   Point: 'point',
   //
   Data: 'data',
