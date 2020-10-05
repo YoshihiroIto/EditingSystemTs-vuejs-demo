@@ -8,6 +8,7 @@
 
       <button class="block_sep" @click="addBoxes">Add boxes</button>
       <button :disabled="project.selectedObject === null" @click="addChildBox">Add child box</button>
+      <button @click="addPoints">Add points</button>
     </div>
 
     <SceneViewport
@@ -202,8 +203,9 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addBoxes: () => appTest.addObjects('box'),
+        addBoxes: () => appTest.addObjects('box', false),
         addChildBox: () => appTest.addChildObject('box'),
+        addPoints: () => appTest.addObjects('point', true),
       };
     });
   },

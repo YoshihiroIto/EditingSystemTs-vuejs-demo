@@ -15,7 +15,7 @@ export class AppTest {
     private readonly rootScene: RootScene
   ) {}
 
-  addObjects(name: string): void {
+  addObjects(name: string, isOnlyPosition: boolean): void {
     using(container.resolve(BatchEditingBlock), () => {
       for (let i = 0; i != 20; ++i) {
         const obj = this.createObject.invoke(name);
@@ -26,11 +26,14 @@ export class AppTest {
           (Math.random() - 0.5) * 10,
           (Math.random() - 0.5) * 10
         );
-        obj.rotation = new SeVector3(
-          Math.random() * Math.PI * 2 - Math.PI,
-          Math.random() * Math.PI * 2 - Math.PI,
-          Math.random() * Math.PI * 2 - Math.PI
-        );
+
+        if (isOnlyPosition === false) {
+          obj.rotation = new SeVector3(
+            Math.random() * Math.PI * 2 - Math.PI,
+            Math.random() * Math.PI * 2 - Math.PI,
+            Math.random() * Math.PI * 2 - Math.PI
+          );
+        }
       }
     });
   }
