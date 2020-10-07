@@ -16,7 +16,9 @@ import { Entity } from '@/models/entity/Entity';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends Entity>(Base: TBase) {
   return class extends Base implements Disposable {
-    get model(): Entity | null {
+    get model(): Entity {
+      Assert.isNotNull(this._model);
+
       return this._model;
     }
 

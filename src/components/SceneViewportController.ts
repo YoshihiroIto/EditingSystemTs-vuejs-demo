@@ -11,6 +11,7 @@ import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
 import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';
 import { MathUtils } from 'three/src/math/MathUtils';
+import { Entity } from '@/models/entity/Entity';
 
 export class SceneViewportController implements Disposable {
   readonly beginContinuousEditing = new TypedEvent();
@@ -193,12 +194,12 @@ export class SceneViewportController implements Disposable {
       return;
     }
 
-    this.entitiesPicked.emit(this, new EntitiesPickedEventArgs(intersects.map(x => x.object as ThObject3D)));
+    this.entitiesPicked.emit(this, new EntitiesPickedEventArgs(intersects.map(x => (x.object as ThObject3D).model)));
   };
 }
 
 export class EntitiesPickedEventArgs extends EventArgs {
-  constructor(readonly objects: ThObject3D[]) {
+  constructor(readonly entities: Entity[]) {
     super();
   }
 }

@@ -152,7 +152,7 @@ export default defineComponent({
       controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
-      controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.objects[0].model));
+      controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
 
       trash.push(renderer);
       trash.push(controller);
