@@ -1,7 +1,7 @@
 import { UseCase } from '@/Di';
 import using from '@/foundations/Using';
 import { SeVector3 } from '@/se/math/SeVector3';
-import { CreateObjectUseCase } from '@/useCases/project/CreateObjectUseCase';
+import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
 import { container, inject, singleton } from 'tsyringe';
 import { BatchEditingBlock } from './BatchEditingBlock';
 import { Project } from './Project';
@@ -10,7 +10,7 @@ import { RootScene } from './RootScene';
 @singleton()
 export class AppTest {
   constructor(
-    @inject(UseCase.createObject) private readonly createObject: CreateObjectUseCase,
+    @inject(UseCase.createEntity) private readonly createObject: CreateEntityUseCase,
     private readonly project: Project,
     private readonly rootScene: RootScene
   ) {}

@@ -9,7 +9,7 @@ import { EndBatchEditingInteractor } from './interactors/history/EndBatchEditing
 import { EndPauseEditingInteractor } from './interactors/history/EndPauseEditingInteractor';
 import { GetEditedInteractor } from './interactors/history/GetEditedInteractor';
 import { GetHistoryStateInteractor } from './interactors/history/GetHistoryStateInteractor';
-import { CreateObjectInteractor } from './interactors/project/CreateObjectInteractor';
+import { CreateEntityInteractor } from './interactors/project/CreateEntityInteractor';
 
 const UseCase = {
   // history
@@ -24,7 +24,7 @@ const UseCase = {
   getHistoryState: Symbol(),
 
   // project
-  createObject: Symbol(),
+  createEntity: Symbol(),
 };
 
 export { UseCase };
@@ -43,5 +43,5 @@ export default function setupDi(): void {
   container.registerInstance(History, new History());
 
   // project
-  container.register(UseCase.createObject, { useClass: CreateObjectInteractor });
+  container.register(UseCase.createEntity, { useClass: CreateEntityInteractor });
 }

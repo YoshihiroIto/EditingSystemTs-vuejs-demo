@@ -1,12 +1,12 @@
 import { SeBoxMesh, SePointMesh } from '@/se/SeMesh';
 import { SeObject3D } from '@/se/SeObject3D';
 import { container, singleton } from 'tsyringe';
-import { ObjectDefinition } from './ObjectDefinition';
+import { EntityDefinition } from './EntityDefinition';
 
 @singleton()
-export class ObjectCreator {
+export class EntityCreator {
   constructor() {
-    this.registerObjectDefinitions();
+    this.registerEntityDefinitions();
   }
 
   create(name: string): SeObject3D {
@@ -23,20 +23,20 @@ export class ObjectCreator {
     return obj;
   }
 
-  readonly objectDefinitions = new Map<string, ObjectDefinition>();
+  readonly objectDefinitions = new Map<string, EntityDefinition>();
 
-  private registerObjectDefinitions(): void {
-    //todo:オブジェクト定義ファイルを読み込んできて登録する
+  private registerEntityDefinitions(): void {
+    //todo:エンティティ定義ファイルを読み込んできて登録する
     this.objectDefinitions.set(
       'box',
-      new ObjectDefinition(() => {
+      new EntityDefinition(() => {
         return container.resolve(SeBoxMesh);
       })
     );
 
     this.objectDefinitions.set(
       'point',
-      new ObjectDefinition(() => {
+      new EntityDefinition(() => {
         return container.resolve(SePointMesh);
       })
     );
