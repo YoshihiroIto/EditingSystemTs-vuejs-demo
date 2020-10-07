@@ -61,7 +61,7 @@
 
 <script lang="ts">
 import SceneViewportToolbar from './SceneViewportToolbar.vue';
-import { SeObject3D } from '@/se/SeObject3D';
+import { Entity } from '@/models/entity/Entity';
 import { ThObject3D } from '@/th/ThObject';
 import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
@@ -83,14 +83,14 @@ import {
 
 type Props = {
   scene: ThObject3D | null;
-  selectedObject: SeObject3D | null;
+  selectedEntity: Entity | null;
   updated: TypedEvent | null;
 };
 
 export default defineComponent({
   props: {
     scene: { default: null },
-    selectedObject: { default: null },
+    selectedEntity: { default: null },
     updated: { default: null },
   },
   components: {
@@ -152,7 +152,7 @@ export default defineComponent({
       controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
-      controller.objectsPicked.on((_, e) => context.emit('update:selectedObject', e.objects[0].model));
+      controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.objects[0].model));
 
       trash.push(renderer);
       trash.push(controller);
@@ -178,11 +178,11 @@ export default defineComponent({
     const onCanvasMouseLeave = () => (controller.IsVisibleGizmo = false);
 
     ///////////////////////////////////////////////////////////////////////////
-    // selectedObject
+    // selectedEntity
     ///////////////////////////////////////////////////////////////////////////
     watch(
-      () => props.selectedObject,
-      (newObj: SeObject3D | null) => {
+      () => props.selectedEntity,
+      (newObj: Entity | null) => {
         Assert.isNotNull(props.scene);
 
         let isAttached = false;

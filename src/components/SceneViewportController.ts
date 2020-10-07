@@ -6,7 +6,7 @@ import { Raycaster } from 'three/src/core/Raycaster';
 import { ThObject3D } from '@/th/ThObject';
 import { TypedEvent, Disposable, EventArgs } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
-import { SeVector3 } from '@/se/math/SeVector3';
+import { Vector3 } from '@/foundations/math/SeVector3';
 import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
 import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';
@@ -15,7 +15,7 @@ import { MathUtils } from 'three/src/math/MathUtils';
 export class SceneViewportController implements Disposable {
   readonly beginContinuousEditing = new TypedEvent();
   readonly endContinuousEditing = new TypedEvent();
-  readonly objectsPicked = new TypedEvent<ObjectsPickedEventArgs>();
+  readonly entitiesPicked = new TypedEvent<EntitiesPickedEventArgs>();
 
   static get allInstances(): ReadonlySet<SceneViewportController> {
     return SceneViewportController._allInstances;
@@ -156,19 +156,19 @@ export class SceneViewportController implements Disposable {
   private onObjectChangeGizmo = (): void => {
     Assert.isNotNull(this.attachedObject?.model);
 
-    this.attachedObject.model.position = new SeVector3(
+    this.attachedObject.model.position = new Vector3(
       this.attachedObject.position.x,
       this.attachedObject.position.y,
       this.attachedObject.position.z
     );
 
-    this.attachedObject.model.rotation = new SeVector3(
+    this.attachedObject.model.rotation = new Vector3(
       this.attachedObject.rotation.x,
       this.attachedObject.rotation.y,
       this.attachedObject.rotation.z
     );
 
-    this.attachedObject.model.scale = new SeVector3(
+    this.attachedObject.model.scale = new Vector3(
       this.attachedObject.scale.x,
       this.attachedObject.scale.y,
       this.attachedObject.scale.z
@@ -193,11 +193,11 @@ export class SceneViewportController implements Disposable {
       return;
     }
 
-    this.objectsPicked.emit(this, new ObjectsPickedEventArgs(intersects.map(x => x.object as ThObject3D)));
+    this.entitiesPicked.emit(this, new EntitiesPickedEventArgs(intersects.map(x => x.object as ThObject3D)));
   };
 }
 
-export class ObjectsPickedEventArgs extends EventArgs {
+export class EntitiesPickedEventArgs extends EventArgs {
   constructor(readonly objects: ThObject3D[]) {
     super();
   }

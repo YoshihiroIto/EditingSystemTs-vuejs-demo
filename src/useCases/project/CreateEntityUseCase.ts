@@ -1,5 +1,5 @@
-import { SeObject3D } from '@/se/SeObject3D';
+import { Entity } from '@/models/entity/Entity';
 
 export interface CreateEntityUseCase {
-  invoke(name: string): SeObject3D;
+  invoke(name: string): Entity;
 }

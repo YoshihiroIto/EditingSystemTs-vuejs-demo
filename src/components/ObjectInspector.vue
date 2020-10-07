@@ -51,14 +51,14 @@
 
 <script lang="ts">
 import { defineComponent, SetupContext } from '@vue/composition-api';
-import { SeObject3D } from '@/se/SeObject3D';
+import { Entity } from '@/models/entity/Entity';
 import { nameof } from '@/foundations/Nameof';
 import { createComputedVector3 } from './ComponentHelper';
 import VectorEditor from './controls/VectorEditor.vue';
 import TextBox from './controls/TextBox.vue';
 
 type Props = {
-  target: SeObject3D | null;
+  target: Entity | null;
 };
 
 export default defineComponent({
@@ -73,9 +73,9 @@ export default defineComponent({
     const emitBeginContinuousEditing = () => context.emit('begin-continuous-editing');
     const emitEndContinuousEditing = () => context.emit('end-continuous-editing');
 
-    const [positionX, positionY, positionZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('position'));
-    const [rotationX, rotationY, rotationZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('rotation'));
-    const [scaleX, scaleY, scaleZ] = createComputedVector3(() => props.target, nameof<SeObject3D>('scale'));
+    const [positionX, positionY, positionZ] = createComputedVector3(() => props.target, nameof<Entity>('position'));
+    const [rotationX, rotationY, rotationZ] = createComputedVector3(() => props.target, nameof<Entity>('rotation'));
+    const [scaleX, scaleY, scaleZ] = createComputedVector3(() => props.target, nameof<Entity>('scale'));
 
     return {
       emitBeginContinuousEditing,

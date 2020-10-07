@@ -1,18 +1,18 @@
 import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
-import { SeObject3D } from '@/se/SeObject3D';
 import { EntityCreator } from '@/models/entity/EntityCreator';
 import { singleton } from 'tsyringe';
+import { Entity } from '@/models/entity/Entity';
 
 @singleton()
 export class CreateEntityInteractor implements CreateEntityUseCase {
-  constructor(private readonly objectCreator: EntityCreator) {}
+  constructor(private readonly entityCreator: EntityCreator) {}
 
-  invoke(name: string): SeObject3D {
-    const box = this.objectCreator.create(name);
+  invoke(name: string): Entity {
+    const entity = this.entityCreator.create(name);
 
-    box.name = `Obj${CreateEntityInteractor.instanceCount++}`;
+    entity.name = `Entity${CreateEntityInteractor.instanceCount++}`;
 
-    return box;
+    return entity;
   }
 
   private static instanceCount = 0;

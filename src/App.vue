@@ -7,14 +7,14 @@
       <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
 
       <button class="block_sep" @click="addBoxes">Add boxes</button>
-      <button :disabled="project.selectedObject === null" @click="addChildBox">Add child box</button>
+      <button :disabled="project.selectedEntity === null" @click="addChildBox">Add child box</button>
       <button @click="addPoints">Add points</button>
     </div>
 
     <SceneViewport
       id="viewport1"
       :scene="rootSceneViewModel"
-      :selectedObject.sync="project.selectedObject"
+      :selectedEntity.sync="project.selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
@@ -23,17 +23,17 @@
     <SceneViewport
       id="viewport2"
       :scene="rootSceneViewModel"
-      :selectedObject.sync="project.selectedObject"
+      :selectedEntity.sync="project.selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
     />
 
-    <ObjectTreeView id="treeview" :children="children" :selectedObject.sync="project.selectedObject" />
+    <ObjectTreeView id="treeview" :children="children" :selectedEntity.sync="project.selectedEntity" />
 
     <ObjectInspector
       id="inspector"
-      :target="project.selectedObject"
+      :target="project.selectedEntity"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
     />

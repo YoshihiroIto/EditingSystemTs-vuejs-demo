@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SeVector3 } from '@/se/math/SeVector3';
+import { Vector3 } from '@/foundations/math/SeVector3';
 import { computed, WritableComputedRef } from '@vue/composition-api';
 
 export function createComputedVector3(
@@ -21,7 +21,7 @@ export function createComputedVector3(
         return;
       }
 
-      target[propertyName] = new SeVector3(value, target[propertyName].y, target[propertyName].z);
+      target[propertyName] = new Vector3(value, target[propertyName].y, target[propertyName].z);
     },
   });
 
@@ -40,7 +40,7 @@ export function createComputedVector3(
         return;
       }
 
-      target[propertyName] = new SeVector3(target[propertyName].x, value, target[propertyName].z);
+      target[propertyName] = new Vector3(target[propertyName].x, value, target[propertyName].z);
     },
   });
 
@@ -59,7 +59,7 @@ export function createComputedVector3(
         return;
       }
 
-      target[propertyName] = new SeVector3(target[propertyName].x, target[propertyName].y, value);
+      target[propertyName] = new Vector3(target[propertyName].x, target[propertyName].y, value);
     },
   });
 

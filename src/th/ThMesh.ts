@@ -1,4 +1,4 @@
-import { MeshTypes, SeMesh } from '@/se/SeMesh';
+import { Entity } from '@/models/entity/Entity';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Geometry } from 'three/src/core/Geometry';
 import { BoxBufferGeometry, SphereBufferGeometry } from 'three/src/geometries/Geometries';
@@ -14,27 +14,28 @@ class ThMeshInternal extends Mesh<Geometry | BufferGeometry, Material | Material
   private static pointGeom: BufferGeometry | null = null;
   private static pointMaterial: Material | null = null;
 
-  setupInternal(model: SeMesh): void {
-    switch (model.meshType) {
-      case MeshTypes.Box:
-        ThMeshInternal.boxGeom ??= new BoxBufferGeometry(1, 1, 1);
-        ThMeshInternal.boxMaterial ??= new MeshNormalMaterial();
+  setupInternal(model: Entity): void {
+    // switch (model.meshType) {
+    //   case MeshTypes.Box:
+    //     ThMeshInternal.boxGeom ??= new BoxBufferGeometry(1, 1, 1);
+    //     ThMeshInternal.boxMaterial ??= new MeshNormalMaterial();
+    //     this.geometry = ThMeshInternal.boxGeom;
+    //     this.material = ThMeshInternal.boxMaterial;
+    //     break;
+    //   case MeshTypes.Point:
+    //     ThMeshInternal.pointGeom ??= new SphereBufferGeometry(0.1, 6, 6);
+    //     ThMeshInternal.pointMaterial ??= new MeshBasicMaterial({ color: 0xdddddd });
+    //     this.geometry = ThMeshInternal.pointGeom;
+    //     this.material = ThMeshInternal.pointMaterial;
+    //     break;
+    //   default:
+    //     throw new Error('Not implementation');
+    // }
 
-        this.geometry = ThMeshInternal.boxGeom;
-        this.material = ThMeshInternal.boxMaterial;
-        break;
-
-      case MeshTypes.Point:
-        ThMeshInternal.pointGeom ??= new SphereBufferGeometry(0.1, 6, 6);
-        ThMeshInternal.pointMaterial ??= new MeshBasicMaterial({ color: 0xdddddd });
-
-        this.geometry = ThMeshInternal.pointGeom;
-        this.material = ThMeshInternal.pointMaterial;
-        break;
-
-      default:
-        throw new Error('Not implementation');
-    }
+    ThMeshInternal.boxGeom ??= new BoxBufferGeometry(1, 1, 1);
+    ThMeshInternal.boxMaterial ??= new MeshNormalMaterial();
+    this.geometry = ThMeshInternal.boxGeom;
+    this.material = ThMeshInternal.boxMaterial;
   }
 }
 

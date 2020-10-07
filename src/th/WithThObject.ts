@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SeMesh } from '@/se/SeMesh';
 import {
   NotifyCollectionChangedEventArgs,
   NotifyCollectionChangedActions,
@@ -7,17 +6,17 @@ import {
 } from '../../externals/EditingSystemTs/src/Event';
 import { container } from 'tsyringe';
 import { ThMesh } from './ThMesh';
-import { SeObject3D } from '@/se/SeObject3D';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Object3D } from 'three/src/core/Object3D';
 import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
 import { Constructor } from '../foundations/Mixin';
 import { nameof } from '../foundations/Nameof';
+import { Entity } from '@/models/entity/Entity';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Base: TBase) {
+export function WithThObject<TBase extends Constructor, T extends Entity>(Base: TBase) {
   return class extends Base implements Disposable {
-    get model(): SeObject3D | null {
+    get model(): Entity | null {
       return this._model;
     }
 
@@ -32,7 +31,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
           if (e.newItems) {
             const newObjects = e.newItems.map(x => {
               const mesh = container.resolve(ThMesh);
-              mesh.setup(x as SeMesh);
+              mesh.setup(x as Entity);
 
               return mesh;
             });
@@ -45,7 +44,7 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
 
         case NotifyCollectionChangedActions.Remove:
           if (e.oldItems) {
-            const modelsLookup = new Set<SeObject3D>(e.oldItems as Array<SeObject3D>);
+            const modelsLookup = new Set<Entity>(e.oldItems as Array<Entity>);
             const targetChildren = this.viewModel.children.filter(x => modelsLookup.has((x as any).model));
 
             for (const vm of targetChildren) {
@@ -66,19 +65,19 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       Assert.isNotNull(this.viewModel);
 
       switch (e.propertyName) {
-        case nameof<SeObject3D>('name'):
+        case nameof<Entity>('name'):
           this.viewModel.name = this._model.name;
           break;
 
-        case nameof<SeObject3D>('position'):
+        case nameof<Entity>('position'):
           this.viewModel.position.set(this._model.position.x, this._model.position.y, this._model.position.z);
           break;
 
-        case nameof<SeObject3D>('rotation'):
+        case nameof<Entity>('rotation'):
           this.viewModel.rotation.set(this._model.rotation.x, this._model.rotation.y, this._model.rotation.z);
           break;
 
-        case nameof<SeObject3D>('scale'):
+        case nameof<Entity>('scale'):
           this.viewModel.scale.set(this._model.scale.x, this._model.scale.y, this._model.scale.z);
           break;
 
@@ -100,10 +99,10 @@ export function WithThObject<TBase extends Constructor, T extends SeObject3D>(Ba
       (this as any)?.setupInternal?.call(this, model);
 
       [
-        nameof<SeObject3D>('name'),
-        nameof<SeObject3D>('position'),
-        nameof<SeObject3D>('rotation'),
-        nameof<SeObject3D>('scale'),
+        nameof<Entity>('name'),
+        nameof<Entity>('position'),
+        nameof<Entity>('rotation'),
+        nameof<Entity>('scale'),
       ].forEach(x => this.propertyChanged(this, new PropertyChangedEventArgs(x, null)));
     }
 

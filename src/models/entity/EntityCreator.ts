@@ -1,6 +1,5 @@
-import { SeBoxMesh, SePointMesh } from '@/se/SeMesh';
-import { SeObject3D } from '@/se/SeObject3D';
 import { container, singleton } from 'tsyringe';
+import { Entity } from './Entity';
 import { EntityDefinition } from './EntityDefinition';
 
 @singleton()
@@ -9,35 +8,35 @@ export class EntityCreator {
     this.registerEntityDefinitions();
   }
 
-  create(name: string): SeObject3D {
-    const objDef = this.objectDefinitions.get(name);
+  create(name: string): Entity {
+    const entityDef = this.entityDefinitions.get(name);
 
-    if (objDef === undefined) {
+    if (entityDef === undefined) {
       throw new Error(`not fount ${name}`);
     }
 
-    const obj = objDef.create();
+    const entity = entityDef.create();
 
-    obj.objectDefinitionName = name;
+    entity.definitionName = name;
 
-    return obj;
+    return entity;
   }
 
-  readonly objectDefinitions = new Map<string, EntityDefinition>();
+  readonly entityDefinitions = new Map<string, EntityDefinition>();
 
   private registerEntityDefinitions(): void {
     //todo:エンティティ定義ファイルを読み込んできて登録する
-    this.objectDefinitions.set(
+    this.entityDefinitions.set(
       'box',
       new EntityDefinition(() => {
-        return container.resolve(SeBoxMesh);
+        return container.resolve(Entity);
       })
     );
 
-    this.objectDefinitions.set(
+    this.entityDefinitions.set(
       'point',
       new EntityDefinition(() => {
-        return container.resolve(SePointMesh);
+        return container.resolve(Entity);
       })
     );
   }

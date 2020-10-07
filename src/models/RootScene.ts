@@ -1,9 +1,9 @@
 ﻿import { History } from '../../externals/EditingSystemTs/src/History';
-import { SeScene } from '@/se/SeScene';
 import { singleton } from 'tsyringe';
+import { Entity } from './entity/Entity';
 
 @singleton()
-export class RootScene extends SeScene {
+export class RootScene extends Entity {
   constructor(history: History) {
     super(history);
   }
