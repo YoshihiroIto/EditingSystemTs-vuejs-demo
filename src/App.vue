@@ -137,7 +137,6 @@ import { AppTest } from './models/AppTest';
 import { Entity } from './models/entity/Entity';
 
 export default defineComponent({
-  name: 'App',
   components: {
     SceneViewport,
     EntityTreeView,
