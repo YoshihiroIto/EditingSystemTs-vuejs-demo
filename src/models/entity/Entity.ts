@@ -5,6 +5,7 @@ import { History } from '../../../externals/EditingSystemTs/src/History';
 import { TypedEvent } from '../../../externals/EditingSystemTs/src/TypedEvent';
 import { ObservableArray } from '../../../externals/EditingSystemTs/src/ObservableArray';
 import { EditingSystem } from '../../../externals/EditingSystemTs/src/Decorators';
+import { EntityDefinition } from './EntityDefinition';
 
 @injectable()
 export class Entity implements NotifyPropertyChanged {
@@ -13,7 +14,7 @@ export class Entity implements NotifyPropertyChanged {
 
   name = '';
 
-  definitionName: string | null = null;
+  definition: Readonly<EntityDefinition> | null = null;
 
   position = Vector3.Zero;
   rotation = Vector3.Zero;

@@ -1,6 +1,7 @@
 import { container, singleton } from 'tsyringe';
 import { Entity } from './Entity';
 import { EntityDefinition } from './EntityDefinition';
+import { MeshTypes, RenderDefinition } from './RenderDefinition';
 
 @singleton()
 export class EntityCreator {
@@ -15,29 +16,34 @@ export class EntityCreator {
       throw new Error(`not fount ${name}`);
     }
 
-    const entity = entityDef.create();
-
-    entity.definitionName = name;
-
-    return entity;
+    return this.createInternal(entityDef);
   }
 
   readonly entityDefinitions = new Map<string, EntityDefinition>();
 
   private registerEntityDefinitions(): void {
-    //todo:エンティティ定義ファイルを読み込んできて登録する
-    this.entityDefinitions.set(
-      'box',
-      new EntityDefinition(() => {
-        return container.resolve(Entity);
-      })
-    );
+    const box = new EntityDefinition({
+      name: 'box',
+      renderDefinition: new RenderDefinition({ meshType: MeshTypes.Box }),
+    });
 
-    this.entityDefinitions.set(
-      'point',
-      new EntityDefinition(() => {
-        return container.resolve(Entity);
-      })
-    );
+    const point = new EntityDefinition({
+      name: 'point',
+      renderDefinition: new RenderDefinition({ meshType: MeshTypes.Point }),
+    });
+
+    this.entityDefinitions.set(box.name, box);
+    this.entityDefinitions.set(point.name, point);
+  }
+
+  createInternal(definition: EntityDefinition): Entity {
+    const entity = container.resolve(Entity);
+
+    entity.definition = definition;
+    entity.position = definition.position;
+    entity.rotation = definition.rotation;
+    entity.scale = definition.scale;
+
+    return entity;
   }
 }
