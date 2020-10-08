@@ -1,7 +1,7 @@
 import { UseCase } from '@/Di';
 import { BeginPauseEditingUseCase } from '@/useCases/history/BeginPauseEditingUseCase';
 import { EndPauseEditingUseCase } from '@/useCases/history/EndPauseEditingUseCase';
-import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { inject, injectable } from 'tsyringe';
 
 @injectable()

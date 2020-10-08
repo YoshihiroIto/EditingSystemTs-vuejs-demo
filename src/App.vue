@@ -132,7 +132,7 @@ import { GetEditedUseCase } from './useCases/history/GetEditedUseCase';
 import { GetHistoryStateUseCase } from './useCases/history/GetHistoryStateUseCase';
 
 import using from './foundations/Using';
-import { PauseEditingBlock } from './models/PauseEditingBlock';
+import { PauseEditingBlock } from './foundations/PauseEditingBlock';
 
 import { AppTest } from './models/AppTest';
 

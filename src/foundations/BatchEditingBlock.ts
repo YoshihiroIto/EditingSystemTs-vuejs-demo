@@ -1,7 +1,7 @@
 import { UseCase } from '@/Di';
 import { BeginBatchEditingUseCase } from '@/useCases/history/BeginBatchEditingUseCase';
 import { EndBatchEditingUseCase } from '@/useCases/history/EndBatchEditingUseCase';
-import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { inject, injectable } from 'tsyringe';
 
 @injectable()
