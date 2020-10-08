@@ -5,21 +5,29 @@ import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
 import { container, inject, singleton } from 'tsyringe';
 import { BatchEditingBlock } from '../foundations/BatchEditingBlock';
 import { Project } from './Project';
-import { RootScene } from './RootScene';
+import { Assert } from '../../externals/EditingSystemTs/src/Assert';
+import { Entity } from './entity/Entity';
 
 @singleton()
 export class AppTest {
   constructor(
     @inject(UseCase.createEntity) private readonly createEntity: CreateEntityUseCase,
-    private readonly project: Project,
-    private readonly rootScene: RootScene
+    private readonly project: Project
   ) {}
+
+  private target: Entity | null = null;
+
+  setup(target: Entity): void {
+    this.target = target;
+  }
 
   addEntities(name: string, isOnlyPosition: boolean): void {
     using(container.resolve(BatchEditingBlock), () => {
+      Assert.isNotNull(this.target);
+
       for (let i = 0; i != 20; ++i) {
         const entity = this.createEntity.invoke(name);
-        this.rootScene.add(entity);
+        this.target.add(entity);
 
         entity.position = new Vector3(
           (Math.random() - 0.5) * 10,

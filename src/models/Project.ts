@@ -1,15 +1,19 @@
 import { History } from '../../externals/EditingSystemTs/src/History';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../externals/EditingSystemTs/src/Event';
-import { singleton } from 'tsyringe';
+import { container, singleton } from 'tsyringe';
 import { nameof } from '@/foundations/Nameof';
 import { Entity } from './entity/Entity';
+import { EditingSystem } from '../../externals/EditingSystemTs/src/Decorators';
 
 @singleton()
 export class Project implements NotifyPropertyChanged {
   readonly propertyChanged = new TypedEvent<PropertyChangedEventArgs>();
 
   selectedEntity: Entity | null = null;
+
+  @EditingSystem.ignore
+  readonly rootScene = container.resolve(Entity);
 
   constructor(private readonly history: History) {
     this.history.register(this);

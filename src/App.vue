@@ -13,7 +13,7 @@
 
     <SceneViewport
       id="viewport1"
-      :scene="rootSceneViewModel"
+      :scene="sceneViewModel"
       :selectedEntity.sync="project.selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
@@ -22,7 +22,7 @@
 
     <SceneViewport
       id="viewport2"
-      :scene="rootSceneViewModel"
+      :scene="sceneViewModel"
       :selectedEntity.sync="project.selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
@@ -114,8 +114,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
 import { container } from 'tsyringe';
-import { RootScene } from './models/RootScene';
-import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
+import { SceneViewModel } from './viewModels/SceneViewModel';
 
 import SceneViewport from './components/SceneViewport.vue';
 import EntityTreeView from './components/EntityTreeView.vue';
@@ -135,6 +134,7 @@ import using from './foundations/Using';
 import { PauseEditingBlock } from './foundations/PauseEditingBlock';
 
 import { AppTest } from './models/AppTest';
+import { Entity } from './models/entity/Entity';
 
 export default defineComponent({
   name: 'App',
@@ -153,10 +153,12 @@ export default defineComponent({
       const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
       const getHistoryState = container.resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
 
-      const appTest = container.resolve(AppTest);
       const project = reactive(container.resolve(Project));
-      const rootScene = container.resolve(RootScene);
       const historyState = computed(() => getHistoryState.invoke());
+      const appTest = container.resolve(AppTest);
+
+      const rootScene = project.rootScene as Entity;
+      appTest.setup(rootScene);
 
       const beginContinuousEditing = () => {
         if (getHistoryState.invoke().isInBatch == false) {
@@ -191,7 +193,7 @@ export default defineComponent({
         beginContinuousEditing,
         endContinuousEditing,
 
-        rootSceneViewModel: RootSceneViewModel.create(rootScene),
+        sceneViewModel: SceneViewModel.create(rootScene),
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
