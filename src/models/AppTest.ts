@@ -15,7 +15,7 @@ export class AppTest {
     private readonly rootScene: RootScene
   ) {}
 
-  addObjects(name: string, isOnlyPosition: boolean): void {
+  addEntities(name: string, isOnlyPosition: boolean): void {
     using(container.resolve(BatchEditingBlock), () => {
       for (let i = 0; i != 20; ++i) {
         const entity = this.createEntity.invoke(name);
@@ -38,7 +38,7 @@ export class AppTest {
     });
   }
 
-  addChildObject(name: string): void {
+  addChildEntity(name: string): void {
     const parent = this.project.selectedEntity;
     if (parent == null) {
       return;

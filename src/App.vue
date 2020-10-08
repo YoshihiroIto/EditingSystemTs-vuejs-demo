@@ -29,9 +29,9 @@
       @end-continuous-editing="endContinuousEditing"
     />
 
-    <ObjectTreeView id="treeview" :children="children" :selectedEntity.sync="project.selectedEntity" />
+    <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="project.selectedEntity" />
 
-    <ObjectInspector
+    <EntityInspector
       id="inspector"
       :target="project.selectedEntity"
       @begin-continuous-editing="beginContinuousEditing"
@@ -118,8 +118,8 @@ import { RootScene } from './models/RootScene';
 import { RootSceneViewModel } from './viewModels/RootSceneViewModel';
 
 import SceneViewport from './components/SceneViewport.vue';
-import ObjectTreeView from './components/ObjectTreeView.vue';
-import ObjectInspector from './components/ObjectInspector.vue';
+import EntityTreeView from './components/EntityTreeView.vue';
+import EntityInspector from './components/EntityInspector.vue';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
 import { UseCase } from './Di';
@@ -140,8 +140,8 @@ export default defineComponent({
   name: 'App',
   components: {
     SceneViewport,
-    ObjectTreeView,
-    ObjectInspector,
+    EntityTreeView,
+    EntityInspector,
   },
   setup() {
     return using(container.resolve(PauseEditingBlock), () => {
@@ -195,9 +195,9 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addBoxes: () => appTest.addObjects('box', false),
-        addChildBox: () => appTest.addChildObject('box'),
-        addPoints: () => appTest.addObjects('point', true),
+        addBoxes: () => appTest.addEntities('box', false),
+        addChildBox: () => appTest.addChildEntity('box'),
+        addPoints: () => appTest.addEntities('point', true),
       };
     });
   },
