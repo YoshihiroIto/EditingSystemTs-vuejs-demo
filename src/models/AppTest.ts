@@ -1,6 +1,6 @@
 import { UseCase } from '@/Di';
 import using from '@/foundations/Using';
-import { Vector3 } from '@/foundations/math/SeVector3';
+import { Vector3 } from '@/foundations/math/Vector3';
 import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
 import { container, inject, singleton } from 'tsyringe';
 import { BatchEditingBlock } from './BatchEditingBlock';

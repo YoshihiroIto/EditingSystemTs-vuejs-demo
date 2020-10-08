@@ -6,7 +6,7 @@ import { Raycaster } from 'three/src/core/Raycaster';
 import { ThObject3D } from '@/th/ThObject';
 import { TypedEvent, Disposable, EventArgs } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
-import { Vector3 } from '@/foundations/math/SeVector3';
+import { Vector3 } from '@/foundations/math/Vector3';
 import { Vector2 } from 'three/src/math/Vector2';
 import { from } from 'linq-to-typescript/sync/Enumerable';
 import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';

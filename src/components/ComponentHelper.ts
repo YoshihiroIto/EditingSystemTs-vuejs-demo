@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Vector3 } from '@/foundations/math/SeVector3';
+import { Vector3 } from '@/foundations/math/Vector3';
 import { computed, WritableComputedRef } from '@vue/composition-api';
 
 export function createComputedVector3(

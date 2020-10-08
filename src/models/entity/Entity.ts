@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { Vector3 } from '../../foundations/math/SeVector3';
+import { Vector3 } from '../../foundations/math/Vector3';
 import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../../externals/EditingSystemTs/src/Event';
 import { History } from '../../../externals/EditingSystemTs/src/History';
 import { TypedEvent } from '../../../externals/EditingSystemTs/src/TypedEvent';
