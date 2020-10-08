@@ -21,16 +21,12 @@ export class Entity implements NotifyPropertyChanged {
   scale = Vector3.One;
 
   @EditingSystem.ignore
-  parent: Entity | null = null;
-
-  @EditingSystem.ignore
-  history: History;
-
-  @EditingSystem.ignore
   isSelected = false;
 
+  @EditingSystem.ignore
+  private parent: Entity | null = null;
+
   constructor(history: History) {
-    this.history = history;
     history.register(this);
   }
 
