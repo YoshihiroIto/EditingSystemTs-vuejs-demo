@@ -32,8 +32,10 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
         case NotifyCollectionChangedActions.Add: {
           if (e.newItems) {
             const newObjects = e.newItems.map(x => {
+              const newEntity = x as Entity;
+
               const mesh = container.resolve(ThMesh);
-              mesh.setup(x as Entity);
+              mesh.setup(newEntity);
 
               return mesh;
             });

@@ -21,11 +21,11 @@ export class AppTest {
     this.target = target;
   }
 
-  addEntities(name: string, isOnlyPosition: boolean): void {
+  addEntities(name: string, isOnlyPosition: boolean, count: number): void {
     using(container.resolve(BatchEditingBlock), () => {
       Assert.isNotNull(this.target);
 
-      for (let i = 0; i != 20; ++i) {
+      for (let i = 0; i != count; ++i) {
         const entity = this.createEntity.invoke(name);
         this.target.add(entity);
 

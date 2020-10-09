@@ -9,6 +9,7 @@
       <button class="block_sep" @click="addBoxes">Add boxes</button>
       <button :disabled="project.selectedEntity === null" @click="addChildBox">Add child box</button>
       <button @click="addPoints">Add points</button>
+      <button @click="addHavingChildrenBox">Add HavingChildrenBox</button>
     </div>
 
     <SceneViewport
@@ -196,9 +197,10 @@ export default defineComponent({
         children: ref(rootScene.children),
         updated: getEdited.invoke(),
 
-        addBoxes: () => appTest.addEntities('box', false),
+        addBoxes: () => appTest.addEntities('box', false, 20),
         addChildBox: () => appTest.addChildEntity('box'),
-        addPoints: () => appTest.addEntities('point', true),
+        addPoints: () => appTest.addEntities('point', true, 20),
+        addHavingChildrenBox: () => appTest.addEntities('havingChildrenBox', true, 1),
       };
     });
   },
