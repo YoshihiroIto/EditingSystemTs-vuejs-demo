@@ -262,7 +262,7 @@ export default defineComponent({
       if (e.shiftKey) {
         controller.isSnap = true;
       }
-      if (e.ctrlKey) {
+      if (e.ctrlKey && controller.IsVisibleGizmo) {
         controller.enabled = false;
       } else {
         switch (e.key.toLowerCase()) {
