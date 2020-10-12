@@ -2,6 +2,7 @@ import { Camera } from 'three/src/cameras/Camera';
 import { Event } from 'three/src/core/EventDispatcher';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+import { BoxHelper } from 'three/src/helpers/BoxHelper';
 import { Raycaster } from 'three/src/core/Raycaster';
 import { ThObject3D } from '@/th/ThObject';
 import { TypedEvent, Disposable, EventArgs } from '../../externals/EditingSystemTs/src/TypedEvent';
@@ -93,6 +94,7 @@ export class SceneViewportController implements Disposable {
 
   private readonly cameraControls: OrbitControls;
   private readonly gizmo: TransformControls;
+  private boundingBox: BoxHelper | null = null;
 
   private attachedObject: ThObject3D | null = null;
   private raycaster = new Raycaster();
@@ -139,11 +141,28 @@ export class SceneViewportController implements Disposable {
   detachTargetObject(): void {
     this.attachedObject = null;
     this.gizmo.detach();
+
+    if (this.boundingBox != null) {
+      this.parent.remove(this.boundingBox);
+      this.boundingBox = null;
+    }
   }
 
   attachTargetObject(target: ThObject3D): void {
     this.gizmo.attach(target);
     this.attachedObject = target;
+
+    if (this.boundingBox != null) {
+      this.parent.remove(this.boundingBox);
+    }
+    if (target != null) {
+      this.boundingBox = new BoxHelper(target);
+      this.parent.add(this.boundingBox);
+    }
+  }
+
+  onRender(): void {
+    this.boundingBox?.update();
   }
 
   private onMouseDownGizmo = (): void => {

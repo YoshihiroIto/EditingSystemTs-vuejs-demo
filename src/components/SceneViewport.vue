@@ -230,6 +230,8 @@ export default defineComponent({
 
       ++frameCount.value;
 
+      controller.onRender();
+
       // canvas size
       {
         // ref: https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html
