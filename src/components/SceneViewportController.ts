@@ -194,7 +194,10 @@ export class SceneViewportController implements Disposable {
       return;
     }
 
-    this.entitiesPicked.emit(this, new EntitiesPickedEventArgs(intersects.map(x => (x.object as ThObject3D).model)));
+    this.entitiesPicked.emit(
+      this,
+      new EntitiesPickedEventArgs(intersects.map(x => (x.object as ThObject3D).model.owner))
+    );
   };
 }
 

@@ -1,7 +1,8 @@
+import { MathHelper } from '@/foundations/math/MathHelper';
 import { Vector3 } from '@/foundations/math/Vector3';
 import { container, singleton } from 'tsyringe';
 import { Entity } from './Entity';
-import { ChildEntity, EntityDefinition } from './EntityDefinition';
+import { ChildEntityTag, EntityDefinition } from './EntityDefinition';
 import { MeshTypes, RenderDefinition } from './RenderDefinition';
 
 @singleton()
@@ -10,17 +11,11 @@ export class EntityCreator {
     this.registerEntityDefinitions();
   }
 
-  create(name: string): Entity {
-    const entityDef = this.entityDefinitions.get(name);
-
-    if (entityDef === undefined) {
-      throw new Error(`not fount ${name}`);
-    }
-
-    return this.createInternal(entityDef);
+  create(definitionName: string): Entity {
+    return this.createInternal(definitionName, true);
   }
 
-  readonly entityDefinitions = new Map<string, EntityDefinition>();
+  private readonly entityDefinitions = new Map<string, EntityDefinition>();
 
   private registerEntityDefinitions(): void {
     const box = new EntityDefinition({
@@ -37,39 +32,63 @@ export class EntityCreator {
       name: 'havingChildrenBox',
       renderDefinition: new RenderDefinition({ meshType: MeshTypes.Point }),
 
-      children: [
-        new ChildEntity({ name: 'box', position: new Vector3(5, 0, 0) }),
-        new ChildEntity({ name: 'point', position: new Vector3(0, 0, 5) }),
-        new ChildEntity({ name: 'box', position: new Vector3(-5, 0, 0) }),
-        new ChildEntity({ name: 'point', position: new Vector3(0, 0, -5) }),
+      childTags: [
+        new ChildEntityTag({ definitionName: 'box', position: new Vector3(5, 0, 0) }),
+        new ChildEntityTag({ definitionName: 'point', position: new Vector3(0, 0, 5) }),
+        new ChildEntityTag({ definitionName: 'box', position: new Vector3(-5, 0, 0) }),
+        new ChildEntityTag({ definitionName: 'point', position: new Vector3(0, 0, -5) }),
+      ],
+    });
+
+    const threeGens = new EntityDefinition({
+      name: 'threeGens',
+      renderDefinition: new RenderDefinition({ meshType: MeshTypes.Point }),
+
+      childTags: [
+        new ChildEntityTag({
+          definitionName: 'box',
+          position: new Vector3(5, 0, 0),
+          childTags: [
+            new ChildEntityTag({
+              definitionName: 'point',
+              position: new Vector3(0, 0, 10),
+              childTags: [new ChildEntityTag({ definitionName: 'box', position: new Vector3(5, 0, 0) })],
+            }),
+          ],
+        }),
       ],
     });
 
     this.entityDefinitions.set(box.name, box);
     this.entityDefinitions.set(point.name, point);
     this.entityDefinitions.set(havingChildrenBox.name, havingChildrenBox);
+    this.entityDefinitions.set(threeGens.name, threeGens);
   }
 
-  createInternal(definition: EntityDefinition): Entity {
+  private createInternal(definitionName: string, isOwner: boolean): Entity {
+    const definition = this.entityDefinitions.get(definitionName);
+    if (definition === undefined) {
+      throw new Error(`not fount ${definitionName}`);
+    }
+
     const entity = container.resolve(Entity);
+    entity.setup(isOwner, definition);
 
-    entity.definition = definition;
+    for (const child of definition.childTags ?? []) {
+      const childEntity = this.createFromChildEntryTag(child);
+      entity.addToOwn(childEntity);
+    }
 
-    if (definition.children != null) {
-      for (const child of definition.children) {
-        const childDef = this.entityDefinitions.get(child.name);
+    return entity;
+  }
 
-        if (childDef === undefined) {
-          throw new Error(`not fount ${name}`);
-        }
+  private createFromChildEntryTag(tag: ChildEntityTag): Entity {
+    const entity = this.createInternal(tag.definitionName, false);
+    MathHelper.copySrt(entity, tag);
 
-        const childEntity = this.createInternal(childDef);
-        childEntity.position = child.position;
-        childEntity.rotation = child.rotation;
-        childEntity.scale = child.scale;
-
-        entity.add(childEntity);
-      }
+    for (const child of tag.childTags ?? []) {
+      const childEntity = this.createFromChildEntryTag(child);
+      entity.addToOwn(childEntity);
     }
 
     return entity;

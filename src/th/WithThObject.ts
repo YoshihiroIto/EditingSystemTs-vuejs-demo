@@ -31,16 +31,7 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       switch (e.action) {
         case NotifyCollectionChangedActions.Add: {
           if (e.newItems) {
-            const newObjects = e.newItems.map(x => {
-              const newEntity = x as Entity;
-
-              const mesh = container.resolve(ThMesh);
-              mesh.setup(newEntity);
-
-              return mesh;
-            });
-
-            this.viewModel.add(...newObjects);
+            this.addToViewModel(this.viewModel, e.newItems as Entity[]);
           }
 
           break;
@@ -63,6 +54,33 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
           throw new Error(`Not implementation: "${e.action}"`);
       }
     };
+
+    private addToViewModel(target: Object3D, entities: Entity[]): void {
+      Assert.isNotNull(this.viewModel);
+
+      if (entities.length === 0) {
+        return;
+      }
+
+      const newObjects = entities.map(entity => {
+        const mesh = container.resolve(ThMesh);
+        mesh.setup(entity);
+
+        return mesh;
+      });
+
+      target.add(...newObjects);
+
+      for (const obj of newObjects) {
+        if (obj.model.hasChildren === false) {
+          continue;
+        }
+
+        Assert.isNotNull(obj.viewModel);
+
+        this.addToViewModel(obj.viewModel, obj.model.makeAllChildren());
+      }
+    }
 
     private propertyChanged = (_: unknown, e: PropertyChangedEventArgs): void => {
       Assert.isNotNull(this._model);
@@ -97,6 +115,7 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       this._model = model;
 
       this._model.children.collectionChanged.on(this.childrenChanged);
+      this._model.ownChildren.collectionChanged.on(this.childrenChanged);
       this._model.propertyChanged.on(this.propertyChanged);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,8 +130,11 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
     }
 
     dispose(): void {
-      this._model?.propertyChanged.off(this.propertyChanged);
-      this._model?.children.collectionChanged.off(this.childrenChanged);
+      Assert.isNotNull(this._model);
+
+      this._model.propertyChanged.off(this.propertyChanged);
+      this._model.ownChildren.collectionChanged.off(this.childrenChanged);
+      this._model.children.collectionChanged.off(this.childrenChanged);
     }
 
     *allChildren(): Generator<Object3D, void, unknown> {

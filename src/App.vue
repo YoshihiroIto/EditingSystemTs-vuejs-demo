@@ -10,6 +10,7 @@
       <button :disabled="project.selectedEntity === null" @click="addChildBox">Add child box</button>
       <button @click="addPoints">Add points</button>
       <button @click="addHavingChildrenBox">Add HavingChildrenBox</button>
+      <button @click="addThreeGens">Add ThreeGens</button>
     </div>
 
     <SceneViewport
@@ -201,6 +202,7 @@ export default defineComponent({
         addChildBox: () => appTest.addChildEntity('box'),
         addPoints: () => appTest.addEntities('point', true, 20),
         addHavingChildrenBox: () => appTest.addEntities('havingChildrenBox', true, 1),
+        addThreeGens: () => appTest.addEntities('threeGens', true, 1),
       };
     });
   },

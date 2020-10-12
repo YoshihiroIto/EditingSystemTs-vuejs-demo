@@ -8,7 +8,7 @@ export class EntityDefinition {
   renderDefinition: RenderDefinition | null = null;
   scriptDefinition: ScriptDefinition | null = null;
 
-  children: ChildEntity[] | null = null;
+  childTags: ChildEntityTag[] | null = null;
 
   constructor({
     name = 'noname',
@@ -16,48 +16,48 @@ export class EntityDefinition {
     renderDefinition = null,
     scriptDefinition = null,
 
-    children = null,
+    childTags = null,
   }: Partial<{
     name: string;
     renderDefinition: RenderDefinition | null;
     scriptDefinition: ScriptDefinition | null;
-    children: ChildEntity[] | null;
+    childTags: ChildEntityTag[] | null;
   }> = {}) {
     this.name = name;
     this.renderDefinition = renderDefinition;
     this.scriptDefinition = scriptDefinition;
-    this.children = children;
+    this.childTags = childTags;
   }
 }
 
-export class ChildEntity {
-  name: string;
+export class ChildEntityTag {
+  definitionName: string;
 
   position: Vector3;
   rotation: Vector3;
   scale: Vector3;
 
-  children: ChildEntity[] | null = null;
+  childTags: ChildEntityTag[] | null = null;
 
   constructor({
-    name = 'noname',
+    definitionName = 'noname',
 
     position = Vector3.Zero,
     rotation = Vector3.Zero,
     scale = Vector3.One,
 
-    children = null,
+    childTags = null,
   }: Partial<{
-    name: string;
+    definitionName: string;
     position: Vector3;
     rotation: Vector3;
     scale: Vector3;
-    children: ChildEntity[] | null;
+    childTags: ChildEntityTag[] | null;
   }> = {}) {
-    this.name = name;
+    this.definitionName = definitionName;
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
-    this.children = children;
+    this.childTags = childTags;
   }
 }
