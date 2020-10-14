@@ -1,1 +1,3 @@
-export class ScriptDefinition {}
+export class ScriptDefinition {
+  code = '';
+}
