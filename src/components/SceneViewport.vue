@@ -67,10 +67,9 @@ import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } fro
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { from } from 'linq-to-typescript';
-import { PerspectiveCamera, WebGLRenderer } from 'three';
+import { PerspectiveCamera } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
-import { CameraHelper } from '../foundations/CameraHelper';
 import { SceneViewportController } from './SceneViewportController';
 import { SceneViewportHelper } from './SceneViewportHelper';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -80,6 +79,7 @@ import {
   SceneViewportControllerSpace,
   SceneViewportControllerSpaces,
 } from './SceneViewportConstants';
+import { ViewportRenderer } from '@/runtime/ViewportRenderer';
 
 type Props = {
   scene: ThObject3D | null;
@@ -102,6 +102,8 @@ export default defineComponent({
     const canvasWrapper = ref<HTMLElement>();
     const canvas = ref<HTMLCanvasElement>();
     const stats = Stats();
+    const frameCount = ref(0);
+    const resizeCount = ref(0);
 
     ///////////////////////////////////////////////////////////////////////////
     // controller
@@ -132,24 +134,24 @@ export default defineComponent({
       requestRender();
     });
 
-    let renderer: WebGLRenderer;
+    let renderer: ViewportRenderer;
     let controller: SceneViewportController;
 
     const trash = new CompositeDisposable();
 
     onMounted(() => {
       Assert.isNotNull(props.scene);
+      Assert.isNotNull(canvas.value);
 
       resizeObserver.observe(container.value as Element);
       props.updated?.on(requestRender);
 
-      renderer = new WebGLRenderer({
-        antialias: true,
-        canvas: canvas.value,
+      renderer = new ViewportRenderer(canvas.value, {
+        onRender: () => ++frameCount.value,
+        onResize: () => ++resizeCount.value,
       });
-      renderer.setPixelRatio(window.devicePixelRatio);
 
-      controller = new SceneViewportController(props.scene, camera, renderer.domElement, requestRender);
+      controller = new SceneViewportController(props.scene, camera, canvas.value, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
@@ -207,54 +209,9 @@ export default defineComponent({
     ///////////////////////////////////////////////////////////////////////////
     // render
     ///////////////////////////////////////////////////////////////////////////
-    let isRequestRender = false;
-
     const requestRender = () => {
-      if (isRequestRender) {
-        return;
-      }
-
-      const animate = () => {
-        render();
-        isRequestRender = false;
-      };
-
-      isRequestRender = true;
-      requestAnimationFrame(animate);
-    };
-
-    const frameCount = ref(0);
-    const resizeCount = ref(0);
-    const render = () => {
       Assert.isNotNull(props.scene);
-
-      ++frameCount.value;
-
-      controller.onRender();
-
-      // canvas size
-      {
-        // ref: https://threejsfundamentals.org/threejs/lessons/threejs-responsive.html
-        const domElement = renderer.domElement;
-        const width = domElement.clientWidth;
-        const height = domElement.clientHeight;
-        const needResize = domElement.width !== width || domElement.height !== height;
-
-        if (needResize) {
-          renderer.setSize(width, height, false);
-          CameraHelper.SetAspect(camera, width / height);
-
-          ++resizeCount.value;
-        }
-      }
-
-      // Enable only own contoller
-      for (const c of SceneViewportController.allInstances) {
-        c.IsVisibleGizmo = c === controller;
-      }
-
-      renderer.render(props.scene, camera);
-      stats.update();
+      renderer.requestRender(props.scene, camera);
     };
 
     ///////////////////////////////////////////////////////////////////////////
