@@ -1,4 +1,4 @@
-import { UseCase } from '@/Di';
+import { UseCase } from '@/di/useCase';
 import { BeginPauseEditingUseCase } from '@/useCases/history/BeginPauseEditingUseCase';
 import { EndPauseEditingUseCase } from '@/useCases/history/EndPauseEditingUseCase';
 import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';

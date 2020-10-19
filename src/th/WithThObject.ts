@@ -4,7 +4,6 @@ import {
   NotifyCollectionChangedActions,
   PropertyChangedEventArgs,
 } from '../../externals/EditingSystemTs/src/Event';
-import { container } from 'tsyringe';
 import { ThMesh } from './ThMesh';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Object3D } from 'three/src/core/Object3D';
@@ -12,6 +11,7 @@ import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
 import { Constructor } from '../foundations/Mixin';
 import { nameof } from '../foundations/Nameof';
 import { Entity } from '@/models/entity/Entity';
+import { dic } from '@/di/dic';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends Entity>(Base: TBase) {
@@ -63,7 +63,7 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       }
 
       const newObjects = entities.map(entity => {
-        const mesh = container.resolve(ThMesh);
+        const mesh = dic().resolve(ThMesh);
         mesh.setup(entity);
 
         return mesh;

@@ -115,7 +115,6 @@ $window-height: calc(100vh - #{$base-gap * 2});
 
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
-import { container } from 'tsyringe';
 import { SceneViewModel } from './viewModels/SceneViewModel';
 
 import SceneViewport from './components/SceneViewport.vue';
@@ -123,7 +122,7 @@ import EntityTreeView from './components/EntityTreeView.vue';
 import EntityInspector from './components/EntityInspector.vue';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
-import { UseCase } from './Di';
+import { UseCase } from './di/useCase';
 import { UndoUseCase } from './useCases/history/UndoUseCase';
 import { RedoUseCase } from './useCases/history/RedoUseCase';
 import { ClearHistoryUseCase } from './useCases/history/ClearHistoryUseCase';
@@ -138,6 +137,8 @@ import { PauseEditingBlock } from './foundations/PauseEditingBlock';
 import { AppTest } from './models/AppTest';
 import { Entity } from './models/entity/Entity';
 
+import { dic } from '@/di/dic';
+
 export default defineComponent({
   components: {
     SceneViewport,
@@ -145,18 +146,18 @@ export default defineComponent({
     EntityInspector,
   },
   setup() {
-    return using(container.resolve(PauseEditingBlock), () => {
-      const undo = container.resolve<UndoUseCase>(UseCase.undo);
-      const redo = container.resolve<RedoUseCase>(UseCase.redo);
-      const clearHistory = container.resolve<ClearHistoryUseCase>(UseCase.clearHistory);
-      const beginBatchEditing = container.resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
-      const endBatchEditing = container.resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
-      const getEdited = container.resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
-      const getHistoryState = container.resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
+    return using(dic().resolve(PauseEditingBlock), () => {
+      const undo = dic().resolve<UndoUseCase>(UseCase.undo);
+      const redo = dic().resolve<RedoUseCase>(UseCase.redo);
+      const clearHistory = dic().resolve<ClearHistoryUseCase>(UseCase.clearHistory);
+      const beginBatchEditing = dic().resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
+      const endBatchEditing = dic().resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
+      const getEdited = dic().resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
+      const getHistoryState = dic().resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
 
-      const project = reactive(container.resolve(Project));
+      const project = reactive(dic().resolve(Project));
       const historyState = computed(() => getHistoryState.invoke());
-      const appTest = container.resolve(AppTest);
+      const appTest = dic().resolve(AppTest);
 
       const rootScene = project.rootScene as Entity;
       appTest.setup(rootScene);

@@ -2,7 +2,8 @@ import { Entity } from '@/models/entity/Entity';
 import { ThScene } from '@/th/ThScene';
 import { onUnmounted } from '@vue/composition-api';
 import { Color } from 'three/src/math/Color';
-import { container, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
+import { dic } from '@/di/dic';
 
 @injectable()
 export class SceneViewModel extends ThScene {
@@ -13,7 +14,7 @@ export class SceneViewModel extends ThScene {
   }
 
   static create(model: Entity): SceneViewModel {
-    const viewModel = container.resolve(SceneViewModel);
+    const viewModel = dic().resolve(SceneViewModel);
     viewModel.setup(model);
 
     onUnmounted(() => {

@@ -1,9 +1,10 @@
 import { MathHelper } from '@/foundations/math/MathHelper';
 import { Vector3 } from '@/foundations/math/Vector3';
-import { container, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import { Entity } from './Entity';
 import { ChildEntityTag, EntityDefinition } from './EntityDefinition';
 import { MeshTypes, RenderDefinition } from './RenderDefinition';
+import { dic } from '@/di/dic';
 
 @singleton()
 export class EntityCreator {
@@ -71,7 +72,7 @@ export class EntityCreator {
       throw new Error(`not fount ${definitionName}`);
     }
 
-    const entity = container.resolve(Entity);
+    const entity = dic().resolve(Entity);
     entity.setup(isOwner, definition);
 
     for (const child of definition.childTags ?? []) {

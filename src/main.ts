@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import Vue from 'vue';
-import App from './App.vue';
+import App from '@/App.vue';
 
 //  composition-api
 import VueCompositionApi from '@vue/composition-api';
 Vue.use(VueCompositionApi);
 
 // DI
-import setupDi from './Di';
+import setupDi from './di/setupDi';
 setupDi();
 
 // Font Awesome

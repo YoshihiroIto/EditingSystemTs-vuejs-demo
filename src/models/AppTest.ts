@@ -1,12 +1,13 @@
-import { UseCase } from '@/Di';
+import { UseCase } from '@/di/useCase';
 import using from '@/foundations/Using';
 import { Vector3 } from '@/foundations/math/Vector3';
 import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
-import { container, inject, singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { BatchEditingBlock } from '../foundations/BatchEditingBlock';
 import { Project } from './Project';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Entity } from './entity/Entity';
+import { dic } from '@/di/dic';
 
 @singleton()
 export class AppTest {
@@ -22,7 +23,7 @@ export class AppTest {
   }
 
   addEntities(name: string, isOnlyPosition: boolean, count: number): void {
-    using(container.resolve(BatchEditingBlock), () => {
+    using(dic().resolve(BatchEditingBlock), () => {
       Assert.isNotNull(this.target);
 
       for (let i = 0; i != count; ++i) {
@@ -52,7 +53,7 @@ export class AppTest {
       return;
     }
 
-    using(container.resolve(BatchEditingBlock), () => {
+    using(dic().resolve(BatchEditingBlock), () => {
       const entity = this.createEntity.invoke(name);
       parent.add(entity);
 
