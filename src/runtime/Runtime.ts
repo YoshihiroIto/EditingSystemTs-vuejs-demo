@@ -1,6 +1,6 @@
 import { Entity } from '@/models/entity/Entity';
 
-export class App {
+export class Runtime {
   private target: Entity | null = null;
 
   setup(target: Entity): void {
