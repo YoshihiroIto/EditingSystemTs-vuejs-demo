@@ -7,7 +7,7 @@
       <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
 
       <button class="block_sep" @click="addBoxes">Add boxes</button>
-      <button :disabled="project.selectedEntity === null" @click="addChildBox">Add child box</button>
+      <button :disabled="appState.selectedEntity === null" @click="addChildBox">Add child box</button>
       <button @click="addPoints">Add points</button>
       <button @click="addHavingChildrenBox">Add HavingChildrenBox</button>
       <button @click="addThreeGens">Add ThreeGens</button>
@@ -16,17 +16,17 @@
     <SceneViewportLayouter
       id="viewport"
       :scene="sceneViewModel"
-      :selectedEntity.sync="project.selectedEntity"
+      :selectedEntity.sync="appState.selectedEntity"
       :updated="updated"
       :beginContinuousEditing="beginContinuousEditing"
       :endContinuousEditing="endContinuousEditing"
     />
 
-    <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="project.selectedEntity" />
+    <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="appState.selectedEntity" />
 
     <EntityInspector
       id="inspector"
-      :target="project.selectedEntity"
+      :target="appState.selectedEntity"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
     />
@@ -109,6 +109,7 @@ import EntityTreeView from './components/EntityTreeView.vue';
 import EntityInspector from './components/EntityInspector.vue';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
+import { AppState } from './models/AppState';
 import { UseCase } from './di/useCase';
 import { UndoUseCase } from './useCases/history/UndoUseCase';
 import { RedoUseCase } from './useCases/history/RedoUseCase';
@@ -143,6 +144,7 @@ export default defineComponent({
       const getHistoryState = dic().resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
 
       const project = reactive(dic().resolve(Project));
+      const appState = reactive(dic().resolve(AppState));
       const historyState = computed(() => getHistoryState.invoke());
       const appTest = dic().resolve(AppTest);
 
@@ -172,7 +174,7 @@ export default defineComponent({
       };
 
       return {
-        project,
+        appState,
         historyState,
 
         undo,
