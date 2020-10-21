@@ -13,22 +13,13 @@
       <button @click="addThreeGens">Add ThreeGens</button>
     </div>
 
-    <SceneViewport
-      id="viewport1"
+    <SceneViewportLayouter
+      id="viewport"
       :scene="sceneViewModel"
       :selectedEntity.sync="project.selectedEntity"
       :updated="updated"
-      @begin-continuous-editing="beginContinuousEditing"
-      @end-continuous-editing="endContinuousEditing"
-    />
-
-    <SceneViewport
-      id="viewport2"
-      :scene="sceneViewModel"
-      :selectedEntity.sync="project.selectedEntity"
-      :updated="updated"
-      @begin-continuous-editing="beginContinuousEditing"
-      @end-continuous-editing="endContinuousEditing"
+      :beginContinuousEditing="beginContinuousEditing"
+      :endContinuousEditing="endContinuousEditing"
     />
 
     <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="project.selectedEntity" />
@@ -60,13 +51,13 @@ $window-height: calc(100vh - #{$base-gap * 2});
   margin: $base-gap;
   gap: $base-gap;
 
-  grid-template-columns: 1fr 1fr 400px;
+  grid-template-columns: 1fr 400px;
   grid-template-rows: auto 1fr 1fr;
 
   grid-template-areas:
-    'header    header    header'
-    'viewport1 viewport2 treeview'
-    'viewport1 viewport2 inspector';
+    'header   header'
+    'viewport treeview'
+    'viewport inspector';
 
   &:focus {
     outline: none;
@@ -84,12 +75,8 @@ $window-height: calc(100vh - #{$base-gap * 2});
   border: 1px solid #aab;
 }
 
-#viewport1 {
-  grid-area: viewport1;
-}
-
-#viewport2 {
-  grid-area: viewport2;
+#viewport {
+  grid-area: viewport;
 }
 
 #treeview {
@@ -117,7 +104,7 @@ $window-height: calc(100vh - #{$base-gap * 2});
 import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
 import { SceneViewModel } from './viewModels/SceneViewModel';
 
-import SceneViewport from './components/SceneViewport.vue';
+import SceneViewportLayouter from './components/SceneViewportLayouter.vue';
 import EntityTreeView from './components/EntityTreeView.vue';
 import EntityInspector from './components/EntityInspector.vue';
 import { isRedo, isUndo } from './components/ComponentHelper';
@@ -141,7 +128,7 @@ import { dic } from '@/di/dic';
 
 export default defineComponent({
   components: {
-    SceneViewport,
+    SceneViewportLayouter,
     EntityTreeView,
     EntityInspector,
   },
