@@ -118,7 +118,7 @@ export default defineComponent({
     // camera
     ///////////////////////////////////////////////////////////////////////////
     const camera = new PerspectiveCamera(45, 600 / 400, 0.1, 1000);
-    camera.position.set(0, 0, 20);
+    camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
 
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
