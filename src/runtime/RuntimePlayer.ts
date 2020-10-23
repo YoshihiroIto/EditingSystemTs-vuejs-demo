@@ -5,7 +5,7 @@ import { Camera } from 'three/src/cameras/Camera';
 import { dic } from '@/di/dic';
 import { ViewportRenderer } from './ViewportRenderer';
 
-export class Runtime implements Disposable {
+export class RuntimePlayer implements Disposable {
   private rootSceneViewModel: SceneViewModel;
   private camera: Camera | null = null;
 
