@@ -1,7 +1,8 @@
 <template>
-  <div class="container" tabindex="0">
+  <div class="container" ref="container" tabindex="0">
     <SceneViewport
       id="viewport1"
+      ref="viewport1"
       :scene="scene"
       :selectedEntity.sync="selectedEntityInternal"
       :updated="updated"
@@ -11,6 +12,7 @@
 
     <SceneViewport
       id="viewport2"
+      ref="viewport2"
       :scene="scene"
       :selectedEntity.sync="selectedEntityInternal"
       :updated="updated"
@@ -52,11 +54,12 @@ $base-gap: 4px;
 
 <script lang="ts">
 import SceneViewport from './SceneViewport.vue';
-
-import { defineComponent, ref, SetupContext, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
 import { Entity } from '../models/entity/Entity';
-import { ThObject3D } from '@/th/ThObject';
-import { TypedEvent } from 'externals/EditingSystemTs/src/TypedEvent';
+import { ThObject3D } from '../th/ThObject';
+import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Assert } from '../../externals/EditingSystemTs/src/Assert';
+import ResizeObserver from 'resize-observer-polyfill';
 
 type Props = {
   scene: ThObject3D | null;
@@ -79,6 +82,28 @@ export default defineComponent({
   },
   setup(props: Props, context: SetupContext) {
     const selectedEntityInternal = ref(props.selectedEntity);
+    const container = ref<HTMLElement>();
+    const viewport1 = ref<InstanceType<typeof SceneViewport>>();
+    const viewport2 = ref<InstanceType<typeof SceneViewport>>();
+
+    const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
+      Assert.isNotNull(viewport1.value);
+      Assert.isNotNull(viewport2.value);
+
+      const height = entries[0].contentRect.height + 'px';
+
+      (viewport1.value.$el as HTMLElement).style.height = height;
+      (viewport2.value.$el as HTMLElement).style.height = height;
+    });
+
+    onMounted(() => {
+      resizeObserver.observe(container.value as Element);
+    });
+
+    onUnmounted(() => {
+      resizeObserver.unobserve(container.value as Element);
+      resizeObserver.disconnect();
+    });
 
     watch(selectedEntityInternal, v => context.emit('update:selectedEntity', v));
 
@@ -89,6 +114,9 @@ export default defineComponent({
 
     return {
       selectedEntityInternal,
+      container,
+      viewport1,
+      viewport2,
     };
   },
 });
