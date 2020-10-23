@@ -104,7 +104,8 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
           break;
 
         default:
-          throw new Error(`Not implementation: "${e.propertyName}"`);
+          //throw new Error(`Not implementation: "${e.propertyName}"`);
+          break;
       }
     };
 

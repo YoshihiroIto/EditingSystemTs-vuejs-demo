@@ -2,6 +2,12 @@
   <div id="app" tabindex="0">
     <div id="header" class="block">
       undo:{{ historyState.undoCount }}, redo:{{ historyState.redoCount }}
+
+      <label class="block_sep">
+        <input type="checkbox" v-model="appState.isInPreview" />
+        Preview
+      </label>
+
       <button :disabled="historyState.canUndo === false" class="block_sep" @click="undo.invoke()">Undo</button>
       <button :disabled="historyState.canRedo === false" @click="redo.invoke()">Redo</button>
       <button :disabled="historyState.canClear === false" @click="clearHistory.invoke()">Clear history</button>
@@ -15,12 +21,15 @@
 
     <SceneViewportLayouter
       id="viewport"
+      v-if="appState.isInPreview === false"
       :scene="sceneViewModel"
       :selectedEntity.sync="appState.selectedEntity"
       :updated="updated"
       :beginContinuousEditing="beginContinuousEditing"
       :endContinuousEditing="endContinuousEditing"
     />
+
+    <PreviewViewport v-else />
 
     <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="appState.selectedEntity" />
 
@@ -101,12 +110,13 @@ $window-height: calc(100vh - #{$base-gap * 2});
 </style>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
-import { SceneViewModel } from './viewModels/SceneViewModel';
-
 import SceneViewportLayouter from './components/SceneViewportLayouter.vue';
+import PreviewViewport from './components/PreviewViewport.vue';
 import EntityTreeView from './components/EntityTreeView.vue';
 import EntityInspector from './components/EntityInspector.vue';
+
+import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
+import { SceneViewModel } from './viewModels/SceneViewModel';
 import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
 import { AppState } from './models/AppState';
@@ -130,6 +140,7 @@ import { dic } from '@/di/dic';
 export default defineComponent({
   components: {
     SceneViewportLayouter,
+    PreviewViewport,
     EntityTreeView,
     EntityInspector,
   },

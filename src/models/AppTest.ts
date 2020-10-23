@@ -4,7 +4,7 @@ import { Vector3 } from '@/foundations/math/Vector3';
 import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
 import { inject, singleton } from 'tsyringe';
 import { BatchEditingBlock } from '../foundations/BatchEditingBlock';
-import { Project } from './Project';
+import { AppState } from './AppState';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Entity } from './entity/Entity';
 import { dic } from '@/di/dic';
@@ -13,7 +13,7 @@ import { dic } from '@/di/dic';
 export class AppTest {
   constructor(
     @inject(UseCase.createEntity) private readonly createEntity: CreateEntityUseCase,
-    private readonly project: Project
+    private readonly appState: AppState
   ) {}
 
   private target: Entity | null = null;
@@ -48,7 +48,7 @@ export class AppTest {
   }
 
   addChildEntity(name: string): void {
-    const parent = this.project.selectedEntity;
+    const parent = this.appState.selectedEntity;
     if (parent == null) {
       return;
     }

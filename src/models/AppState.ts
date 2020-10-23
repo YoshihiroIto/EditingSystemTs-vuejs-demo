@@ -4,6 +4,7 @@ import { NotifyPropertyChanged, PropertyChangedEventArgs } from '../../externals
 import { singleton } from 'tsyringe';
 import { nameof } from '@/foundations/Nameof';
 import { Entity } from './entity/Entity';
+import { EditingSystem } from '../../externals/EditingSystemTs/src/Decorators';
 
 @singleton()
 export class AppState implements NotifyPropertyChanged {
@@ -11,20 +12,37 @@ export class AppState implements NotifyPropertyChanged {
 
   selectedEntity: Entity | null = null;
 
+  @EditingSystem.ignore
+  isInPreview = false;
+
   constructor(private readonly history: History) {
     this.history.register(this);
 
     this.propertyChanged.on((_: unknown, e: PropertyChangedEventArgs) => {
-      if (e.propertyName === nameof<AppState>('selectedEntity')) {
-        const old = e.oldValue as Entity | null;
+      console.log(e.propertyName);
 
-        if (old != null) {
-          old.isSelected = false;
-        }
+      switch (e.propertyName) {
+        //////////////////////////////////////////////////////////////////
+        case nameof<AppState>('selectedEntity'):
+          {
+            const old = e.oldValue as Entity | null;
 
-        if (this.selectedEntity != null) {
-          this.selectedEntity.isSelected = true;
-        }
+            if (old != null) {
+              old.isSelected = false;
+            }
+
+            if (this.selectedEntity != null) {
+              this.selectedEntity.isSelected = true;
+            }
+          }
+          break;
+
+        //////////////////////////////////////////////////////////////////
+        case nameof<AppState>('isInPreview'):
+          {
+            console.log(this.isInPreview);
+          }
+          break;
       }
     });
   }
