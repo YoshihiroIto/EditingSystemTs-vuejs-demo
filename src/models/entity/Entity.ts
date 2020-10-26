@@ -104,4 +104,15 @@ export class Entity implements NotifyPropertyChanged {
       }
     }
   }
+
+  toJSON(): unknown {
+    return {
+      name: this.name,
+      position: this.position,
+      rotation: this.rotation,
+      scale: this.scale,
+      definition: this.definition?.name,
+      children: this.children,
+    };
+  }
 }

@@ -44,4 +44,10 @@ export class ScriptDefinition {
 
     this.functions = new Function(parsingScript)();
   }
+
+  toJSON(): unknown {
+    return {
+      code: this.code,
+    };
+  }
 }

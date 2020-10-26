@@ -39,11 +39,11 @@ export class CreateEntityInteractor implements CreateEntityUseCase {
       name: 'havingChildrenBox',
       renderDefinition: new RenderDefinition({ meshType: MeshTypes.Point }),
 
-      childTags: [
-        new ChildEntityTag({ definitionName: 'box', position: new Vector3(5, 0, 0) }),
-        new ChildEntityTag({ definitionName: 'point', position: new Vector3(0, 0, 5) }),
-        new ChildEntityTag({ definitionName: 'box', position: new Vector3(-5, 0, 0) }),
-        new ChildEntityTag({ definitionName: 'point', position: new Vector3(0, 0, -5) }),
+      children: [
+        new ChildEntityTag({ definition: 'box', position: new Vector3(5, 0, 0) }),
+        new ChildEntityTag({ definition: 'point', position: new Vector3(0, 0, 5) }),
+        new ChildEntityTag({ definition: 'box', position: new Vector3(-5, 0, 0) }),
+        new ChildEntityTag({ definition: 'point', position: new Vector3(0, 0, -5) }),
       ],
     });
 
@@ -51,15 +51,15 @@ export class CreateEntityInteractor implements CreateEntityUseCase {
       name: 'threeGens',
       renderDefinition: new RenderDefinition({ meshType: MeshTypes.Point }),
 
-      childTags: [
+      children: [
         new ChildEntityTag({
-          definitionName: 'box',
+          definition: 'box',
           position: new Vector3(5, 0, 0),
-          childTags: [
+          children: [
             new ChildEntityTag({
-              definitionName: 'point',
+              definition: 'point',
               position: new Vector3(0, 0, 10),
-              childTags: [new ChildEntityTag({ definitionName: 'box', position: new Vector3(5, 0, 0) })],
+              children: [new ChildEntityTag({ definition: 'box', position: new Vector3(5, 0, 0) })],
             }),
           ],
         }),

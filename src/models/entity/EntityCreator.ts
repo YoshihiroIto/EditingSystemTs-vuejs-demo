@@ -6,18 +6,22 @@ import { dic } from '@/di/dic';
 
 @singleton()
 export class EntityCreator {
-  private readonly entityDefinitions = new Map<string, Readonly<EntityDefinition>>();
+  get entityDefinitions(): ReadonlyArray<Readonly<EntityDefinition>> {
+    return [...this._entityDefinitions.values()];
+  }
+
+  private readonly _entityDefinitions = new Map<string, Readonly<EntityDefinition>>();
 
   create(definitionName: string): Entity {
     return this.createInternal(definitionName, true);
   }
 
   addDefinition(definition: Readonly<EntityDefinition>): void {
-    this.entityDefinitions.set(definition.name, definition);
+    this._entityDefinitions.set(definition.name, definition);
   }
 
   private createInternal(definitionName: string, isOwner: boolean): Entity {
-    const definition = this.entityDefinitions.get(definitionName);
+    const definition = this._entityDefinitions.get(definitionName);
     if (definition === undefined) {
       throw new Error(`not fount ${definitionName}`);
     }
@@ -25,7 +29,7 @@ export class EntityCreator {
     const entity = dic().resolve(Entity);
     entity.setup(isOwner, definition);
 
-    for (const child of definition.childTags ?? []) {
+    for (const child of definition.children ?? []) {
       const childEntity = this.createFromChildEntryTag(child);
       entity.addToOwn(childEntity);
     }
@@ -34,10 +38,10 @@ export class EntityCreator {
   }
 
   private createFromChildEntryTag(tag: ChildEntityTag): Entity {
-    const entity = this.createInternal(tag.definitionName, false);
+    const entity = this.createInternal(tag.definition, false);
     MathHelper.copySrt(entity, tag);
 
-    for (const child of tag.childTags ?? []) {
+    for (const child of tag.children ?? []) {
       const childEntity = this.createFromChildEntryTag(child);
       entity.addToOwn(childEntity);
     }

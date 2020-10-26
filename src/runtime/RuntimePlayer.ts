@@ -6,25 +6,23 @@ import { dic } from '@/di/dic';
 import { ViewportRenderer } from './ViewportRenderer';
 
 export class RuntimePlayer implements Disposable {
-  private rootSceneViewModel: SceneViewModel;
+  // private rootSceneViewModel: SceneViewModel;
   private camera: Camera | null = null;
 
-  private renderer: ViewportRenderer;
+  // private renderer: ViewportRenderer;
   private isDisposed = false;
 
-  constructor(rootScene: Entity, canvas: HTMLCanvasElement) {
-    this.rootSceneViewModel = dic().resolve(SceneViewModel);
-    this.rootSceneViewModel.setup(rootScene);
-
-    this.renderer = new ViewportRenderer(canvas);
-
-    requestAnimationFrame(() => this.animate());
+  constructor(serializedProject: string, canvas: HTMLCanvasElement) {
+    // this.rootSceneViewModel = dic().resolve(SceneViewModel);
+    // this.rootSceneViewModel.setup(rootScene);
+    // this.renderer = new ViewportRenderer(canvas);
+    // requestAnimationFrame(() => this.animate());
   }
 
   dispose(): void {
     this.isDisposed = true;
 
-    this.rootSceneViewModel.dispose();
+    // this.rootSceneViewModel.dispose();
   }
 
   private animate(): void {
@@ -36,6 +34,6 @@ export class RuntimePlayer implements Disposable {
       return;
     }
 
-    this.renderer.requestRender(this.rootSceneViewModel, this.camera);
+    // this.renderer.requestRender(this.rootSceneViewModel, this.camera);
   }
 }

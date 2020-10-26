@@ -8,7 +8,7 @@ export class EntityDefinition {
   renderDefinition: RenderDefinition | null = null;
   scriptDefinition: ScriptDefinition | null = null;
 
-  childTags: ChildEntityTag[] | null = null;
+  children: ChildEntityTag[] | null = null;
 
   constructor({
     name = 'noname',
@@ -16,48 +16,67 @@ export class EntityDefinition {
     renderDefinition = null,
     scriptDefinition = null,
 
-    childTags = null,
+    children: children = null,
   }: Partial<{
     name: string;
     renderDefinition: RenderDefinition | null;
     scriptDefinition: ScriptDefinition | null;
-    childTags: ChildEntityTag[] | null;
+    children: ChildEntityTag[] | null;
   }> = {}) {
     this.name = name;
     this.renderDefinition = renderDefinition;
     this.scriptDefinition = scriptDefinition;
-    this.childTags = childTags;
+    this.children = children;
+  }
+
+  toJSON(): unknown {
+    return {
+      name: this.name,
+      renderDefinition: this.renderDefinition,
+      scriptDefinition: this.scriptDefinition,
+      children: this.children,
+    };
   }
 }
 
 export class ChildEntityTag {
-  definitionName: string;
+  definition: string;
 
   position: Vector3;
   rotation: Vector3;
   scale: Vector3;
 
-  childTags: ChildEntityTag[] | null = null;
+  children: ChildEntityTag[] | null = null;
 
   constructor({
-    definitionName = 'noname',
+    definition = 'noname',
 
     position = Vector3.Zero,
     rotation = Vector3.Zero,
     scale = Vector3.One,
 
-    childTags = null,
+    children: children = null,
   }: Partial<{
-    definitionName: string;
+    definition: string;
     position: Vector3;
     rotation: Vector3;
     scale: Vector3;
-    childTags: ChildEntityTag[] | null;
+    children: ChildEntityTag[] | null;
   }> = {}) {
-    this.definitionName = definitionName;
+    this.definition = definition;
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
-    this.childTags = childTags;
+    this.children = children;
+  }
+
+  toJSON(): unknown {
+    return {
+      definition: this.definition,
+      position: this.position,
+      rotation: this.rotation,
+      scale: this.scale,
+      children: this.children,
+    };
   }
 }
