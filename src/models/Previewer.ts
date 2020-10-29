@@ -1,25 +1,31 @@
-import { RuntimePlayer } from '@/runtime/RuntimePlayer';
+import { dic, endRuntime, startRuntime } from '@/di/dic';
+// import { RuntimePlayer } from '@/runtime/RuntimePlayer';
+import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
+import { EntityCreator } from './entity/EntityCreator';
 import { EntityDefinition } from './entity/EntityDefinition';
 import { Project } from './Project';
-import { ProjectSerializer } from './ProjectSerializer';
+import { ProjectSerializer } from './Serialize/ProjectSerializer';
 
-export class Previewer {
-  // private runtimePlayer: RuntimePlayer;
+export class Previewer implements Disposable {
+  readonly project: Project;
+
+  //private runtimePlayer: RuntimePlayer;
 
   constructor(project: Project, entityDefinitions: ReadonlyArray<EntityDefinition> /*, canvas: HTMLCanvasElement*/) {
-    // 1. プロジェクトをシリアライズ
-    //  1.1
-    //
-    // 2. プレビュー用DIを新規構築
-    //
-    // 3. プロジェクトをデシリアライズ
-    //  3.2 エンティティ定義構築
-    //  3.3 ルートシーンを作る
-    //
-    // this.runtimePlayer = new RuntimePlayer();
+    // 1. プロジェクトをシリアライズする
+    const serializedProject = ProjectSerializer.serialize(project, entityDefinitions);
 
-    const serializedProject = ProjectSerializer.Serialize(project, entityDefinitions);
+    // 2. プレビュー用DIを新規構築する
+    startRuntime();
 
-    // this.runtimePlayer = new RuntimePlayer(serializedProject, canvas);
+    // 3. プロジェクトをデシリアライズする
+    this.project = ProjectSerializer.deserialize(serializedProject, dic().resolve(EntityCreator));
+
+    // // 4. プレイヤーを用意する
+    // this.runtimePlayer = new RuntimePlayer(previewProject, canvas);
+  }
+
+  dispose(): void {
+    endRuntime();
   }
 }

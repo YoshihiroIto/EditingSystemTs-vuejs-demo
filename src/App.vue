@@ -20,7 +20,7 @@
     </div>
 
     <SceneViewportLayouter
-      id="viewport"
+      id="sceneViewport"
       v-if="appState.isInPreview === false"
       :scene="sceneViewModel"
       :selectedEntity.sync="appState.selectedEntity"
@@ -29,7 +29,7 @@
       :endContinuousEditing="endContinuousEditing"
     />
 
-    <PreviewViewport v-else />
+    <PreviewViewport id="previewViewport" v-else />
 
     <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="appState.selectedEntity" />
 
@@ -84,7 +84,11 @@ $window-height: calc(100vh - #{$base-gap * 2});
   border: 1px solid #aab;
 }
 
-#viewport {
+#sceneViewport {
+  grid-area: viewport;
+}
+
+#previewViewport {
   grid-area: viewport;
 }
 

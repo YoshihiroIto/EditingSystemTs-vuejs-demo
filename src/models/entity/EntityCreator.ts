@@ -1,13 +1,16 @@
 import { MathHelper } from '@/foundations/math/MathHelper';
-import { singleton } from 'tsyringe';
 import { Entity } from './Entity';
 import { ChildEntityTag, EntityDefinition } from './EntityDefinition';
 import { dic } from '@/di/dic';
+import { Lifecycle, scoped } from 'tsyringe';
 
-@singleton()
+@scoped(Lifecycle.ContainerScoped)
 export class EntityCreator {
   get entityDefinitions(): ReadonlyArray<Readonly<EntityDefinition>> {
     return [...this._entityDefinitions.values()];
+  }
+  get isEmpty(): boolean {
+    return this._entityDefinitions.size === 0;
   }
 
   private readonly _entityDefinitions = new Map<string, Readonly<EntityDefinition>>();
@@ -17,6 +20,10 @@ export class EntityCreator {
   }
 
   addDefinition(definition: Readonly<EntityDefinition>): void {
+    if (this._entityDefinitions.has(definition.name)) {
+      throw new Error();
+    }
+
     this._entityDefinitions.set(definition.name, definition);
   }
 

@@ -71,7 +71,7 @@ import { PerspectiveCamera } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { SceneViewportController } from './SceneViewportController';
-import { SceneViewportHelper } from './SceneViewportHelper';
+import { ViewportHelper } from './ViewportHelper';
 import ResizeObserver from 'resize-observer-polyfill';
 import {
   SceneViewportControllerMode,
@@ -158,7 +158,7 @@ export default defineComponent({
 
       trash.push(renderer);
       trash.push(controller);
-      trash.push(new SceneViewportHelper(props.scene));
+      trash.push(new ViewportHelper(props.scene));
 
       // stats
       stats.dom.style.position = 'absolute';

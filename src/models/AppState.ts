@@ -8,6 +8,7 @@ import { EditingSystem } from '../../externals/EditingSystemTs/src/Decorators';
 import { Previewer } from './Previewer';
 import { Project } from './Project';
 import { EntityCreator } from './entity/EntityCreator';
+import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 
 @singleton()
 export class AppState implements NotifyPropertyChanged {
@@ -18,11 +19,14 @@ export class AppState implements NotifyPropertyChanged {
   @EditingSystem.ignore
   isInPreview = false;
 
+  @EditingSystem.ignore
+  previewer: Previewer | null = null;
+
   constructor(private readonly history: History, project: Project, readonly entityCreator: EntityCreator) {
     this.history.register(this);
 
     this.propertyChanged.on((_: unknown, e: PropertyChangedEventArgs) => {
-      console.log(e.propertyName);
+      // console.log(e.propertyName);
 
       switch (e.propertyName) {
         //////////////////////////////////////////////////////////////////
@@ -43,9 +47,14 @@ export class AppState implements NotifyPropertyChanged {
         //////////////////////////////////////////////////////////////////
         case nameof<AppState>('isInPreview'):
           {
-            console.log(this.isInPreview);
-
-            const previewer = new Previewer(project, entityCreator.entityDefinitions);
+            if (this.isInPreview) {
+              Assert.isNull(this.previewer);
+              this.previewer = new Previewer(project, entityCreator.entityDefinitions);
+            } else {
+              Assert.isNotNull(this.previewer);
+              this.previewer.dispose();
+              this.previewer = null;
+            }
           }
           break;
       }

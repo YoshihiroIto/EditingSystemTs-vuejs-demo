@@ -111,7 +111,7 @@ export class Entity implements NotifyPropertyChanged {
       position: this.position,
       rotation: this.rotation,
       scale: this.scale,
-      definition: this.definition?.name,
+      definition: this.definition?.name ?? '',
       children: this.children,
     };
   }

@@ -33,32 +33,23 @@
 </style>
 
 <script lang="ts">
-import { Entity } from '@/models/entity/Entity';
-import { ThObject3D } from '@/th/ThObject';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { PerspectiveCamera } from 'three';
-import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { AppState } from '@/models/AppState';
+import { dic } from '@/di/dic';
+import { RuntimePlayer } from '@/runtime/RuntimePlayer';
 import ResizeObserver from 'resize-observer-polyfill';
-import { ViewportRenderer } from '@/runtime/ViewportRenderer';
-
-type Props = {
-  scene: ThObject3D | null;
-  selectedEntity: Entity | null;
-  updated: TypedEvent | null;
-};
 
 export default defineComponent({
-  props: {
-    scene: { default: null },
-    updated: { default: null },
-  },
-  components: {},
-  setup(props: Props) {
+  setup() {
     const container = ref<HTMLElement>();
     const canvasWrapper = ref<HTMLElement>();
     const canvas = ref<HTMLCanvasElement>();
+    //
+    const appState = dic().resolve(AppState);
+    let runtimePlayer: RuntimePlayer | null = null;
 
     ///////////////////////////////////////////////////////////////////////////
     // camera
@@ -79,27 +70,25 @@ export default defineComponent({
       requestRender();
     });
 
-    let renderer: ViewportRenderer;
-
     const trash = new CompositeDisposable();
 
     onMounted(() => {
       Assert.isNotNull(canvas.value);
 
       resizeObserver.observe(container.value as Element);
-      props.updated?.on(requestRender);
 
-      renderer = new ViewportRenderer(canvas.value);
+      const project = appState?.previewer?.project;
+      Assert.isNotNull(project);
 
-      trash.push(renderer);
+      runtimePlayer = new RuntimePlayer(project, canvas.value);
+      trash.push(runtimePlayer);
     });
 
     onUnmounted(() => {
-      props.updated?.off(requestRender);
-
       resizeObserver.unobserve(canvas.value as Element);
       resizeObserver.disconnect();
 
+      runtimePlayer = null;
       trash.dispose();
     });
 
@@ -107,10 +96,11 @@ export default defineComponent({
     // render
     ///////////////////////////////////////////////////////////////////////////
     const requestRender = () => {
-      if (props.scene == null) {
+      if (runtimePlayer == null) {
         return;
       }
-      renderer.requestRender(props.scene, camera);
+
+      runtimePlayer.requestRender();
     };
 
     return {

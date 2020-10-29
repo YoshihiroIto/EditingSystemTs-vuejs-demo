@@ -1,4 +1,5 @@
 import { container, DependencyContainer } from 'tsyringe';
+import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 
 let runtimeContainer: DependencyContainer | null = null;
 
@@ -7,13 +8,13 @@ export function dic(): DependencyContainer {
 }
 
 export function startRuntime(): void {
-  throw new Error('Not implement Runtime mode.');
+  Assert.isNull(runtimeContainer);
 
   runtimeContainer = container.createChildContainer();
 }
 
 export function endRuntime(): void {
-  throw new Error('Not implement Runtime mode.');
+  Assert.isNotNull(runtimeContainer);
 
   runtimeContainer = null;
 }

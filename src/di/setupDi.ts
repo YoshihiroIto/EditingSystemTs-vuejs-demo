@@ -25,6 +25,6 @@ export default function setupDi(): void {
   container.register(UseCase.getHistoryState, { useClass: GetHistoryStateInteractor });
   container.registerInstance(History, new History());
 
-  // project
+  // project -- @scoped(Lifecycle.ContainerScoped)
   container.register(UseCase.createEntity, { useClass: CreateEntityInteractor });
 }

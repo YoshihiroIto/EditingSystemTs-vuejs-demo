@@ -1,19 +1,21 @@
 import { CreateEntityUseCase } from '@/useCases/project/CreateEntityUseCase';
 import { EntityCreator } from '@/models/entity/EntityCreator';
-import { singleton } from 'tsyringe';
+import { Lifecycle, scoped } from 'tsyringe';
 import { Entity } from '@/models/entity/Entity';
 import { ChildEntityTag, EntityDefinition } from '@/models/entity/EntityDefinition';
 import { MeshTypes, RenderDefinition } from '@/models/entity/RenderDefinition';
 import { Vector3 } from '@/foundations/math/Vector3';
 import { ScriptDefinition } from '@/models/entity/ScriptDefinition';
 
-@singleton()
+@scoped(Lifecycle.ContainerScoped)
 export class CreateEntityInteractor implements CreateEntityUseCase {
-  constructor(private readonly entityCreator: EntityCreator) {
-    this.registerEntityDefinitions();
-  }
+  constructor(private readonly entityCreator: EntityCreator) {}
 
   invoke(name: string): Entity {
+    if (this.entityCreator.isEmpty) {
+      this.registerEntityDefinitions();
+    }
+
     const entity = this.entityCreator.create(name);
 
     entity.name = `Entity${CreateEntityInteractor.instanceCount++}`;
