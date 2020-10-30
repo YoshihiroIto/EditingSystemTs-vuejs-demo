@@ -74,14 +74,14 @@ export default defineComponent({
 
     onMounted(() => {
       Assert.isNotNull(canvas.value);
+      Assert.isNotNull(appState?.previewer);
 
       resizeObserver.observe(container.value as Element);
 
-      const project = appState?.previewer?.project;
-      Assert.isNotNull(project);
-
-      runtimePlayer = new RuntimePlayer(project, canvas.value);
+      runtimePlayer = new RuntimePlayer(appState.previewer.project, canvas.value);
       trash.push(runtimePlayer);
+
+      appState.previewer.start();
     });
 
     onUnmounted(() => {

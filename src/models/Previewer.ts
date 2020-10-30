@@ -3,23 +3,42 @@ import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
 import { EntityCreator } from './entity/EntityCreator';
 import { EntityDefinition } from './entity/EntityDefinition';
 import { Project } from './Project';
+import { ProjectDeserializer } from './Serialize/ProjectDeserializer';
 import { ProjectSerializer } from './Serialize/ProjectSerializer';
 
 export class Previewer implements Disposable {
-  readonly project: Project;
+  readonly project = new Project();
 
-  constructor(project: Project, entityDefinitions: ReadonlyArray<EntityDefinition>) {
-    // 1. プロジェクトをシリアライズする
-    const serializedProject = ProjectSerializer.serialize(project, entityDefinitions);
+  private serializedProject: string;
+  private isStart = false;
+
+  constructor(srcProject: Project, entityDefinitions: ReadonlyArray<EntityDefinition>) {
+    this.serializedProject = new ProjectSerializer(srcProject, entityDefinitions).invoke();
+  }
+
+  start(): void {
+    if (this.isStart) {
+      return;
+    }
 
     // 2. プレビュー用DIを新規構築する
     startRuntime();
 
     // 3. プロジェクトをデシリアライズする
-    this.project = ProjectSerializer.deserialize(serializedProject, dic().resolve(EntityCreator));
+    const entityCreatorForPreview = dic().resolve(EntityCreator);
+    new ProjectDeserializer(this.project, this.serializedProject, entityCreatorForPreview).invoke();
+
+    //
+    this.isStart = true;
   }
 
   dispose(): void {
+    if (this.isStart === false) {
+      return;
+    }
+
     endRuntime();
+
+    this.isStart = false;
   }
 }
