@@ -38,28 +38,27 @@ export class ViewportRenderer implements Disposable {
     this.renderer.dispose();
   }
 
-  requestRender(scene: Object3D, camera: Camera): void {
-    if (this.isRequestRender) {
-      return;
-    }
-
+  requestRender(scene: Object3D | null, camera: Camera | null): void {
     this.scene = scene;
     this.camera = camera;
 
     const animate = () => {
-      this.render();
+      this.render(this.scene, this.camera);
       this.isRequestRender = false;
     };
 
-    this.isRequestRender = true;
-    requestAnimationFrame(animate);
+    if (this.isRequestRender == false) {
+      this.isRequestRender = true;
+
+      requestAnimationFrame(animate);
+    }
   }
 
-  private render(): void {
-    if (this.scene == null) {
+  render(scene: Object3D | null, camera: Camera | null): void {
+    if (scene == null) {
       return;
     }
-    if (this.camera == null) {
+    if (camera == null) {
       return;
     }
 
@@ -77,7 +76,7 @@ export class ViewportRenderer implements Disposable {
 
       if (needResize) {
         this.renderer.setSize(width, height, false);
-        CameraHelper.SetAspect(this.camera, width / height);
+        CameraHelper.SetAspect(camera, width / height);
 
         if (this.onResize != null) {
           this.onResize();
@@ -85,6 +84,6 @@ export class ViewportRenderer implements Disposable {
       }
     }
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(scene, camera);
   }
 }

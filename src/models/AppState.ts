@@ -9,6 +9,7 @@ import { Previewer } from './Previewer';
 import { Project } from './Project';
 import { EntityCreator } from './entity/EntityCreator';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
+import { dic } from '@/di/dic';
 
 @singleton()
 export class AppState implements NotifyPropertyChanged {
@@ -49,7 +50,8 @@ export class AppState implements NotifyPropertyChanged {
           {
             if (this.isInPreview) {
               Assert.isNull(this.previewer);
-              this.previewer = new Previewer(project, entityCreator.entityDefinitions);
+              this.previewer = dic().resolve(Previewer);
+              this.previewer.setup(project, entityCreator.entityDefinitions);
             } else {
               Assert.isNotNull(this.previewer);
               this.previewer.dispose();

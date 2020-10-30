@@ -67,7 +67,7 @@ export default defineComponent({
       // canvasWrapper.value.style.width = w + 'px';
       canvasWrapper.value.style.height = h + 'px';
 
-      requestRender();
+      // requestRender();
     });
 
     const trash = new CompositeDisposable();
@@ -78,7 +78,8 @@ export default defineComponent({
 
       resizeObserver.observe(container.value as Element);
 
-      runtimePlayer = new RuntimePlayer(appState.previewer.project, canvas.value);
+      runtimePlayer = dic().resolve(RuntimePlayer);
+      runtimePlayer.start(appState.previewer.project, canvas.value);
       trash.push(runtimePlayer);
 
       appState.previewer.start();
@@ -95,13 +96,13 @@ export default defineComponent({
     ///////////////////////////////////////////////////////////////////////////
     // render
     ///////////////////////////////////////////////////////////////////////////
-    const requestRender = () => {
-      if (runtimePlayer == null) {
-        return;
-      }
+    // const requestRender = () => {
+    //   if (runtimePlayer == null) {
+    //     return;
+    //   }
 
-      runtimePlayer.requestRender();
-    };
+    //   runtimePlayer.requestRender();
+    // };
 
     return {
       container,

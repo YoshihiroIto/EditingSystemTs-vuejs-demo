@@ -1,18 +1,20 @@
 import { dic, endRuntime, startRuntime } from '@/di/dic';
-import { Disposable } from 'externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { injectable } from 'tsyringe';
 import { EntityCreator } from './entity/EntityCreator';
 import { EntityDefinition } from './entity/EntityDefinition';
 import { Project } from './Project';
 import { ProjectDeserializer } from './Serialize/ProjectDeserializer';
 import { ProjectSerializer } from './Serialize/ProjectSerializer';
 
+@injectable()
 export class Previewer implements Disposable {
   readonly project = new Project();
 
-  private serializedProject: string;
+  private serializedProject = '';
   private isStart = false;
 
-  constructor(srcProject: Project, entityDefinitions: ReadonlyArray<EntityDefinition>) {
+  setup(srcProject: Project, entityDefinitions: ReadonlyArray<EntityDefinition>): void {
     this.serializedProject = new ProjectSerializer(srcProject, entityDefinitions).invoke();
   }
 

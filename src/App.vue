@@ -179,6 +179,10 @@ export default defineComponent({
       };
 
       document.body.onkeydown = (e: KeyboardEvent) => {
+        if (appState.isInPreview) {
+          return;
+        }
+
         if (isUndo(e)) {
           e.preventDefault();
           undo.invoke();
