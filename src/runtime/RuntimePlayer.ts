@@ -13,6 +13,7 @@ import { injectable } from 'tsyringe';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { Entity } from '@/models/entity/Entity';
 import { Vector3 } from '@/foundations/math/Vector3';
+import { UpdateEventArgs } from './EventArgs';
 
 @injectable()
 export class RuntimePlayer implements Disposable {
@@ -87,11 +88,24 @@ export class RuntimePlayer implements Disposable {
     return rootScene;
   }
 
+  private prevTime: number | null = null;
+
   private update(entity: Entity): void {
-    entity.update();
+    const time = performance.now();
+    const delta = this.prevTime == null ? 0 : time - this.prevTime;
+
+    const eventArgs = new UpdateEventArgs(time, delta);
+
+    this.updateInternal(entity, eventArgs);
+
+    this.prevTime = time;
+  }
+
+  private updateInternal(entity: Entity, eventArgs: UpdateEventArgs): void {
+    entity.update(eventArgs);
 
     for (const child of entity.allChildren()) {
-      this.update(child);
+      this.updateInternal(child, eventArgs);
     }
   }
 

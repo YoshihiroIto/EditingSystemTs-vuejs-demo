@@ -1,5 +1,6 @@
 import { Entity } from './Entity';
 import ts from 'typescript';
+import { EventArgs } from '@/runtime/EventArgs';
 
 export class ScriptDefinition {
   get code(): string {
@@ -21,11 +22,11 @@ export class ScriptDefinition {
     this.code = code;
   }
 
-  invokeUpdate(entity: Entity): void {
-    this.invokeInternal(entity, 'update');
+  invokeUpdate(entity: Entity, eventArgs: EventArgs): void {
+    this.invokeInternal(entity, eventArgs, 'update');
   }
 
-  private invokeInternal(entity: Entity, funcName: string): void {
+  private invokeInternal(entity: Entity, eventArgs: EventArgs, funcName: string): void {
     if (this.functions == null) {
       return;
     }
@@ -36,9 +37,8 @@ export class ScriptDefinition {
     }
 
     try {
-      (func as (_: Entity) => void)(entity);
+      (func as (_0: Entity, _1: EventArgs) => void)(entity, eventArgs);
     } catch (e) {
-      //
       console.log(e);
     }
   }

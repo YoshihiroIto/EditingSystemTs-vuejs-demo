@@ -6,6 +6,7 @@ import { TypedEvent } from '../../../externals/EditingSystemTs/src/TypedEvent';
 import { ObservableArray } from '../../../externals/EditingSystemTs/src/ObservableArray';
 import { EditingSystem } from '../../../externals/EditingSystemTs/src/Decorators';
 import { EntityDefinition } from './EntityDefinition';
+import { UpdateEventArgs } from '@/runtime/EventArgs';
 
 @injectable()
 export class Entity implements NotifyPropertyChanged {
@@ -83,13 +84,13 @@ export class Entity implements NotifyPropertyChanged {
     this.removeInternal(this.ownChildren, entities);
   }
 
-  update(): void {
+  update(eventArgs: UpdateEventArgs): void {
     const script = this.definition?.scriptDefinition;
     if (script == null) {
       return;
     }
 
-    script.invokeUpdate(this);
+    script.invokeUpdate(this, eventArgs);
   }
 
   private addInternal(target: ObservableArray<Entity>, entities: Entity[]): void {
