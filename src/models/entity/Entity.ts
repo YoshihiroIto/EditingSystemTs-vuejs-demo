@@ -83,6 +83,15 @@ export class Entity implements NotifyPropertyChanged {
     this.removeInternal(this.ownChildren, entities);
   }
 
+  update(): void {
+    const script = this.definition?.scriptDefinition;
+    if (script == null) {
+      return;
+    }
+
+    script.invokeUpdate(this);
+  }
+
   private addInternal(target: ObservableArray<Entity>, entities: Entity[]): void {
     for (const entity of entities) {
       if (entity.parent != null) {

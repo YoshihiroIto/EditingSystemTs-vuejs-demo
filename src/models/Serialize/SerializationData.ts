@@ -1,5 +1,6 @@
 import { Vector3 } from '@/foundations/math/Vector3';
 import { EntityDefinition } from '../entity/EntityDefinition';
+import { ScriptDefinition } from '../entity/ScriptDefinition';
 
 export type SdProject = {
   entityDefinitions: SdEntityDefinition[];
@@ -8,6 +9,8 @@ export type SdProject = {
 
 export class SdEntityDefinition extends EntityDefinition {
   static toInstance(sd: SdEntityDefinition): EntityDefinition {
+    sd.scriptDefinition = new ScriptDefinition({ code: sd.scriptDefinition?.code });
+
     return sd;
   }
 }

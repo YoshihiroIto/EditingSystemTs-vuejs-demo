@@ -75,8 +75,11 @@ export class CreateEntityInteractor implements CreateEntityUseCase {
   }
 
   private static testScriptCode = `
-    function update(entity, event) {
-      entity.rotation = new Vector3(entity.rotation.x + 10, entity.rotation.y, entity.rotation.z);
+    function update(entity:Entity, event:any) {
+      entity.rotation = new Vector3(
+        entity.rotation.x + 0.005,
+        entity.rotation.y + 0.03,
+        entity.rotation.z);
     }
   `;
 }

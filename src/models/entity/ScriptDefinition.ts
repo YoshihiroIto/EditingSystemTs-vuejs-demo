@@ -1,4 +1,5 @@
 import { Entity } from './Entity';
+import ts from 'typescript';
 
 export class ScriptDefinition {
   get code(): string {
@@ -34,7 +35,12 @@ export class ScriptDefinition {
       return;
     }
 
-    (func as (_: Entity) => void)(entity);
+    try {
+      (func as (_: Entity) => void)(entity);
+    } catch (e) {
+      //
+      console.log(e);
+    }
   }
 
   private functions: Record<string, unknown> | null = null;
@@ -42,7 +48,11 @@ export class ScriptDefinition {
   private updateScript(): void {
     const parsingScript = this.code + '\nreturn {update:update};';
 
-    this.functions = new Function(parsingScript)();
+    const transpiledScript = ts.transpileModule(parsingScript, {
+      compilerOptions: { module: ts.ModuleKind.ESNext },
+    });
+
+    this.functions = new Function(transpiledScript.outputText)();
   }
 
   toJSON(): unknown {

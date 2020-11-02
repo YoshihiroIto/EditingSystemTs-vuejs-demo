@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SceneViewModel } from '@/viewModels/SceneViewModel';
 import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
@@ -10,6 +11,8 @@ import { PerspectiveCamera } from 'three';
 import { ViewportHelper } from '@/components/ViewportHelper';
 import { injectable } from 'tsyringe';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
+import { Entity } from '@/models/entity/Entity';
+import { Vector3 } from '@/foundations/math/Vector3';
 
 @injectable()
 export class RuntimePlayer implements Disposable {
@@ -19,11 +22,15 @@ export class RuntimePlayer implements Disposable {
   private renderer: ViewportRenderer | null = null;
   private isDisposed = false;
 
+  private project: Project | null = null;
+
   private readonly trash = new CompositeDisposable();
 
   constructor(private readonly history: History) {}
 
   start(project: Project, canvas: HTMLCanvasElement): void {
+    this.project = project;
+
     this.history.beginPause();
 
     this.sceneViewModel = dic().resolve(SceneViewModel);
@@ -40,6 +47,8 @@ export class RuntimePlayer implements Disposable {
     const viewportHelper = new ViewportHelper(this.sceneViewModel);
     this.trash.push(viewportHelper);
 
+    this.setupApi();
+
     this.animate();
   }
 
@@ -51,8 +60,6 @@ export class RuntimePlayer implements Disposable {
     this.trash.dispose();
   }
 
-  private count = 0;
-
   private animate(): void {
     if (this.isDisposed) {
       return;
@@ -61,12 +68,35 @@ export class RuntimePlayer implements Disposable {
     Assert.isNotNull(this.renderer);
     Assert.isNotNull(this.sceneViewModel);
 
-    // todo:ここでスクリプトをじっこうする
+    // console.log('RuntimePlayer', ++this.count);
 
-    console.log('RuntimPlayer', ++this.count);
+    this.update(this.rootScene);
 
     this.renderer.render(this.sceneViewModel, this.camera);
 
     requestAnimationFrame(() => this.animate());
+  }
+
+  private count = 0;
+
+  private get rootScene(): Entity {
+    const rootScene = this.project?.rootScene;
+
+    Assert.isNotNull(rootScene);
+
+    return rootScene;
+  }
+
+  private update(entity: Entity): void {
+    entity.update();
+
+    for (const child of entity.allChildren()) {
+      this.update(child);
+    }
+  }
+
+  private setupApi(): void {
+    // memo: https://qiita.com/Toyoharu-Nishikawa/items/138db999d62fe18de632
+    (window as any).Vector3 = Vector3;
   }
 }
