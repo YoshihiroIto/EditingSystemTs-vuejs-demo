@@ -1,4 +1,3 @@
-import { MathHelper } from '@/foundations/math/MathHelper';
 import { Entity } from '../entity/Entity';
 import { EntityCreator } from '../entity/EntityCreator';
 import { Project } from '../Project';
@@ -27,10 +26,7 @@ export class ProjectDeserializer {
   }
 
   private createEntity(src: SdEntity): Entity {
-    const entity = this.entityCreator.create(src.definition);
-
-    entity.name = src.name;
-    MathHelper.copySrt(entity, src);
+    const entity = this.entityCreator.create(src.name, src.definition, src);
 
     for (const srcChild of src.children) {
       entity.children.pushCore(this.createEntity(srcChild));

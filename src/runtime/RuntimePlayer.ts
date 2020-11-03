@@ -69,16 +69,12 @@ export class RuntimePlayer implements Disposable {
     Assert.isNotNull(this.renderer);
     Assert.isNotNull(this.sceneViewModel);
 
-    // console.log('RuntimePlayer', ++this.count);
-
     this.update(this.rootScene);
 
     this.renderer.render(this.sceneViewModel, this.camera);
 
     requestAnimationFrame(() => this.animate());
   }
-
-  private count = 0;
 
   private get rootScene(): Entity {
     const rootScene = this.project?.rootScene;

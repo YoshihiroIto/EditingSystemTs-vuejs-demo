@@ -22,6 +22,10 @@ export class ScriptDefinition {
     this.code = code;
   }
 
+  invokeInit(entity: Entity): void {
+    this.invokeInternal(entity, EventArgs.empty, 'init');
+  }
+
   invokeUpdate(entity: Entity, eventArgs: EventArgs): void {
     this.invokeInternal(entity, eventArgs, 'update');
   }
@@ -46,7 +50,7 @@ export class ScriptDefinition {
   private functions: Record<string, unknown> | null = null;
 
   private initializeScript(): void {
-    const parsingScript = this.code + '\nreturn {update:update};';
+    const parsingScript = this.code + '\nreturn {update: update, init: init};';
 
     const transpiledScript = ts.transpileModule(parsingScript, {
       compilerOptions: { module: ts.ModuleKind.ESNext },

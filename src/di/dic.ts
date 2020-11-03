@@ -18,3 +18,7 @@ export function endRuntime(): void {
 
   runtimeContainer = null;
 }
+
+export function isRuntime(): boolean {
+  return runtimeContainer !== null;
+}

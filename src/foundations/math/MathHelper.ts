@@ -8,7 +8,7 @@ export class MathHelper {
   }
 }
 
-type HasSrt = {
+export type HasSrt = {
   position: Vector3;
   rotation: Vector3;
   scale: Vector3;

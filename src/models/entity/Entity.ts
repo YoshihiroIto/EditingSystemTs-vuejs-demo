@@ -84,6 +84,15 @@ export class Entity implements NotifyPropertyChanged {
     this.removeInternal(this.ownChildren, entities);
   }
 
+  init(): void {
+    const script = this.definition?.scriptDefinition;
+    if (script == null) {
+      return;
+    }
+
+    script.invokeInit(this);
+  }
+
   update(eventArgs: UpdateEventArgs): void {
     const script = this.definition?.scriptDefinition;
     if (script == null) {

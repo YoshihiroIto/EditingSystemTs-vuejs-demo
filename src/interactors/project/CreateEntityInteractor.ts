@@ -16,9 +16,8 @@ export class CreateEntityInteractor implements CreateEntityUseCase {
       this.registerEntityDefinitions();
     }
 
-    const entity = this.entityCreator.create(name);
-
-    entity.name = `Entity${CreateEntityInteractor.instanceCount++}`;
+    const entityName = `Entity${CreateEntityInteractor.instanceCount++}`;
+    const entity = this.entityCreator.create(entityName, name, null);
 
     return entity;
   }
@@ -75,11 +74,23 @@ export class CreateEntityInteractor implements CreateEntityUseCase {
   }
 
   private static testScriptCode = `
+    function init(entity: Entity, event: EventArgs) {
+      entity.initPos = entity.position;
+      entity.frame = Math.random() * Math.PI * 2;
+    }
+
     function update(entity: Entity, event: UpdateEventArgs) {
       entity.rotation = new Vector3(
         entity.rotation.x + 0.0005 * event.delta,
         entity.rotation.y + 0.003  * event.delta,
         entity.rotation.z + 0.001  * event.delta);
+
+      const frame = entity.frame + event.time * 0.002;
+
+      entity.position = new Vector3(
+        entity.initPos.x + Math.sin(frame) * 3
+        entity.initPos.y + Math.cos(frame) * 5,
+        entity.initPos.z + Math.sin(frame) * 7);
     }
   `;
 }
