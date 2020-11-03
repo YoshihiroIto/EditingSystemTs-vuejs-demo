@@ -13,7 +13,7 @@ export class ScriptDefinition {
     }
 
     this._code = v;
-    this.updateScript();
+    this.initializeScript();
   }
 
   private _code = '';
@@ -45,7 +45,7 @@ export class ScriptDefinition {
 
   private functions: Record<string, unknown> | null = null;
 
-  private updateScript(): void {
+  private initializeScript(): void {
     const parsingScript = this.code + '\nreturn {update:update};';
 
     const transpiledScript = ts.transpileModule(parsingScript, {
