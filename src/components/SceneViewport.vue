@@ -147,7 +147,10 @@ export default defineComponent({
       props.updated?.on(requestRender);
 
       renderer = new ViewportRenderer(canvas.value, {
-        onRender: () => ++frameCount.value,
+        onRender: () => {
+          ++frameCount.value;
+          stats.update();
+        },
         onResize: () => ++resizeCount.value,
       });
 
