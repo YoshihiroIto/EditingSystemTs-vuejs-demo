@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SceneViewModel } from '@/viewModels/SceneViewModel';
-import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Disposable, EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { History } from '../../externals/EditingSystemTs/src/History';
 import { Camera } from 'three/src/cameras/Camera';
@@ -17,9 +17,14 @@ import { UpdateEventArgs } from './EventArgs';
 
 @injectable()
 export class RuntimePlayer implements Disposable {
+  get animated(): TypedEvent {
+    this._animated ??= new TypedEvent();
+    return this._animated;
+  }
+
+  private _animated: TypedEvent | null = null;
   private sceneViewModel: SceneViewModel | null = null;
   private camera: Camera | null = null;
-
   private renderer: ViewportRenderer | null = null;
   private isDisposed = false;
 
@@ -72,6 +77,8 @@ export class RuntimePlayer implements Disposable {
     this.update(this.rootScene);
 
     this.renderer.render(this.sceneViewModel, this.camera);
+
+    this._animated?.emit(this, EventArgs.empty);
 
     requestAnimationFrame(() => this.animate());
   }

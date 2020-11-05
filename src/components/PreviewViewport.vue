@@ -41,6 +41,7 @@ import { AppState } from '@/models/AppState';
 import { dic } from '@/di/dic';
 import { RuntimePlayer } from '@/runtime/RuntimePlayer';
 import ResizeObserver from 'resize-observer-polyfill';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 export default defineComponent({
   setup() {
@@ -50,6 +51,8 @@ export default defineComponent({
     //
     const appState = dic().resolve(AppState);
     let runtimePlayer: RuntimePlayer | null = null;
+
+    const stats = Stats();
 
     let isStarted = false;
 
@@ -75,6 +78,8 @@ export default defineComponent({
       if (isStarted === false) {
         runtimePlayer.start(appState.previewer.project, canvas.value);
 
+        runtimePlayer.animated.on(() => stats.update());
+
         appState.previewer.start();
         isStarted = true;
       }
@@ -87,6 +92,11 @@ export default defineComponent({
       trash.push(runtimePlayer);
 
       resizeObserver.observe(container.value as Element);
+
+      // stats
+      stats.dom.style.position = 'absolute';
+      stats.showPanel(2);
+      canvasWrapper.value?.appendChild(stats.dom);
     });
 
     onUnmounted(() => {
