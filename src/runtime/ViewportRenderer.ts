@@ -72,7 +72,10 @@ export class ViewportRenderer implements Disposable {
       const domElement = this.renderer.domElement;
       const width = domElement.clientWidth;
       const height = domElement.clientHeight;
-      const needResize = domElement.width !== width || domElement.height !== height;
+      const widthC = Math.floor(width * window.devicePixelRatio);
+      const heightC = Math.floor(height * window.devicePixelRatio);
+
+      const needResize = domElement.width !== widthC || domElement.height !== heightC;
 
       if (needResize) {
         this.renderer.setSize(width, height, false);
