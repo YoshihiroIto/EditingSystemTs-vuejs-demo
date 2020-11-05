@@ -51,6 +51,8 @@ export default defineComponent({
     const appState = dic().resolve(AppState);
     let runtimePlayer: RuntimePlayer | null = null;
 
+    let isStarted = false;
+
     ///////////////////////////////////////////////////////////////////////////
     // camera
     ///////////////////////////////////////////////////////////////////////////
@@ -59,7 +61,10 @@ export default defineComponent({
     camera.lookAt(0, 0, 0);
 
     const resizeObserver: ResizeObserver = new ResizeObserver(entries => {
+      Assert.isNotNull(canvas.value);
       Assert.isNotNull(canvasWrapper.value);
+      Assert.isNotNull(appState?.previewer);
+      Assert.isNotNull(runtimePlayer);
 
       // const w = entries[0].contentRect.width;
       const h = entries[0].contentRect.height;
@@ -67,22 +72,21 @@ export default defineComponent({
       // canvasWrapper.value.style.width = w + 'px';
       canvasWrapper.value.style.height = h + 'px';
 
-      // requestRender();
+      if (isStarted === false) {
+        runtimePlayer.start(appState.previewer.project, canvas.value);
+
+        appState.previewer.start();
+        isStarted = true;
+      }
     });
 
     const trash = new CompositeDisposable();
 
     onMounted(() => {
-      Assert.isNotNull(canvas.value);
-      Assert.isNotNull(appState?.previewer);
-
-      resizeObserver.observe(container.value as Element);
-
       runtimePlayer = dic().resolve(RuntimePlayer);
-      runtimePlayer.start(appState.previewer.project, canvas.value);
       trash.push(runtimePlayer);
 
-      appState.previewer.start();
+      resizeObserver.observe(container.value as Element);
     });
 
     onUnmounted(() => {
@@ -92,17 +96,6 @@ export default defineComponent({
       runtimePlayer = null;
       trash.dispose();
     });
-
-    ///////////////////////////////////////////////////////////////////////////
-    // render
-    ///////////////////////////////////////////////////////////////////////////
-    // const requestRender = () => {
-    //   if (runtimePlayer == null) {
-    //     return;
-    //   }
-
-    //   runtimePlayer.requestRender();
-    // };
 
     return {
       container,
