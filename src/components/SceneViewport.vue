@@ -146,18 +146,20 @@ export default defineComponent({
       resizeObserver.observe(container.value as Element);
       props.updated?.on(requestRender);
 
-      renderer = new ViewportRenderer(canvas.value, {
-        onRender: () => {
-          ++frameCount.value;
-          stats.update();
-        },
-        onResize: () => ++resizeCount.value,
-      });
-
       controller = new SceneViewportController(props.scene, camera, canvas.value, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
+
+      renderer = new ViewportRenderer(canvas.value, {
+        onRender: () => {
+          ++frameCount.value;
+
+          stats.update();
+          controller.onRender();
+        },
+        onResize: () => ++resizeCount.value,
+      });
 
       trash.push(renderer);
       trash.push(controller);
