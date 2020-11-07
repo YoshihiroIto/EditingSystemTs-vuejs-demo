@@ -97,7 +97,7 @@ export class SceneViewportController implements Disposable {
   private boundingBox: BoxHelper | null = null;
 
   private attachedObject: ThObject3D | null = null;
-  private raycaster = new Raycaster();
+  private raycaster: Raycaster | null = null;
 
   private _isSnap = false;
   private canPickObject = true;
@@ -199,6 +199,8 @@ export class SceneViewportController implements Disposable {
     if (this.canPickObject == false) {
       return;
     }
+
+    this.raycaster ??= new Raycaster();
 
     const x = event.offsetX;
     const y = event.offsetY;
