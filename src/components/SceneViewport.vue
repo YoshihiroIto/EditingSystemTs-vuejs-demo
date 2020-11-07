@@ -195,9 +195,7 @@ export default defineComponent({
         let isAttached = false;
 
         if (newObj != null) {
-          const obj = from(props.scene.allChildren()).firstOrDefault(x => {
-            return (x as ThObject3D).model === newObj;
-          });
+          const obj = from(props.scene.allChildren()).firstOrDefault(x => (x as ThObject3D).model === newObj);
 
           if (obj != null) {
             controller?.attachTargetObject(obj as ThObject3D);
