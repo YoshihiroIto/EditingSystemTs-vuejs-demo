@@ -16,9 +16,7 @@ import { dic } from '@/di/dic';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function WithThObject<TBase extends Constructor, T extends Entity>(Base: TBase) {
   return class extends Base implements Disposable {
-    get model(): Entity {
-      Assert.isNotNull(this._model);
-
+    get model(): Entity | null {
       return this._model;
     }
 
@@ -72,6 +70,10 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       target.add(...newObjects);
 
       for (const obj of newObjects) {
+        if (obj.model === null) {
+          continue;
+        }
+
         if (obj.model.hasChildren === false) {
           continue;
         }

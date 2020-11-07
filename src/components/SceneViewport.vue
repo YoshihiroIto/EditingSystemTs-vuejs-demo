@@ -180,9 +180,9 @@ export default defineComponent({
       trash.dispose();
     });
 
-    const onCanvasMouseEnter = () => (controller.IsVisibleGizmo = true);
-    const onCanvasMouseMove = () => (controller.IsVisibleGizmo = true);
-    const onCanvasMouseLeave = () => (controller.IsVisibleGizmo = false);
+    const onCanvasMouseEnter = () => (controller.isVisibleGizmo = true);
+    const onCanvasMouseMove = () => (controller.isVisibleGizmo = true);
+    const onCanvasMouseLeave = () => (controller.isVisibleGizmo = false);
 
     ///////////////////////////////////////////////////////////////////////////
     // selectedEntity
@@ -226,7 +226,7 @@ export default defineComponent({
       if (e.shiftKey) {
         controller.isSnap = true;
       }
-      if (e.ctrlKey && controller.IsVisibleGizmo) {
+      if (e.ctrlKey && controller.isVisibleGizmo) {
         controller.enabled = false;
       } else {
         switch (e.key.toLowerCase()) {

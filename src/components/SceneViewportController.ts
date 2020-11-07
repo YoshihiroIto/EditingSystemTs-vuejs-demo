@@ -63,11 +63,11 @@ export class SceneViewportController implements Disposable {
     this.gizmo.enabled = i;
   }
 
-  get IsVisibleGizmo(): boolean {
+  get isVisibleGizmo(): boolean {
     return this._enabledGizmo;
   }
 
-  set IsVisibleGizmo(i: boolean) {
+  set isVisibleGizmo(i: boolean) {
     if (i === this._enabledGizmo) {
       return;
     }
@@ -130,22 +130,12 @@ export class SceneViewportController implements Disposable {
     this.domElement.removeEventListener('click', this.onClickElement, false);
 
     //
-    this.IsVisibleGizmo = false;
+    this.isVisibleGizmo = false;
     this.gizmo.dispose();
 
     //
     this.cameraControls.removeEventListener('change', this.requestRender);
     this.cameraControls.dispose();
-  }
-
-  detachTargetObject(): void {
-    this.attachedObject = null;
-    this.gizmo.detach();
-
-    if (this.boundingBox != null) {
-      this.parent.remove(this.boundingBox);
-      this.boundingBox = null;
-    }
   }
 
   attachTargetObject(target: ThObject3D): void {
@@ -158,6 +148,16 @@ export class SceneViewportController implements Disposable {
     if (target != null) {
       this.boundingBox = new BoxHelper(target);
       this.parent.add(this.boundingBox);
+    }
+  }
+
+  detachTargetObject(): void {
+    this.attachedObject = null;
+    this.gizmo.detach();
+
+    if (this.boundingBox != null) {
+      this.parent.remove(this.boundingBox);
+      this.boundingBox = null;
     }
   }
 
@@ -208,14 +208,21 @@ export class SceneViewportController implements Disposable {
     const mouse = new Vector2((x / w) * 2 - 1, -(y / h) * 2 + 1);
     this.raycaster.setFromCamera(mouse, this.camera);
 
-    const intersects = this.raycaster.intersectObjects(from(this.parent.allChildren()).toArray());
+    const children = from(this.parent.allChildren())
+      .where(x => (x as ThObject3D).model !== null)
+      .toArray();
+
+    const intersects = this.raycaster.intersectObjects(children);
     if (intersects.length == 0) {
       return;
     }
 
     this.entitiesPicked.emit(
       this,
-      new EntitiesPickedEventArgs(intersects.map(x => (x.object as ThObject3D).model.owner))
+      new EntitiesPickedEventArgs(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        intersects.filter(x => (x.object as ThObject3D).model !== null).map(x => (x.object as ThObject3D).model!.owner)
+      )
     );
   };
 }
