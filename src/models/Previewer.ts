@@ -1,5 +1,5 @@
 import { dic, endRuntime, startRuntime } from '@/di/dic';
-import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/Disposable';
 import { injectable } from 'tsyringe';
 import { EntityCreator } from './entity/EntityCreator';
 import { EntityDefinition } from './entity/EntityDefinition';

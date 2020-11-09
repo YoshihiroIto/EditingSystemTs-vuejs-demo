@@ -1,4 +1,4 @@
-import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/Disposable';
 import { WebGLRenderer } from 'three/src/renderers/WebGLRenderer';
 import { CameraHelper } from '@/foundations/CameraHelper';
 import { Camera } from 'three/src/cameras/Camera';

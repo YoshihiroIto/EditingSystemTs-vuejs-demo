@@ -2,7 +2,7 @@ import { ThObject3D } from '@/th/ThObject';
 import { GridHelper } from 'three/src/helpers/GridHelper';
 import { AxesHelper } from 'three/src/helpers/AxesHelper';
 import { Color } from 'three/src/math/Color';
-import { Disposable } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/Disposable';
 
 export class ViewportHelper implements Disposable {
   readonly grid: GridHelper;

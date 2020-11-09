@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SceneViewModel } from '@/viewModels/SceneViewModel';
-import { Disposable, EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { EventArgs, TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
+import { Disposable } from '../../externals/EditingSystemTs/src/Disposable';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { History } from '../../externals/EditingSystemTs/src/History';
 import { Camera } from 'three/src/cameras/Camera';
