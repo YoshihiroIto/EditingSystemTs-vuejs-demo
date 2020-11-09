@@ -133,7 +133,9 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
     }
 
     dispose(): void {
-      Assert.isNotNull(this._model);
+      if (this._model == null) {
+        return;
+      }
 
       this._model.propertyChanged.off(this.propertyChanged);
       this._model.ownChildren.collectionChanged.off(this.childrenChanged);

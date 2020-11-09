@@ -13,6 +13,8 @@ import { from } from 'linq-to-typescript/sync/Enumerable';
 import { SceneViewportControllerMode, SceneViewportControllerSpace } from './SceneViewportConstants';
 import { MathUtils } from 'three/src/math/MathUtils';
 import { Entity } from '@/models/entity/Entity';
+import { ThObject3D } from '@/th/ThObject';
+import { ThScene } from '@/th/ThScene';
 
 export class SceneViewportController implements Disposable {
   readonly beginContinuousEditing = new TypedEvent();
@@ -104,7 +106,8 @@ export class SceneViewportController implements Disposable {
   private _enabledGizmo = false;
 
   constructor(
-    private readonly parent: ThObject3D,
+    private readonly parent: ThScene,
+    private readonly pickingTarget: ThObject3D,
     private readonly camera: Camera,
     private readonly domElement: HTMLCanvasElement,
     private readonly requestRender: () => void
@@ -210,7 +213,7 @@ export class SceneViewportController implements Disposable {
     const mouse = new Vector2((x / w) * 2 - 1, -(y / h) * 2 + 1);
     this.raycaster.setFromCamera(mouse, this.camera);
 
-    const children = from(this.parent.allChildren())
+    const children = from(this.pickingTarget.allChildren())
       .where(x => (x as ThObject3D).model !== null)
       .toArray();
 
@@ -223,7 +226,7 @@ export class SceneViewportController implements Disposable {
       this,
       new EntitiesPickedEventArgs(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        intersects.filter(x => (x.object as ThObject3D).model !== null).map(x => (x.object as ThObject3D).model!.owner)
+        intersects.map(x => (x.object as ThObject3D).model!.owner)
       )
     );
   };

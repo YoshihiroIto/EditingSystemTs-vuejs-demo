@@ -3,13 +3,7 @@
     <SceneViewportToolbar :mode.sync="controllerMode" :space.sync="controllerSpace" id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
-      <canvas
-        id="canvas"
-        ref="canvas"
-        @mouseenter="onCanvasMouseEnter"
-        @mousemove="onCanvasMouseMove"
-        @mouseleave="onCanvasMouseLeave"
-      />
+      <canvas id="canvas" ref="canvas" />
 
       <div id="info">
         FrameCount: {{ frameCount }}<br />
@@ -68,11 +62,10 @@ import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import { CompositeDisposable } from '../../externals/EditingSystemTs/src/CompositeDisposable';
 import { from } from 'linq-to-typescript';
 import { PerspectiveCamera } from 'three';
-import Stats from 'three/examples/jsm/libs/stats.module';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { SceneViewportController } from './SceneViewportController';
 import { ViewportHelper } from './ViewportHelper';
-import ResizeObserver from 'resize-observer-polyfill';
+import { SceneViewportRenderGroup } from './SceneViewportRenderGroup';
 import {
   SceneViewportControllerMode,
   SceneViewportControllerModes,
@@ -80,9 +73,12 @@ import {
   SceneViewportControllerSpaces,
 } from './SceneViewportConstants';
 import { ViewportRenderer } from '@/runtime/ViewportRenderer';
+import { ThScene } from '@/th/ThScene';
+import ResizeObserver from 'resize-observer-polyfill';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 type Props = {
-  scene: ThObject3D | null;
+  scene: ThScene | null;
   selectedEntity: Entity | null;
   updated: TypedEvent | null;
 };
@@ -104,6 +100,14 @@ export default defineComponent({
     const stats = Stats();
     const frameCount = ref(0);
     const resizeCount = ref(0);
+
+    const trash = new CompositeDisposable();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // renderGroup
+    ///////////////////////////////////////////////////////////////////////////
+    const renderGroup = new SceneViewportRenderGroup();
+    trash.push(renderGroup);
 
     ///////////////////////////////////////////////////////////////////////////
     // controller
@@ -137,8 +141,6 @@ export default defineComponent({
     let renderer: ViewportRenderer;
     let controller: SceneViewportController;
 
-    const trash = new CompositeDisposable();
-
     onMounted(() => {
       Assert.isNotNull(props.scene);
       Assert.isNotNull(canvas.value);
@@ -146,10 +148,15 @@ export default defineComponent({
       resizeObserver.observe(container.value as Element);
       props.updated?.on(requestRender);
 
-      controller = new SceneViewportController(props.scene, camera, canvas.value, requestRender);
+      trash.push(new ViewportHelper(renderGroup));
+
+      controller = new SceneViewportController(renderGroup, props.scene, camera, canvas.value, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
       controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
+      trash.push(controller);
+
+      controller.isVisibleGizmo = true;
 
       renderer = new ViewportRenderer(canvas.value, {
         onRender: () => {
@@ -157,13 +164,15 @@ export default defineComponent({
 
           stats.update();
           controller.onRender();
+
+          if (props.scene !== null) {
+            renderGroup.background = props.scene.background;
+            renderGroup.add(props.scene);
+          }
         },
         onResize: () => ++resizeCount.value,
       });
-
       trash.push(renderer);
-      trash.push(controller);
-      trash.push(new ViewportHelper(props.scene));
 
       // stats
       stats.dom.style.position = 'absolute';
@@ -179,10 +188,6 @@ export default defineComponent({
 
       trash.dispose();
     });
-
-    const onCanvasMouseEnter = () => (controller.isVisibleGizmo = true);
-    const onCanvasMouseMove = () => (controller.isVisibleGizmo = true);
-    const onCanvasMouseLeave = () => (controller.isVisibleGizmo = false);
 
     ///////////////////////////////////////////////////////////////////////////
     // selectedEntity
@@ -212,10 +217,7 @@ export default defineComponent({
     ///////////////////////////////////////////////////////////////////////////
     // render
     ///////////////////////////////////////////////////////////////////////////
-    const requestRender = () => {
-      Assert.isNotNull(props.scene);
-      renderer.requestRender(props.scene, camera);
-    };
+    const requestRender = () => renderer.requestRender(renderGroup, camera);
 
     ///////////////////////////////////////////////////////////////////////////
     // shortcut keys
@@ -268,10 +270,6 @@ export default defineComponent({
       //
       onKeyDown,
       onKeyUp,
-      //
-      onCanvasMouseEnter,
-      onCanvasMouseMove,
-      onCanvasMouseLeave,
     };
   },
 });
