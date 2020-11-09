@@ -76,19 +76,25 @@ export class SceneViewportController implements Disposable {
 
     this._enabledGizmo = i;
 
+    const onDraggingChanged = (event: Event) => {
+      this.cameraControls.enabled = !event.value;
+      this.canPickObject = !event.value;
+    };
+
     if (this._enabledGizmo === true) {
       this.gizmo.addEventListener('change', this.requestRender);
       this.gizmo.addEventListener('objectChange', this.onObjectChangeGizmo);
       this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
       this.gizmo.addEventListener('mouseUp', this.onMouseUpGizmo);
-      this.gizmo.addEventListener('dragging-changed', (event: Event) => {
-        this.cameraControls.enabled = !event.value;
-        this.canPickObject = !event.value;
-      });
+      this.gizmo.addEventListener('dragging-changed', onDraggingChanged);
       this.parent.add(this.gizmo);
     } else {
       this.parent.remove(this.gizmo);
       this.gizmo.removeEventListener('change', this.requestRender);
+      this.gizmo.removeEventListener('objectChange', this.onObjectChangeGizmo);
+      this.gizmo.removeEventListener('mouseDown', this.onMouseDownGizmo);
+      this.gizmo.removeEventListener('mouseUp', this.onMouseUpGizmo);
+      this.gizmo.removeEventListener('dragging-changed', onDraggingChanged);
     }
   }
 
