@@ -65,23 +65,27 @@ export class SceneViewportController implements Disposable {
     this.gizmo.enabled = i;
   }
 
+  get isDragging(): boolean {
+    return this._isDragging;
+  }
+
   get isVisibleGizmo(): boolean {
-    return this._enabledGizmo;
+    return this._isVisibleGizmo;
   }
 
   set isVisibleGizmo(i: boolean) {
-    if (i === this._enabledGizmo) {
+    if (i === this._isVisibleGizmo) {
       return;
     }
 
-    this._enabledGizmo = i;
+    this._isVisibleGizmo = i;
 
     const onDraggingChanged = (event: Event) => {
       this.cameraControls.enabled = !event.value;
       this.canPickObject = !event.value;
     };
 
-    if (this._enabledGizmo === true) {
+    if (this._isVisibleGizmo === true) {
       this.gizmo.addEventListener('change', this.requestRender);
       this.gizmo.addEventListener('objectChange', this.onObjectChangeGizmo);
       this.gizmo.addEventListener('mouseDown', this.onMouseDownGizmo);
@@ -96,6 +100,8 @@ export class SceneViewportController implements Disposable {
       this.gizmo.removeEventListener('mouseUp', this.onMouseUpGizmo);
       this.gizmo.removeEventListener('dragging-changed', onDraggingChanged);
     }
+
+    this.requestRender();
   }
 
   private static readonly _allInstances = new Set<SceneViewportController>();
@@ -107,9 +113,10 @@ export class SceneViewportController implements Disposable {
   private attachedObject: ThObject3D | null = null;
   private raycaster: Raycaster | null = null;
 
-  private _isSnap = false;
   private canPickObject = true;
-  private _enabledGizmo = false;
+  private _isSnap = false;
+  private _isVisibleGizmo = false;
+  private _isDragging = false;
 
   constructor(
     private readonly parent: ThScene,
@@ -175,10 +182,12 @@ export class SceneViewportController implements Disposable {
   }
 
   private onMouseDownGizmo = (): void => {
+    this._isDragging = true;
     this.beginContinuousEditing.emit(this, EventArgs.empty);
   };
 
   private onMouseUpGizmo = (): void => {
+    this._isDragging = false;
     this.endContinuousEditing.emit(this, EventArgs.empty);
   };
 

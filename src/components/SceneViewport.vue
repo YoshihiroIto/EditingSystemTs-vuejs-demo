@@ -3,7 +3,13 @@
     <SceneViewportToolbar :mode.sync="controllerMode" :space.sync="controllerSpace" id="toolbar" ref="toolbar" />
 
     <div id="canvas-wrapper" ref="canvasWrapper">
-      <canvas id="canvas" ref="canvas" />
+      <canvas
+        id="canvas"
+        ref="canvas"
+        @mouseenter="onCanvasMouseEnter"
+        @mousemove="onCanvasMouseMove"
+        @mouseleave="onCanvasMouseLeave"
+      />
 
       <div id="info">
         FrameCount: {{ frameCount }}<br />
@@ -217,7 +223,7 @@ export default defineComponent({
     ///////////////////////////////////////////////////////////////////////////
     // render
     ///////////////////////////////////////////////////////////////////////////
-    const requestRender = () => renderer.requestRender(renderGroup, camera);
+    const requestRender = () => renderer?.requestRender(renderGroup, camera);
 
     ///////////////////////////////////////////////////////////////////////////
     // shortcut keys
@@ -257,6 +263,26 @@ export default defineComponent({
       controller.enabled = true;
     };
 
+    const onCanvasMouseEnter = () => {
+      if (controller.isDragging) {
+        return;
+      }
+      controller.isVisibleGizmo = true;
+      canvas.value?.focus();
+    };
+    const onCanvasMouseMove = () => {
+      if (controller.isDragging) {
+        return;
+      }
+      controller.isVisibleGizmo = true;
+    };
+    const onCanvasMouseLeave = () => {
+      if (controller.isDragging) {
+        return;
+      }
+      controller.isVisibleGizmo = false;
+    };
+
     return {
       container,
       toolbar,
@@ -270,6 +296,10 @@ export default defineComponent({
       //
       onKeyDown,
       onKeyUp,
+      //
+      onCanvasMouseEnter,
+      onCanvasMouseMove,
+      onCanvasMouseLeave,
     };
   },
 });
