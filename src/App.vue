@@ -155,7 +155,7 @@ export default defineComponent({
       const clearHistory = dic().resolve<ClearHistoryUseCase>(UseCase.clearHistory);
       const beginBatchEditing = dic().resolve<BeginBatchEditingUseCase>(UseCase.beginBatchEditing);
       const endBatchEditing = dic().resolve<EndBatchEditingUseCase>(UseCase.endBatchEditing);
-      const getEdited = dic().resolve<GetEditedUseCase>(UseCase.getEditedUseCase);
+      const getEdited = dic().resolve<GetEditedUseCase>(UseCase.getEdited);
       const getHistoryState = dic().resolve<GetHistoryStateUseCase>(UseCase.getHistoryState);
 
       const project = reactive(dic().resolve(Project));

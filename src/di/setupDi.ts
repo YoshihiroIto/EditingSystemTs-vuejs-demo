@@ -10,6 +10,7 @@ import { EndPauseEditingInteractor } from '../interactors/history/EndPauseEditin
 import { GetEditedInteractor } from '../interactors/history/GetEditedInteractor';
 import { GetHistoryStateInteractor } from '../interactors/history/GetHistoryStateInteractor';
 import { CreateEntityInteractor } from '../interactors/project/CreateEntityInteractor';
+import { SetSelectedEntitiesInteractor } from '../interactors/edit/SetSelectedEntitiesInteractor';
 import { UseCase } from './useCase';
 
 export default function setupDi(): void {
@@ -21,9 +22,12 @@ export default function setupDi(): void {
   container.register(UseCase.endBatchEditing, { useClass: EndBatchEditingInteractor });
   container.register(UseCase.beginPauseEditing, { useClass: BeginPauseEditingInteractor });
   container.register(UseCase.endPauseEditing, { useClass: EndPauseEditingInteractor });
-  container.register(UseCase.getEditedUseCase, { useClass: GetEditedInteractor });
+  container.register(UseCase.getEdited, { useClass: GetEditedInteractor });
   container.register(UseCase.getHistoryState, { useClass: GetHistoryStateInteractor });
   container.registerInstance(History, new History());
+
+  // edit
+  container.register(UseCase.setSelectedEntities, { useClass: SetSelectedEntitiesInteractor });
 
   // project -- @scoped(Lifecycle.ContainerScoped)
   container.register(UseCase.createEntity, { useClass: CreateEntityInteractor });

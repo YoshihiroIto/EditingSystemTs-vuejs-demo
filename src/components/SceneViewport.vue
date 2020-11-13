@@ -82,6 +82,9 @@ import { ViewportRenderer } from '@/runtime/ViewportRenderer';
 import { ThScene } from '@/th/ThScene';
 import ResizeObserver from 'resize-observer-polyfill';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import { dic } from '@/di/dic';
+import { SetSelectedEntitiesUseCase } from '@/useCases/edit/SetSelectedEntitiesUseCase';
+import { UseCase } from '@/di/useCase';
 
 type Props = {
   scene: ThScene | null;
@@ -106,6 +109,8 @@ export default defineComponent({
     const stats = Stats();
     const frameCount = ref(0);
     const resizeCount = ref(0);
+
+    const setSelectedEntities = dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
 
     const trash = new CompositeDisposable();
 
@@ -159,7 +164,10 @@ export default defineComponent({
       controller = new SceneViewportController(renderGroup, props.scene, camera, canvas.value, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
-      controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
+
+      //controller.entitiesPicked.on((_, e) => context.emit('update:selectedEntity', e.entities[0]));
+      controller.entitiesPicked.on((_, e) => setSelectedEntities.invoke(...e.entities));
+
       trash.push(controller);
 
       controller.isVisibleGizmo = true;

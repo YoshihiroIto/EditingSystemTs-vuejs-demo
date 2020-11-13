@@ -7,8 +7,11 @@ const UseCase = {
   endBatchEditing: Symbol(),
   beginPauseEditing: Symbol(),
   endPauseEditing: Symbol(),
-  getEditedUseCase: Symbol(),
+  getEdited: Symbol(),
   getHistoryState: Symbol(),
+
+  // edit
+  setSelectedEntities: Symbol(),
 
   // project
   createEntity: Symbol(),
