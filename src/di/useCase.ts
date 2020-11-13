@@ -12,6 +12,8 @@ const UseCase = {
 
   // edit
   setSelectedEntities: Symbol(),
+  addSelectedEntities: Symbol(),
+  removeSelectedEntities: Symbol(),
 
   // project
   createEntity: Symbol(),

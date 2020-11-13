@@ -11,6 +11,8 @@ import { GetEditedInteractor } from '../interactors/history/GetEditedInteractor'
 import { GetHistoryStateInteractor } from '../interactors/history/GetHistoryStateInteractor';
 import { CreateEntityInteractor } from '../interactors/project/CreateEntityInteractor';
 import { SetSelectedEntitiesInteractor } from '../interactors/edit/SetSelectedEntitiesInteractor';
+import { AddSelectedEntitiesInteractor } from '../interactors/edit/AddSelectedEntitiesInteractor';
+import { RemoveSelectedEntitiesInteractor } from '../interactors/edit/RemoveSelectedEntitiesInteractor';
 import { UseCase } from './useCase';
 
 export default function setupDi(): void {
@@ -28,6 +30,8 @@ export default function setupDi(): void {
 
   // edit
   container.register(UseCase.setSelectedEntities, { useClass: SetSelectedEntitiesInteractor });
+  container.register(UseCase.addSelectedEntities, { useClass: AddSelectedEntitiesInteractor });
+  container.register(UseCase.removeSelectedEntities, { useClass: RemoveSelectedEntitiesInteractor });
 
   // project -- @scoped(Lifecycle.ContainerScoped)
   container.register(UseCase.createEntity, { useClass: CreateEntityInteractor });
