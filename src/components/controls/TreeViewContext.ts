@@ -1,9 +1,9 @@
-import { ref, Ref, SetupContext } from '@vue/composition-api';
+import { ref, Ref } from '@vue/composition-api';
 
 export class TreeViewContext {
   private selectedItem: Ref<unknown>;
 
-  constructor(private readonly context: SetupContext, selectedItem: unknown) {
+  constructor(private readonly onSelectItem: (selectedItem: unknown) => void, selectedItem: unknown) {
     this.selectedItem = ref(selectedItem);
   }
 
@@ -16,7 +16,8 @@ export class TreeViewContext {
       return;
     }
 
-    this.context.emit('selectItem', item);
+    this.onSelectItem(item);
+
     this.selectedItem.value = item;
   }
 

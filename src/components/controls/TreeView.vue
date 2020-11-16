@@ -32,7 +32,7 @@ export default defineComponent({
     TreeViewItem,
   },
   setup(props: Props, context: SetupContext) {
-    const root = new TreeViewContext(context, props.selectedItem);
+    const root = new TreeViewContext(item => context.emit('select-item', item), props.selectedItem);
 
     watch(
       () => props.selectedItem,

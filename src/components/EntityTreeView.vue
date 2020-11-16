@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TreeView :children="children" @selectItem="onSelectItem" :selectedItem="selectedEntity">
+    <TreeView :children="children" @select-item="onSelectItem" :selectedItem="selectedEntity">
       <template #itemTemplate="item">
         {{ item.data.name }}
         ({{ item.data.definition.name }}, isSelected:{{ item.data.isSelected }})
