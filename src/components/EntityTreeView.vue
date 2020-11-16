@@ -11,10 +11,14 @@
 </template>
 
 <script lang="ts">
+import { dic } from '@/di/dic';
+import { UseCase } from '@/di/useCase';
 import { Entity } from '@/models/entity/Entity';
-import { defineComponent, SetupContext } from '@vue/composition-api';
+import { SetSelectedEntitiesUseCase } from '@/useCases/edit/SetSelectedEntitiesUseCase';
+import { defineComponent } from '@vue/composition-api';
 import TreeView from './controls/TreeView.vue';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Props = {
   children: Entity[] | null;
   selectedEntity: Entity | null;
@@ -28,8 +32,13 @@ export default defineComponent({
   components: {
     TreeView,
   },
-  setup: (props: Props, context: SetupContext) => {
-    const onSelectItem = (e: unknown) => context.emit('update:selectedEntity', e);
+  setup: () => {
+    let setSelectedEntities: SetSelectedEntitiesUseCase | null = null;
+
+    const onSelectItem = (e: unknown) => {
+      setSelectedEntities ||= dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
+      setSelectedEntities.invoke(e as Entity);
+    };
 
     return {
       onSelectItem,

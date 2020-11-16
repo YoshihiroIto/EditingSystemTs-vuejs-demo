@@ -23,7 +23,7 @@
       id="sceneViewport"
       v-if="appState.isInPreview === false"
       :scene="sceneViewModel"
-      :selectedEntity.sync="appState.selectedEntity"
+      :selectedEntity="appState.selectedEntity"
       :updated="updated"
       :beginContinuousEditing="beginContinuousEditing"
       :endContinuousEditing="endContinuousEditing"
@@ -31,7 +31,7 @@
 
     <PreviewViewport id="previewViewport" v-else />
 
-    <EntityTreeView id="treeview" :children="children" :selectedEntity.sync="appState.selectedEntity" />
+    <EntityTreeView id="treeview" :children="children" :selectedEntity="appState.selectedEntity" />
 
     <EntityInspector
       id="inspector"

@@ -4,7 +4,7 @@
       id="viewport1"
       ref="viewport1"
       :scene="scene"
-      :selectedEntity.sync="selectedEntityInternal"
+      :selectedEntity="selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
@@ -14,7 +14,7 @@
       id="viewport2"
       ref="viewport2"
       :scene="scene"
-      :selectedEntity.sync="selectedEntityInternal"
+      :selectedEntity="selectedEntity"
       :updated="updated"
       @begin-continuous-editing="beginContinuousEditing"
       @end-continuous-editing="endContinuousEditing"
@@ -54,13 +54,14 @@ $base-gap: 4px;
 
 <script lang="ts">
 import SceneViewport from './SceneViewport.vue';
-import { defineComponent, onMounted, onUnmounted, ref, SetupContext, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { Entity } from '../models/entity/Entity';
 import { ThObject3D } from '../th/ThObject';
 import { TypedEvent } from '../../externals/EditingSystemTs/src/TypedEvent';
 import { Assert } from '../../externals/EditingSystemTs/src/Assert';
 import ResizeObserver from 'resize-observer-polyfill';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Props = {
   scene: ThObject3D | null;
   selectedEntity: Entity | null;
@@ -80,8 +81,7 @@ export default defineComponent({
   components: {
     SceneViewport,
   },
-  setup(props: Props, context: SetupContext) {
-    const selectedEntityInternal = ref(props.selectedEntity);
+  setup() {
     const container = ref<HTMLElement>();
     const viewport1 = ref<InstanceType<typeof SceneViewport>>();
     const viewport2 = ref<InstanceType<typeof SceneViewport>>();
@@ -105,15 +105,7 @@ export default defineComponent({
       resizeObserver.disconnect();
     });
 
-    watch(selectedEntityInternal, v => context.emit('update:selectedEntity', v));
-
-    watch(
-      () => props.selectedEntity,
-      v => (selectedEntityInternal.value = v)
-    );
-
     return {
-      selectedEntityInternal,
       container,
       viewport1,
       viewport2,
