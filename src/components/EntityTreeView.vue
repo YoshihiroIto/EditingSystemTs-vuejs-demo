@@ -36,7 +36,7 @@ export default defineComponent({
     let setSelectedEntities: SetSelectedEntitiesUseCase | null = null;
 
     const onSelectItem = (e: unknown) => {
-      setSelectedEntities ||= dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
+      setSelectedEntities ??= dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
       setSelectedEntities.invoke(e as Entity);
     };
 
