@@ -13,6 +13,7 @@ import { CreateEntityInteractor } from '../interactors/project/CreateEntityInter
 import { SetSelectedEntitiesInteractor } from '../interactors/edit/SetSelectedEntitiesInteractor';
 import { AddSelectedEntitiesInteractor } from '../interactors/edit/AddSelectedEntitiesInteractor';
 import { RemoveSelectedEntitiesInteractor } from '../interactors/edit/RemoveSelectedEntitiesInteractor';
+import { ToggleSelectedEntitiesInteractor } from '../interactors/edit/ToggleSelectedEntitiesInteractor';
 import { UseCase } from './useCase';
 
 export default function setupDi(): void {
@@ -32,6 +33,7 @@ export default function setupDi(): void {
   container.register(UseCase.setSelectedEntities, { useClass: SetSelectedEntitiesInteractor });
   container.register(UseCase.addSelectedEntities, { useClass: AddSelectedEntitiesInteractor });
   container.register(UseCase.removeSelectedEntities, { useClass: RemoveSelectedEntitiesInteractor });
+  container.register(UseCase.toggleSelectedEntities, { useClass: ToggleSelectedEntitiesInteractor });
 
   // project -- @scoped(Lifecycle.ContainerScoped)
   container.register(UseCase.createEntity, { useClass: CreateEntityInteractor });

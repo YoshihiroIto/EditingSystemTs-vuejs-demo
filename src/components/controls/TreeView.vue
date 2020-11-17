@@ -36,7 +36,7 @@ export default defineComponent({
 
     watch(
       () => props.selectedItem,
-      newValue => root.SelectItem(newValue)
+      newValue => root.SetSelectItem(newValue)
     );
 
     return {

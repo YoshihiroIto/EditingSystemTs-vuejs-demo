@@ -11,14 +11,17 @@ export class TreeViewContext {
     return this.selectedItem.value === item;
   }
 
+  SetSelectItem(item: unknown): void {
+    this.selectedItem.value = item;
+  }
+
   SelectItem(item: unknown): void {
     if (this.selectedItem.value === item) {
       return;
     }
 
     this.onSelectItem(item);
-
-    this.selectedItem.value = item;
+    this.SetSelectItem(item);
   }
 
   ToggleSelectItem(item: unknown): void {

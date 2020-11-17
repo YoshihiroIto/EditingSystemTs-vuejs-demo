@@ -83,8 +83,10 @@ import { ThScene } from '@/th/ThScene';
 import ResizeObserver from 'resize-observer-polyfill';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { dic } from '@/di/dic';
+import { isControlPressed } from '../components/ComponentHelper';
 import { SetSelectedEntitiesUseCase } from '@/useCases/edit/SetSelectedEntitiesUseCase';
 import { UseCase } from '@/di/useCase';
+import { ToggleSelectedEntitiesUseCase } from '@/useCases/edit/ToggleSelectedEntitiesUseCase';
 
 type Props = {
   scene: ThScene | null;
@@ -109,8 +111,8 @@ export default defineComponent({
     const stats = Stats();
     const frameCount = ref(0);
     const resizeCount = ref(0);
-
     const setSelectedEntities = dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
+    const toggleSelectedEntities = dic().resolve<ToggleSelectedEntitiesUseCase>(UseCase.toggleSelectedEntities);
 
     const trash = new CompositeDisposable();
 
@@ -164,7 +166,9 @@ export default defineComponent({
       controller = new SceneViewportController(renderGroup, props.scene, camera, canvas.value, requestRender);
       controller.beginContinuousEditing.on(() => context.emit('begin-continuous-editing'));
       controller.endContinuousEditing.on(() => context.emit('end-continuous-editing'));
-      controller.entitiesPicked.on((_, e) => setSelectedEntities.invoke(...e.entities));
+      controller.entitiesPicked.on((_, e) =>
+        (isControlPressed() ? toggleSelectedEntities : setSelectedEntities).invoke(...e.entities)
+      );
 
       trash.push(controller);
 
@@ -238,7 +242,7 @@ export default defineComponent({
       if (e.shiftKey) {
         controller.isSnap = true;
       }
-      if (e.ctrlKey && controller.isVisibleGizmo) {
+      if (e.key.toLowerCase() == 'x' && controller.isVisibleGizmo) {
         controller.enabled = false;
       } else {
         switch (e.key.toLowerCase()) {

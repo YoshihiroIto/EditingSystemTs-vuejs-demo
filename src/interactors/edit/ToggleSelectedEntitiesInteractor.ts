@@ -1,5 +1,5 @@
 import { dic } from '@/di/dic';
-import { RemoveSelectedEntitiesUseCase } from '@/useCases/edit/RemoveSelectedEntitiesUseCase';
+import { ToggleSelectedEntitiesUseCase } from '@/useCases/edit/ToggleSelectedEntitiesUseCase';
 import { Entity } from '@/models/entity/Entity';
 import { AppState } from '@/models/AppState';
 import { History } from '../../../externals/EditingSystemTs/src/History';
@@ -8,23 +8,24 @@ import { singleton } from 'tsyringe';
 import using from '@/foundations/Using';
 
 @singleton()
-export class RemoveSelectedEntitiesInteractor implements RemoveSelectedEntitiesUseCase {
+export class ToggleSelectedEntitiesInteractor implements ToggleSelectedEntitiesUseCase {
   constructor(private readonly history: History, private appState: AppState) {}
 
   invoke(...entities: Entity[]): void {
-    console.log('A', 'RemoveSelectedEntitiesInteractor', this.appState.selectedEntities.length);
-
     using(dic().resolve(BatchEditingBlock), () => {
+      console.log('A', 'ToggleSelectedEntitiesInteractor', this.appState.selectedEntities.length);
+
       for (const entity of entities) {
-        const index = this.appState.selectedEntities.indexOf(entity, 0);
+        const index = this.appState.selectedEntities.indexOf(entity);
+
         if (index === -1) {
-          continue;
+          this.appState.selectedEntities.pushCore(entity);
+        } else {
+          this.appState.selectedEntities.spliceCore(index, 1);
         }
-
-        this.appState.selectedEntities.spliceCore(index, 1);
       }
-    });
 
-    console.log('B', 'RemoveSelectedEntitiesInteractor', this.appState.selectedEntities.length);
+      console.log('B', 'ToggleSelectedEntitiesInteractor', this.appState.selectedEntities.length);
+    });
   }
 }

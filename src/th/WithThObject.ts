@@ -89,6 +89,13 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       Assert.isNotNull(this.viewModel);
 
       switch (e.propertyName) {
+        case nameof<Entity>('isSelected'):
+          if (this instanceof ThMesh) {
+            this.isSelected = this._model.isSelected;
+          }
+
+          break;
+
         case nameof<Entity>('name'):
           this.viewModel.name = this._model.name;
           break;
@@ -125,6 +132,7 @@ export function WithThObject<TBase extends Constructor, T extends Entity>(Base: 
       (this as any)?.setupInternal?.call(this, model);
 
       [
+        nameof<Entity>('isSelected'),
         nameof<Entity>('name'),
         nameof<Entity>('position'),
         nameof<Entity>('rotation'),

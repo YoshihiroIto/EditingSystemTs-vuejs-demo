@@ -121,7 +121,6 @@ import EntityInspector from './components/EntityInspector.vue';
 
 import { computed, defineComponent, reactive, ref } from '@vue/composition-api';
 import { SceneViewModel } from './viewModels/SceneViewModel';
-import { isRedo, isUndo } from './components/ComponentHelper';
 import { Project } from './models/Project';
 import { AppState } from './models/AppState';
 import { UseCase } from './di/useCase';
@@ -175,20 +174,6 @@ export default defineComponent({
       const endContinuousEditing = () => {
         if (getHistoryState.invoke().isInBatch) {
           endBatchEditing.invoke();
-        }
-      };
-
-      document.body.onkeydown = (e: KeyboardEvent) => {
-        if (appState.isInPreview) {
-          return;
-        }
-
-        if (isUndo(e)) {
-          e.preventDefault();
-          undo.invoke();
-        } else if (isRedo(e)) {
-          e.preventDefault();
-          redo.invoke();
         }
       };
 

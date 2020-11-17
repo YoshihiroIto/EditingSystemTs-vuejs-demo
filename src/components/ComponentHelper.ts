@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { dic } from '@/di/dic';
+import { UseCase } from '@/di/useCase';
 import { Vector3 } from '@/foundations/math/Vector3';
+import { AppState } from '@/models/AppState';
+import { RedoUseCase } from '@/useCases/history/RedoUseCase';
+import { UndoUseCase } from '@/useCases/history/UndoUseCase';
 import { computed, WritableComputedRef } from '@vue/composition-api';
 
 export function createComputedVector3(
@@ -77,3 +82,43 @@ export function isRedo(e: KeyboardEvent): boolean {
 export function isEditingConfirmation(e: KeyboardEvent): boolean {
   return e.key == 'Enter' || isUndo(e) || isRedo(e);
 }
+
+export function isControlPressed(): boolean {
+  return _isControlPressed;
+}
+
+export function initializeComponentHelper(): void {
+  document.body.onkeydown = (e: KeyboardEvent) => {
+    const appState = dic().resolve(AppState);
+    const undo = dic().resolve<UndoUseCase>(UseCase.undo);
+    const redo = dic().resolve<RedoUseCase>(UseCase.redo);
+
+    if (appState.isInPreview) {
+      return;
+    }
+
+    if (isUndo(e)) {
+      e.preventDefault();
+      undo.invoke();
+    } else if (isRedo(e)) {
+      e.preventDefault();
+      redo.invoke();
+    }
+
+    if (_isControlPressed === false) {
+      if (e.ctrlKey === true) {
+        _isControlPressed = true;
+      }
+    }
+  };
+
+  document.body.onkeyup = (e: KeyboardEvent) => {
+    if (_isControlPressed === true) {
+      if (e.ctrlKey === false) {
+        _isControlPressed = false;
+      }
+    }
+  };
+}
+
+let _isControlPressed = false;

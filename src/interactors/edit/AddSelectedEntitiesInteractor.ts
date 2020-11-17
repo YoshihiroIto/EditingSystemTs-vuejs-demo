@@ -12,8 +12,12 @@ export class AddSelectedEntitiesInteractor implements AddSelectedEntitiesUseCase
   constructor(private readonly history: History, private appState: AppState) {}
 
   invoke(...entities: Entity[]): void {
+    console.log('A', 'AddSelectedEntitiesInteractor', this.appState.selectedEntities.length);
+
     using(dic().resolve(BatchEditingBlock), () => {
       this.appState.selectedEntities.pushCore(...entities);
     });
+
+    console.log('B', 'AddSelectedEntitiesInteractor', this.appState.selectedEntities.length);
   }
 }
