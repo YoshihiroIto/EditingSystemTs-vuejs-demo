@@ -20,19 +20,25 @@ import TreeViewItem from './TreeViewItem.vue';
 import { TreeViewContext } from './TreeViewContext';
 
 type Props = {
-  selectedItem: unknown;
+  selectedItem: unknown | null;
+  isSelectedAction: ((item: unknown) => boolean) | null;
 };
 
 export default defineComponent({
   props: {
     children: { default: null },
     selectedItem: { type: Object, default: null },
+    isSelectedAction: { type: Function, default: null },
   },
   components: {
     TreeViewItem,
   },
   setup(props: Props, context: SetupContext) {
-    const root = new TreeViewContext(item => context.emit('select-item', item), props.selectedItem);
+    const root = new TreeViewContext(
+      item => context.emit('select-item', item),
+      props.selectedItem,
+      props.isSelectedAction
+    );
 
     watch(
       () => props.selectedItem,

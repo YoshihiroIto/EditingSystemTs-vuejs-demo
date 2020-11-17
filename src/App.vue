@@ -31,7 +31,7 @@
 
     <PreviewViewport id="previewViewport" v-else />
 
-    <EntityTreeView id="treeview" :children="children" :selectedEntity="appState.selectedEntity" />
+    <EntityTreeView id="treeview" :children="children" />
 
     <EntityInspector
       id="inspector"

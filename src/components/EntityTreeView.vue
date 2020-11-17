@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TreeView :children="children" @select-item="onSelectItem" :selectedItem="selectedEntity">
+    <TreeView :children="children" @select-item="onSelectItem" :isSelectedAction="isSelectedAction">
       <template #itemTemplate="item">
         {{ item.data.name }}
         ({{ item.data.definition.name }}, isSelected:{{ item.data.isSelected }})
@@ -21,13 +21,11 @@ import TreeView from './controls/TreeView.vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Props = {
   children: Entity[] | null;
-  selectedEntity: Entity | null;
 };
 
 export default defineComponent({
   props: {
     children: { default: null },
-    selectedEntity: { default: null },
   },
   components: {
     TreeView,
@@ -40,8 +38,13 @@ export default defineComponent({
       setSelectedEntities.invoke(e as Entity);
     };
 
+    const isSelectedAction = (item: Entity | null) => {
+      return item == null ? false : item.isSelected;
+    };
+
     return {
       onSelectItem,
+      isSelectedAction,
     };
   },
 });
