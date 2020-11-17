@@ -237,13 +237,10 @@ export class SceneViewportController implements Disposable {
       return;
     }
 
-    this.entitiesPicked.emit(
-      this,
-      new EntitiesPickedEventArgs(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        intersects.map(x => (x.object as ThObject3D).model!.owner)
-      )
-    );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const pickedFrontEntity = (intersects[0].object as ThObject3D).model!.owner;
+
+    this.entitiesPicked.emit(this, new EntitiesPickedEventArgs([pickedFrontEntity]));
   };
 }
 
