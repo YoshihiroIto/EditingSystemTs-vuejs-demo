@@ -1,9 +1,15 @@
 <template>
   <div>
-    <TreeView :children="children" @select-item="onSelectItem" :isSelectedAction="isSelectedAction">
+    <TreeView
+      :children="children"
+      @set-selected-items="onSetSelectedItems"
+      @toggle-selected-items="onToggleSelectedItems"
+      :isSelectedAction="isSelectedAction"
+      :isMultiselection="true"
+    >
       <template #itemTemplate="item">
         {{ item.data.name }}
-        ({{ item.data.definition.name }}, isSelected:{{ item.data.isSelected }})
+        <!-- ({{ item.data.definition.name }}, isSelected:{{ item.data.isSelected }}) -->
         <!-- {{ item.data.rotation }} -->
       </template>
     </TreeView>
@@ -15,6 +21,7 @@ import { dic } from '@/di/dic';
 import { UseCase } from '@/di/useCase';
 import { Entity } from '@/models/entity/Entity';
 import { SetSelectedEntitiesUseCase } from '@/useCases/edit/SetSelectedEntitiesUseCase';
+import { ToggleSelectedEntitiesUseCase } from '@/useCases/edit/ToggleSelectedEntitiesUseCase';
 import { defineComponent } from '@vue/composition-api';
 import TreeView from './controls/TreeView.vue';
 
@@ -32,10 +39,16 @@ export default defineComponent({
   },
   setup: () => {
     let setSelectedEntities: SetSelectedEntitiesUseCase | null = null;
+    let toggleSelectedEntities: ToggleSelectedEntitiesUseCase | null = null;
 
-    const onSelectItem = (e: unknown) => {
+    const onSetSelectedItems = (e: unknown[]) => {
       setSelectedEntities ??= dic().resolve<SetSelectedEntitiesUseCase>(UseCase.setSelectedEntities);
-      setSelectedEntities.invoke(e as Entity);
+      setSelectedEntities.invoke(...(e as Entity[]));
+    };
+
+    const onToggleSelectedItems = (e: unknown[]) => {
+      toggleSelectedEntities ??= dic().resolve<ToggleSelectedEntitiesUseCase>(UseCase.toggleSelectedEntities);
+      toggleSelectedEntities.invoke(...(e as Entity[]));
     };
 
     const isSelectedAction = (item: Entity | null) => {
@@ -43,7 +56,8 @@ export default defineComponent({
     };
 
     return {
-      onSelectItem,
+      onSetSelectedItems,
+      onToggleSelectedItems,
       isSelectedAction,
     };
   },

@@ -1,34 +1,24 @@
-import { ref, Ref } from '@vue/composition-api';
-
 export class TreeViewContext {
-  private selectedItem: Ref<unknown>;
-
   constructor(
-    private readonly onSelectItem: (selectedItem: unknown) => void,
-    selectedItem: unknown | null,
-    private readonly isSelectedAction: ((item: unknown) => boolean) | null
+    private readonly onSetSelectItems: (items: unknown[]) => void,
+    private readonly onToggleSelectedItems: (items: unknown[]) => void,
+    private readonly isSelectedAction: (item: unknown) => boolean,
+    isMultiselection: boolean
   ) {
-    this.selectedItem = ref(selectedItem);
+    if (isMultiselection === false) {
+      throw new Error('Not impl');
+    }
   }
 
   IsSelectedItem(item: unknown): boolean {
-    return this.isSelectedAction != null ? this.isSelectedAction(item) : this.selectedItem.value === item;
+    return this.isSelectedAction(item);
   }
 
-  SetSelectItem(item: unknown): void {
-    this.selectedItem.value = item;
+  SetSelectedItems(...items: unknown[]): void {
+    this.onSetSelectItems(items);
   }
 
-  SelectItem(item: unknown): void {
-    if (this.selectedItem.value === item) {
-      return;
-    }
-
-    this.onSelectItem(item);
-    this.SetSelectItem(item);
-  }
-
-  ToggleSelectItem(item: unknown): void {
-    this.SelectItem(this.selectedItem.value === item ? null : item);
+  ToggleSelectedItems(...items: unknown[]): void {
+    this.onToggleSelectedItems(items);
   }
 }

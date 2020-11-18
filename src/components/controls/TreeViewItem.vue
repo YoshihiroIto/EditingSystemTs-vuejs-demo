@@ -98,9 +98,9 @@ export default defineComponent({
 
     const onClickItem = (item: unknown, e: MouseEvent) => {
       if (e.ctrlKey) {
-        props.root.ToggleSelectItem(item);
+        props.root.ToggleSelectedItems(item);
       } else {
-        props.root.SelectItem(item);
+        props.root.SetSelectedItems(item);
       }
     };
 

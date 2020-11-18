@@ -15,34 +15,30 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, SetupContext, watch } from '@vue/composition-api';
+import { defineComponent, SetupContext } from '@vue/composition-api';
 import TreeViewItem from './TreeViewItem.vue';
 import { TreeViewContext } from './TreeViewContext';
 
 type Props = {
-  selectedItem: unknown | null;
-  isSelectedAction: ((item: unknown) => boolean) | null;
+  isSelectedAction: (item: unknown) => boolean;
+  isMultiselection: boolean;
 };
 
 export default defineComponent({
   props: {
     children: { default: null },
-    selectedItem: { type: Object, default: null },
     isSelectedAction: { type: Function, default: null },
+    isMultiselection: { type: Boolean, default: false },
   },
   components: {
     TreeViewItem,
   },
   setup(props: Props, context: SetupContext) {
     const root = new TreeViewContext(
-      item => context.emit('select-item', item),
-      props.selectedItem,
-      props.isSelectedAction
-    );
-
-    watch(
-      () => props.selectedItem,
-      newValue => root.SetSelectItem(newValue)
+      items => context.emit('set-selected-items', items),
+      items => context.emit('toggle-selected-items', items),
+      props.isSelectedAction,
+      props.isMultiselection
     );
 
     return {
